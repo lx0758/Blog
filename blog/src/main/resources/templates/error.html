@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BaseVO"*/-->
+<!--/*@thymesVar id="error" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
+
+<head>
+    <style type="text/css">
+        .error {
+            top: 50%;
+            width: 100%;
+            height: 600px;
+            /*border:1px solid red;*/
+            overflow: hidden;
+        }
+
+        .error img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .error p {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600
+        }
+    </style>
+</head>
+
+<body>
+<div class="content">
+
+    <div class="post-block" lang="zh-CN">
+        <div class="error">
+            <div style="height: 50px;"></div>
+            <img src="/blog/images/error.png">
+            <p style="font-size: 40px" th:text="${error.get('status') + ' - ' + error.get('error')}"></p>
+            <p>很抱歉，你访问的页面出现故障不能显示！</p>
+            <p>请稍后重试或者联系系统管理员。</p>
+            <div class="post-button">
+                <a class="btn" href="/" rel="contents">返回首页</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
