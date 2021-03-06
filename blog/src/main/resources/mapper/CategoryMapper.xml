@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liux.blog.dao.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.liux.blog.bean.po.Category">
+        <!--@mbg.generated-->
+        <!--@Table t_category-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="article_count" jdbcType="INTEGER" property="articleCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, `name`, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_category
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_category
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete
+        from t_category
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Category"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_category (`name`, create_time)
+        values (#{name,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Category"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.liux.blog.bean.po.Category">
+        <!--@mbg.generated-->
+        update t_category
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Category">
+        <!--@mbg.generated-->
+        update t_category
+        set `name`      = #{name,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="select" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,
+        (SELECT COUNT(id) FROM t_article WHERE t_article.status = 1 AND t_article.category_id = t_category.id) AS article_count
+        from t_category
+        order by create_time
+    </select>
+    <select id="selectCount" resultType="INTEGER">
+        select
+        count(id)
+        from t_category
+    </select>
+</mapper>
