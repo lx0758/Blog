@@ -1,7 +1,11 @@
 package com.liux.blog.controller.blog
 
 import com.liux.blog.bean.Resp
+import com.liux.blog.bean.po.STATE_COMMENT_ENABLE
 import com.liux.blog.bean.vo.CommentVO
+import com.liux.blog.getIp
+import com.liux.blog.getUserAgent
+import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CommentService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -11,6 +15,8 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping("/comment")
 class CommentController {
 
+    @Autowired
+    private lateinit var articleService: ArticleService
     @Autowired
     private lateinit var commentService: CommentService
 
@@ -34,38 +40,32 @@ class CommentController {
         @RequestParam("link") link: String?,
         @RequestParam("content") content: String,
     ): Resp<*> {
-        val headers = arrayOf(
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_CLIENT_IP",
-            "X-Real-IP",
-        )
-        var index = 0
-        var ip: String? = null
-        while (ip.isNullOrEmpty() && index < headers.size) {
-            ip = request.getHeader(headers[index])
-            index ++
-        }
-        if (ip.isNullOrEmpty()) {
-            ip = request.remoteAddr
-        }
-
-        val ua = request.getHeader("User-Agent")
+        val ip = request.getIp()
+        val ua = request.getUserAgent()
 
         if (nickname.isEmpty()) {
-            return Resp.error("昵称不能为空")
+            return Resp.failed("昵称不能为空")
         }
         if (email.isEmpty()) {
-            return Resp.error("邮箱不能为空")
+            return Resp.failed("邮箱不能为空")
         }
         var localLink = link
         if (localLink.isNullOrEmpty()) localLink = null
         if (content.isEmpty()) {
-            return Resp.error("内容不能为空")
+            return Resp.failed("内容不能为空")
+        }
+
+        val article = articleService.getArticleById(articleId) ?: return Resp.failed("文章不存在")
+
+        if (article.enableComment != STATE_COMMENT_ENABLE) {
+            return Resp.failed("文章禁止评论")
+        }
+
+        if (parentId != null) {
+            commentService.getCommentById(parentId) ?: return Resp.failed("父评论不存在")
         }
 
         commentService.addByBlog(articleId, parentId, nickname, email, localLink, content, ip, ua)
-        return Resp.succeed()
+        return Resp.succeed("提交成功，请等待审核。")
     }
 }

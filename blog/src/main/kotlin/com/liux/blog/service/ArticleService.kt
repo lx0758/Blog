@@ -12,6 +12,7 @@ interface ArticleService {
     fun listBySearch(): List<Article>
     fun listBySitemap(): List<Article>
 
+    fun getArticleById(id: Int): Article?
     fun getArticleByUrl(url: String): Article?
     fun getArticleByPrev(articleId: Int): Article?
     fun getArticleByNext(articleId: Int): Article?

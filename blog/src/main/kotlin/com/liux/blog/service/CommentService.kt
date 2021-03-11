@@ -7,6 +7,8 @@ interface CommentService {
 
     fun listByArticle(articleId: Int, pageNum: Int): Page<Comment>
 
+    fun getCommentById(id: Int): Comment?
+
     fun addByBlog(
         articleId: Int,
         parentId: Int?,

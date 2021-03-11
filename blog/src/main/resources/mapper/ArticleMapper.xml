@@ -93,7 +93,13 @@
         from t_article
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByUrl" resultMap="BaseResultMap">
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByIdOrUrl" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>

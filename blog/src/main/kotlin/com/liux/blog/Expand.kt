@@ -9,6 +9,7 @@ import com.liux.blog.bean.vo.CatalogueVO
 import com.liux.blog.markdown.MarkdownHelper
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 val JSON = jacksonObjectMapper()
 
@@ -23,6 +24,30 @@ inline fun <reified T> String.toBean(): T {
 fun Date.toDateString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
     val simpleDateFormat = SimpleDateFormat(pattern)
     return simpleDateFormat.format(this)
+}
+
+val IP_HEADERS = arrayOf(
+    "X-Forwarded-For",
+    "Proxy-Client-IP",
+    "WL-Proxy-Client-IP",
+    "HTTP_CLIENT_IP",
+    "X-Real-IP",
+)
+fun HttpServletRequest.getIp(): String {
+    var index = 0
+    var ip: String? = null
+    while (ip.isNullOrEmpty() && index < IP_HEADERS.size) {
+        ip = getHeader(IP_HEADERS[index])
+        index ++
+    }
+    if (ip.isNullOrEmpty()) {
+        ip = remoteAddr
+    }
+    return ip!!
+}
+
+fun HttpServletRequest.getUserAgent(): String {
+    return getHeader("User-Agent")
 }
 
 fun Article.parseContent(catalogues: MutableList<CatalogueVO>? = null): String {

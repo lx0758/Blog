@@ -32,12 +32,12 @@ class ApiLoginFilter(
             response.setHeader("content-type", "application/json;charset=UTF-8")
             response.writer.print(
                 when(exception) {
-                    is BadCredentialsException -> Resp.error("账号或密码不正确").toJSONString()
-                    is AccountExpiredException -> Resp.error("账户已失效").toJSONString()
-                    is CredentialsExpiredException -> Resp.error("密码已失效").toJSONString()
-                    is DisabledException -> Resp.error("账户已被禁用").toJSONString()
-                    is LockedException -> Resp.error("账户已被锁定").toJSONString()
-                    else -> Resp.error("登录失败:${exception.message}").toJSONString()
+                    is BadCredentialsException -> Resp.failed("账号或密码不正确").toJSONString()
+                    is AccountExpiredException -> Resp.failed("账户已失效").toJSONString()
+                    is CredentialsExpiredException -> Resp.failed("密码已失效").toJSONString()
+                    is DisabledException -> Resp.failed("账户已被禁用").toJSONString()
+                    is LockedException -> Resp.failed("账户已被锁定").toJSONString()
+                    else -> Resp.failed("登录失败:${exception.message}").toJSONString()
                 }
             )
             response.writer.flush()

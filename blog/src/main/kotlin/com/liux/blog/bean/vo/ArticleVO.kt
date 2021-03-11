@@ -1,6 +1,8 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.STATE_ACTIVATED
+import com.liux.blog.bean.po.STATE_COMMENT_ENABLE
 import com.liux.blog.parseContent
 import java.util.*
 import kotlin.collections.ArrayList
@@ -15,6 +17,7 @@ data class ArticleVO(
     var category: CategoryVO,
     var author: UserVO,
     var views: Int,
+    var allowComment: Boolean,
     var tags: List<String>,
     var catalogues: List<CatalogueVO>,
 ) {
@@ -31,6 +34,7 @@ data class ArticleVO(
                 CategoryVO.of(article.category!!),
                 UserVO.of(article.author!!),
                 article.views!!,
+                article.enableComment == STATE_COMMENT_ENABLE,
                 article.tags?.map { it.name!! } ?: emptyList(),
                 catalogues,
             )
