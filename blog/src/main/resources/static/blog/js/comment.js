@@ -31,9 +31,7 @@ function Comment(options) {
             </svg>
         </p>
         <div class="vheader item3">
-            <input name="nick" placeholder="昵称" class="vnick vinput" type="text">
-            <input name="mail" placeholder="邮箱" class="vmail vinput" type="email">
-            <input name="link" placeholder="网址(http://)" class="vlink vinput" type="text">
+            <input name="nick" placeholder="昵称" class="vnick vinput" type="text"><input name="mail" placeholder="邮箱" class="vmail vinput" type="email"><input name="link" placeholder="网址(http://)" class="vlink vinput" type="text">
         </div>
         <div class="vedit">
             <textarea id="veditor" class="veditor vinput" placeholder="赶紧来吐槽一下吧~!"></textarea>
