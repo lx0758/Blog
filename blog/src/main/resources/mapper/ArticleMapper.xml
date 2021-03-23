@@ -25,7 +25,7 @@
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         id, title, content, format, url, weight, views, enable_comment,
-        `status`, create_time, update_time, category_id, author_id
+        status, create_time, update_time, category_id, author_id
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -47,7 +47,7 @@
     <sql id="Item_Column_List">
         <!--@mbg.generated-->
         id, title, content, format, url, weight, views, enable_comment,
-        `status`, create_time, update_time, category_id
+        status, create_time, update_time, category_id
     </sql>
     <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -91,27 +91,27 @@
         select
         <include refid="Base_Column_List"/>
         from t_article
-        where id = #{id,jdbcType=INTEGER}
+        where status = 1 and id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectById" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_article
-        where id=#{id,jdbcType=INTEGER}
+        where status = 1 and id=#{id,jdbcType=INTEGER}
     </select>
     <select id="selectByIdOrUrl" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_article
-        where id = #{id,jdbcType=INTEGER} OR url = #{url,jdbcType=VARCHAR}
+        where status = 1 and (id = #{id,jdbcType=INTEGER} OR url = #{url,jdbcType=VARCHAR})
     </select>
     <select id="selectByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Simple_Column_List"/>
         from t_article
-        where id &lt; #{articleId,jdbcType=INTEGER}
+        where status = 1 and id &lt; #{articleId,jdbcType=INTEGER}
         order by id desc
         limit 1
     </select>
@@ -120,7 +120,7 @@
         select
         <include refid="Simple_Column_List"/>
         from t_article
-        where id &gt; #{articleId,jdbcType=INTEGER}
+        where status = 1 and id &gt; #{articleId,jdbcType=INTEGER}
         order by id
         limit 1
     </select>
@@ -128,21 +128,21 @@
         select
         <include refid="Item_Column_List"/>
         from t_article
-        where `status` = 1
+        where status = 1
         order by weight desc, id desc
     </select>
     <select id="selectByArchive" resultMap="SimpleResultMap">
         select
         <include refid="Simple_Column_List"/>
         from t_article
-        where `status` = 1
+        where status = 1
         order by id desc
     </select>
     <select id="selectByCategory" resultMap="SimpleResultMap">
         select
         <include refid="Simple_Column_List"/>
         from t_article
-        where `status` = 1 and category_id = #{categoryId,jdbcType=INTEGER}
+        where status = 1 and category_id = #{categoryId,jdbcType=INTEGER}
         order by id desc
     </select>
     <select id="selectByTag" resultMap="SimpleResultMap">
@@ -150,28 +150,28 @@
         <include refid="Simple_Column_List"/>
         from t_article
         LEFT JOIN t_article_tag ON t_article.id = t_article_tag.article_id
-        where t_article.`status` = 1 and t_article_tag.tag_id = #{tagId,jdbcType=INTEGER}
+        where t_article.status = 1 and t_article_tag.tag_id = #{tagId,jdbcType=INTEGER}
         order by id desc
     </select>
     <select id="selectBySearch" resultMap="SearchResultMap">
         select
         <include refid="Search_Column_List"/>
         from t_article
-        where `status` = 1
+        where status = 1
         order by id desc
     </select>
     <select id="selectBySitemap" resultMap="SitemapResultMap">
         select
         <include refid="Sitemap_Column_List"/>
         from t_article
-        where `status` = 1
+        where status = 1
         order by id desc
     </select>
     <select id="selectCount" resultType="INTEGER">
         select
                 count(id)
         from t_article
-        where `status` = 1
+        where status = 1
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--@mbg.generated-->
@@ -185,7 +185,7 @@
         insert into t_article (category_id, title,
                                content, format, author_id,
                                url, weight, views,
-                               enable_comment, `status`,
+                               enable_comment, status,
                                create_time, update_time)
         values (#{category.id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
                 #{content,jdbcType=LONGVARCHAR}, #{format,jdbcType=TINYINT}, #{author.id,jdbcType=INTEGER},
@@ -226,7 +226,7 @@
                 enable_comment,
             </if>
             <if test="status != null">
-                `status`,
+                status,
             </if>
             <if test="createTime != null">
                 create_time,
@@ -306,7 +306,7 @@
                 enable_comment = #{enableComment,jdbcType=TINYINT},
             </if>
             <if test="status != null">
-                `status` = #{status,jdbcType=TINYINT},
+                status = #{status,jdbcType=TINYINT},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -329,7 +329,7 @@
             weight          = #{weight,jdbcType=INTEGER},
             views          = #{views,jdbcType=INTEGER},
             enable_comment = #{enableComment,jdbcType=TINYINT},
-            `status`       = #{status,jdbcType=TINYINT},
+            status       = #{status,jdbcType=TINYINT},
             create_time    = #{createTime,jdbcType=TIMESTAMP},
             update_time    = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}

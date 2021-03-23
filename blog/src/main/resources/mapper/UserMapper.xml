@@ -26,7 +26,7 @@
     select
     <include refid="Base_Column_List" />
     from t_user
-    where id = #{id,jdbcType=INTEGER}
+    where status = 1 and id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectByOwner" resultMap="BaseResultMap">
     <!--@mbg.generated-->
