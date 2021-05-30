@@ -21,5 +21,5 @@ class ShortUrl(
     // 更新时间
     var updateTime: Date? = null,
     // 状态 -1_已删除 0_禁用 1_启用
-    var state: Int? = null,
+    var status: Int? = null,
 )

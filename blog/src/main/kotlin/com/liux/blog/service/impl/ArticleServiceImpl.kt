@@ -46,13 +46,17 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.selectBySitemap()
     }
 
+    override fun getArticleById(id: Int): Article? {
+        return articleMapper.selectById(id)
+    }
+
     override fun getArticleByUrl(url: String): Article? {
         val id = try {
             url.toInt()
         } catch (e: NumberFormatException) {
             0
         }
-        return articleMapper.selectByUrl(id, url)?.apply {
+        return articleMapper.selectByIdOrUrl(id, url)?.apply {
             views = views?.plus(1)
             articleMapper.updateByPrimaryKeySelective(Article(id, views = views))
         }

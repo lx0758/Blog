@@ -22,6 +22,10 @@ class CommentServiceImpl: CommentService {
         return page
     }
 
+    override fun getCommentById(id: Int): Comment? {
+        return commentMapper.selectByPrimaryKey(id)
+    }
+
     override fun addByBlog(
         articleId: Int,
         parentId: Int?,

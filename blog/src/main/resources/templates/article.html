@@ -6,7 +6,7 @@
 <!--/*@thymesVar id="prev" type="com.liux.blog.bean.vo.ArticleSimpleVO"*/-->
 <!--/*@thymesVar id="next" type="com.liux.blog.bean.vo.ArticleSimpleVO"*/-->
 
-<header>
+<header th:if="${article.allowComment}">
     <link rel="stylesheet" href="/blog/css/comment.css">
     <script type="text/javascript" src="/blog/js/comment.js"></script>
 </header>
@@ -127,14 +127,14 @@
             </div>
 
             <div class="post-nav">
-                <div class="post-nav-item" th:if="${prev != null}">
-                    <a th:href="${'/article/' + prev.url}" rel="prev" th:title="${prev.title}">
+                <div class="post-nav-item">
+                    <a th:if="${prev != null}" th:href="${'/article/' + prev.url}" rel="prev" th:title="${prev.title}">
                         <i class="fa fa-chevron-left"></i>
                         <th:block th:text="${prev.title}"></th:block>
                     </a>
                 </div>
-                <div class="post-nav-item" th:if="${next != null}">
-                    <a th:href="${'/article/' + next.url}" rel="next" th:title="${next.title}">
+                <div class="post-nav-item">
+                    <a th:if="${next != null}" th:href="${'/article/' + next.url}" rel="next" th:title="${next.title}">
                         <th:block th:text="${next.title}"></th:block>
                         <i class="fa fa-chevron-right"></i>
                     </a>
@@ -145,16 +145,18 @@
 
         <div style="height: 50px"></div>
 
-        <div class="blog-comment"></div>
-        <script type="text/javascript" th:inline="javascript">
-            window.onload = function () {
-                new Comment({
-                    element: '.blog-comment',
-                    apiUrl: '/comment',
-                    apiSubjectId: [[${article.id}]],
-                });
-            }
-        </script>
+        <th:block th:if="${article.allowComment}">
+            <div class="blog-comment"></div>
+            <script type="text/javascript" th:inline="javascript">
+                window.onload = function () {
+                    new Comment({
+                        element: '.blog-comment',
+                        apiUrl: '/comment',
+                        apiSubjectId: [[${article.id}]],
+                    });
+                }
+            </script>
+        </th:block>
 
     </article>
 

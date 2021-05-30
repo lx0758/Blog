@@ -21,7 +21,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, article_id, parent_id, author, author_id, email, url, content, ip, ua, `status`,
+    id, article_id, parent_id, author, author_id, email, url, content, ip, ua, status,
     create_time, update_time
   </sql>
   <select id="selectByArticleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -59,7 +59,7 @@
     <!--@mbg.generated-->
     insert into t_comment (article_id, parent_id, author,
       author_id, email, url,
-      content, ip, ua, `status`,
+      content, ip, ua, status,
       create_time, update_time)
     values (#{articleId,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{author,jdbcType=VARCHAR},
       #{authorId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
@@ -98,7 +98,7 @@
         ua,
       </if>
       <if test="status != null">
-        `status`,
+        status,
       </if>
       <if test="createTime != null">
         create_time,
@@ -178,7 +178,7 @@
         ua = #{ua,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=TINYINT},
+        status = #{status,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -201,7 +201,7 @@
       content = #{content,jdbcType=VARCHAR},
       ip = #{ip,jdbcType=VARCHAR},
       ua = #{ua,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=TINYINT},
+      status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

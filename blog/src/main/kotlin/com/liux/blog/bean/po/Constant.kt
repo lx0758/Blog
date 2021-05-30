@@ -5,6 +5,8 @@ const val STATE_DELETED = -1
 // 文章/文件状态
 const val STATE_UNPUBLISHED = 0
 const val STATE_PUBLISHED = 1
+const val STATE_COMMENT_DISABLE = 0
+const val STATE_COMMENT_ENABLE = 1
 // 评论状态
 const val STATE_PENDING = 0
 const val STATE_AUDITED = 1

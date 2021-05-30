@@ -11,7 +11,8 @@ interface ArticleMapper {
     fun insert(record: Article): Int
     fun insertSelective(record: Article): Int
     fun selectByPrimaryKey(id: Int): Article?
-    fun selectByUrl(@Param("id") id: Int, @Param("url") url: String): Article?
+    fun selectById(@Param("id") id: Int?): Article?
+    fun selectByIdOrUrl(@Param("id") id: Int, @Param("url") url: String): Article?
     fun selectByPrev(articleId: Int): Article?
     fun selectByNext(articleId: Int): Article?
     fun selectByPage(): List<Article>
