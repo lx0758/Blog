@@ -151,7 +151,7 @@
                 window.onload = function () {
                     new Comment({
                         element: '.blog-comment',
-                        apiUrl: '/comment',
+                        apiUrl: '/article/' + [[${article.id}]] + '/comment',
                         apiSubjectId: [[${article.id}]],
                     });
                 }

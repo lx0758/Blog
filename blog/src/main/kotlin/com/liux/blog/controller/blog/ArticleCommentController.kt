@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/comment")
-class CommentController {
+@RequestMapping("/article/{id}/comment")
+class ArticleCommentController {
 
     @Autowired
     private lateinit var articleService: ArticleService
@@ -22,7 +22,8 @@ class CommentController {
 
     @GetMapping
     fun query(
-        @RequestParam("subjectId") articleId: Int,
+        @PathVariable("id") articleId: Int,
+        @RequestParam("subjectId") subjectId: Int,
         @RequestParam("page") page: Int,
     ): Resp<*> {
         val comments = commentService.listByArticle(articleId, page)
@@ -33,7 +34,8 @@ class CommentController {
     @PutMapping
     fun insert(
         request: HttpServletRequest,
-        @RequestParam("subjectId") articleId: Int,
+        @PathVariable("id") articleId: Int,
+        @RequestParam("subjectId") subjectId: Int,
         @RequestParam("parentId") parentId: Int?,
         @RequestParam("nickname") nickname: String,
         @RequestParam("email") email: String,

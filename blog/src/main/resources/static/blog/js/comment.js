@@ -350,6 +350,7 @@ function Comment(options) {
                 _content.value = null
                 Comment.panel.showInfo('评论成功!')
                 Comment.panel.replyCancel()
+                Comment.emoji.hide()
                 Comment.page.refresh()
             }).catch(function (error) {
                 Comment.panel.showInfo(error)
