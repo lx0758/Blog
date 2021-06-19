@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BaseVO"*/-->
-<!--/*@thymesVar id="articles" type="java.util.List<com.liux.blog.bean.vo.ArticleItemVO>"*/-->
+<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
+<!--/*@thymesVar id="articles" type="java.util.List<com.liux.blog.bean.vo.ArticlePageVO>"*/-->
 <!--/*@thymesVar id="pagination" type="com.liux.blog.bean.vo.PaginationVO"*/-->
 
 <body>
@@ -12,9 +12,9 @@
         <link itemprop="mainEntityOfPage" th:href="${'/article/' + article.url}">
 
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <meta itemprop="image" th:content="${base.masterAvatar}">
-            <meta itemprop="name" th:content="${base.masterNickname}">
-            <meta itemprop="description" th:content="${base.masterDescription}">
+            <meta itemprop="image" th:content="${base.ownerAvatar}">
+            <meta itemprop="name" th:content="${base.ownerNickname}">
+            <meta itemprop="description" th:content="${base.ownerDescription}">
         </span>
 
         <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -54,8 +54,8 @@
                     </span>
                     <span class="post-meta-item-text">分类于</span>
                     <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                        <a th:href="${'/category/' + article.category.name}" itemprop="url" rel="index">
-                            <span itemprop="name" th:text="${article.category.name}"></span>
+                        <a th:href="${'/category/' + article.categoryName}" itemprop="url" rel="index">
+                            <span itemprop="name" th:text="${article.categoryName}"></span>
                         </a>
                     </span>
                 </span>

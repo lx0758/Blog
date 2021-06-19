@@ -1,9 +1,8 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.*
-import java.util.*
 
-data class BaseVO(
+data class BlogVO(
     var siteDomain: String,
     var siteTitle: String,
     var siteDescription: String,
@@ -17,26 +16,25 @@ data class BaseVO(
     var siteCategoryCount: Int,
     var siteTagCount: Int,
 
-    var masterAvatar: String,
-    var masterNickname: String,
-    var masterDescription: String,
-
-    var masterGithub: String,
-    var masterEmail: String,
-    var masterWeibo: String,
-    var masterGoogle: String,
-    var masterTwitter: String,
-    var masterFacebook: String,
-    var masterStackOverflow: String,
-    var masterYoutube: String,
-    var masterInstagram: String,
-    var masterSkype: String,
+    var ownerAvatar: String,
+    var ownerNickname: String,
+    var ownerDescription: String,
+    var ownerGithub: String,
+    var ownerEmail: String,
+    var ownerWeibo: String,
+    var ownerGoogle: String,
+    var ownerTwitter: String,
+    var ownerFacebook: String,
+    var ownerStackOverflow: String,
+    var ownerYoutube: String,
+    var ownerInstagram: String,
+    var ownerSkype: String,
 
     var links: List<LinkVO> = emptyList(),
 ) {
     companion object {
-        fun of(configs: Map<String, String?>, articleCount: Int, categoryCount: Int, tagCount: Int, user: User, links: List<Link>): BaseVO {
-            return BaseVO(
+        fun of(configs: Map<String, String?>, articleCount: Int, categoryCount: Int, tagCount: Int, user: User, links: List<Link>): BlogVO {
+            return BlogVO(
                 configs[SITE_DOMAIN] ?: "domain.org",
                 configs[SITE_TITLE] ?: "Blog",
                 configs[SITE_DESCRIPTION] ?: "",

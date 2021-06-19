@@ -50,6 +50,12 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.selectById(id)
     }
 
+    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Article> {
+        val page = PageHelper.startPage<Article>(pageNum, pageSize)
+        articleMapper.selectByAdmin()
+        return page
+    }
+
     override fun getArticleByUrl(url: String): Article? {
         val id = try {
             url.toInt()

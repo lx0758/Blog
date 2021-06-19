@@ -1,4 +1,4 @@
-package com.liux.blog.controller.blog
+package com.liux.blog.controller
 
 import com.liux.blog.parseContent
 import com.liux.blog.service.ArticleService
@@ -25,7 +25,7 @@ class OtherController {
         return articles.map { article ->
             HashMap<String, String>().apply {
                 put("title", article.title!!)
-                put("content", article.parseContent())
+                put("content",  article.parseContent())
                 put("url", "/article/" + (article.url ?: article.id.toString()))
             }
         }

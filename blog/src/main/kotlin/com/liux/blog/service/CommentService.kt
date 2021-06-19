@@ -5,6 +5,8 @@ import com.liux.blog.bean.po.Comment
 
 interface CommentService {
 
+    fun listByAdmin(pageNum: Int, pageSize: Int): Page<Comment>
+
     fun listByArticle(articleId: Int, pageNum: Int): Page<Comment>
 
     fun getCommentById(id: Int): Comment?

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liux.blog.dao.UploadMapper">
+  <resultMap id="BaseResultMap" type="com.liux.blog.bean.po.Upload">
+    <!--@Table t_upload-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="display_name" jdbcType="VARCHAR" property="displayName" />
+    <result column="length" jdbcType="INTEGER" property="length" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="author_id" jdbcType="INTEGER" property="authorId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
+                 column="author_id"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, display_name, `length`, `type`, `path`, author_id, `status`, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_upload
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByAdmin" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_upload
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_upload
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Upload" useGeneratedKeys="true">
+    insert into t_upload (display_name, `length`, `type`, 
+      `path`, author_id, `status`, 
+      create_time)
+    values (#{displayName,jdbcType=VARCHAR}, #{length,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
+      #{path,jdbcType=VARCHAR}, #{authorId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Upload" useGeneratedKeys="true">
+    insert into t_upload
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="displayName != null">
+        display_name,
+      </if>
+      <if test="length != null">
+        `length`,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="path != null">
+        `path`,
+      </if>
+      <if test="authorId != null">
+        author_id,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="displayName != null">
+        #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="length != null">
+        #{length,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="authorId != null">
+        #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liux.blog.bean.po.Upload">
+    update t_upload
+    <set>
+      <if test="displayName != null">
+        display_name = #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="length != null">
+        `length` = #{length,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        `path` = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="authorId != null">
+        author_id = #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Upload">
+    update t_upload
+    set display_name = #{displayName,jdbcType=VARCHAR},
+      `length` = #{length,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=VARCHAR},
+      `path` = #{path,jdbcType=VARCHAR},
+      author_id = #{authorId,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -10,7 +10,7 @@ data class Comment(
     // ID
     var id: Int,
     // 文章ID
-    var articleId: Int? = null,
+    var articleId: Int,
     // 父评论ID
     var parentId: Int? = null,
     // 作者
@@ -34,6 +34,8 @@ data class Comment(
     // 更新时间
     var updateTime: Date? = null,
 
+    // 文章
+    var article: Article? = null,
     // 子评论
     var childs: List<Comment>? = null
 ) : Serializable

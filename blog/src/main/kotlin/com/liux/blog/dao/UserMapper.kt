@@ -9,6 +9,7 @@ interface UserMapper {
     fun insert(record: User): Int
     fun insertSelective(record: User): Int
     fun selectByPrimaryKey(id: Int): User?
+    fun selectByAuthor(id: Int): User?
     fun selectByOwner(): User
     fun selectByUsername(username: String): User?
     fun updateByPrimaryKeySelective(record: User): Int

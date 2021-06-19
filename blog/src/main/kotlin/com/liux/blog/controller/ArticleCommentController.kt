@@ -1,8 +1,8 @@
-package com.liux.blog.controller.blog
+package com.liux.blog.controller
 
 import com.liux.blog.bean.Resp
-import com.liux.blog.bean.po.STATE_COMMENT_ENABLE
-import com.liux.blog.bean.vo.CommentVO
+import com.liux.blog.bean.po.COMMENT_ENABLE
+import com.liux.blog.bean.vo.CommentPageVO
 import com.liux.blog.getIp
 import com.liux.blog.getUserAgent
 import com.liux.blog.service.ArticleService
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/comment")
-class CommentController {
+@RequestMapping("/article/{id}/comment")
+class ArticleCommentController {
 
     @Autowired
     private lateinit var articleService: ArticleService
@@ -22,18 +22,20 @@ class CommentController {
 
     @GetMapping
     fun query(
-        @RequestParam("subjectId") articleId: Int,
+        @PathVariable("id") articleId: Int,
+        @RequestParam("subjectId") subjectId: Int,
         @RequestParam("page") page: Int,
     ): Resp<*> {
         val comments = commentService.listByArticle(articleId, page)
-        val commentVO = CommentVO.of(comments)
+        val commentVO = CommentPageVO.of(comments)
         return Resp.succeed(commentVO)
     }
 
     @PutMapping
     fun insert(
         request: HttpServletRequest,
-        @RequestParam("subjectId") articleId: Int,
+        @PathVariable("id") articleId: Int,
+        @RequestParam("subjectId") subjectId: Int,
         @RequestParam("parentId") parentId: Int?,
         @RequestParam("nickname") nickname: String,
         @RequestParam("email") email: String,
@@ -57,7 +59,7 @@ class CommentController {
 
         val article = articleService.getArticleById(articleId) ?: return Resp.failed("文章不存在")
 
-        if (article.enableComment != STATE_COMMENT_ENABLE) {
+        if (article.enableComment != COMMENT_ENABLE) {
             return Resp.failed("文章禁止评论")
         }
 

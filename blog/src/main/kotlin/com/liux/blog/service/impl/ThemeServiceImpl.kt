@@ -1,6 +1,6 @@
 package com.liux.blog.service.impl
 
-import com.liux.blog.bean.vo.BaseVO
+import com.liux.blog.bean.vo.BlogVO
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.CategoryMapper
 import com.liux.blog.dao.TagMapper
@@ -31,22 +31,22 @@ class ThemeServiceImpl: ThemeService {
     @Autowired
     private lateinit var linkService: LinkService
 
-    private var cacheBaseVO: BaseVO? = null
+    private var cacheBlogVO: BlogVO? = null
 
     override fun updateBase() {
-        logger.info("Update base info, current base info is ${if (cacheBaseVO != null) "not null" else "null"}")
-        val configs = configService.listConfigs()
+        logger.info("Update base info, current base info is ${if (cacheBlogVO != null) "not null" else "null"}")
+        val configs = configService.listByTheme()
         val articleCount = articleMapper.selectCount()
         val categoryCount = categoryMapper.selectCount()
         val tagCount = tagMapper.selectCount()
         val user = userMapper.selectByOwner()
         val links = linkService.queryAll()
-        cacheBaseVO = BaseVO.of(configs, articleCount, categoryCount, tagCount, user, links)
+        cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links)
     }
 
-    override fun getCacheBase(): BaseVO {
-        if (cacheBaseVO == null) updateBase()
-        return cacheBaseVO!!
+    override fun getCacheBase(): BlogVO {
+        if (cacheBlogVO == null) updateBase()
+        return cacheBlogVO!!
     }
 
     override fun render(model: Model, template: String): String {

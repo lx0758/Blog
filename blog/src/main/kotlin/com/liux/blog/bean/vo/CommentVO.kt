@@ -1,19 +1,31 @@
 package com.liux.blog.bean.vo
 
-import com.github.pagehelper.Page
 import com.liux.blog.bean.po.Comment
+import com.liux.blog.browser
+import com.liux.blog.system
+import com.liux.blog.toDateString
 
 data class CommentVO(
-    val total: Int,
-    val hasMore: Boolean,
-    val comments: List<CommentItemVO>,
+    val id: Int,
+    val avatar: String,
+    val nickname: String,
+    val browser: String,
+    val system: String,
+    val time: String,
+    val content: String,
+    val children: List<CommentVO>?,
 ) {
     companion object {
-        fun of(comments: Page<Comment>): CommentVO {
+        fun of(comment: Comment): CommentVO {
             return CommentVO(
-                comments.total.toInt(),
-                comments.size >= comments.pageSize,
-                comments.map { CommentItemVO.of(it) }
+                comment.id,
+                "/blog/images/avatar.gif",
+                comment.author ?: "匿名用户",
+                comment.browser(),
+                comment.system(),
+                comment.createTime!!.toDateString(),
+                comment.content!!,
+                comment.childs?.map { of(it) }
             )
         }
     }

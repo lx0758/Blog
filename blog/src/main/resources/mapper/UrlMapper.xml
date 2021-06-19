@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.liux.blog.dao.ShortUrlMapper">
-  <resultMap id="BaseResultMap" type="com.liux.blog.bean.po.ShortUrl">
+<mapper namespace="com.liux.blog.dao.UrlMapper">
+  <resultMap id="BaseResultMap" type="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
-    <!--@Table t_short_url-->
+    <!--@Table t_url-->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="key" jdbcType="VARCHAR" property="key" />
     <result column="url" jdbcType="VARCHAR" property="url" />
@@ -12,42 +12,60 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
+                 column="author_id"/>
+  </resultMap>
+  <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Url">
+    <!--@mbg.generated-->
+    <!--@Table t_url-->
+    <result column="key" jdbcType="VARCHAR" property="key" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, `key`, url, description, author_id, status, create_time, update_time
   </sql>
-  <select id="selectByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <sql id="Simple_Column_List">
+    <!--@mbg.generated-->
+    `key`, url
+  </sql>
+  <select id="selectByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
     <!--@mbg.generated-->
     select
-    <include refid="Base_Column_List" />
-    from t_short_url
+    <include refid="Simple_Column_List" />
+    from t_url
     where status = 1 and `key` = #{key,jdbcType=VARCHAR}
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
-    from t_short_url
+    from t_url
     where status = 1 and id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByAdmin" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from t_url
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->
-    delete from t_short_url
+    delete from t_url
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.ShortUrl" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into t_short_url (`key`, url, description,
+    insert into t_url (`key`, url, description,
       author_id, status, create_time,
       update_time)
     values (#{key,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
       #{authorId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.ShortUrl" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into t_short_url
+    insert into t_url
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="key != null">
         `key`,
@@ -95,9 +113,9 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.liux.blog.bean.po.ShortUrl">
+  <update id="updateByPrimaryKeySelective" parameterType="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
-    update t_short_url
+    update t_url
     <set>
       <if test="key != null">
         `key` = #{key,jdbcType=VARCHAR},
@@ -123,9 +141,9 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.ShortUrl">
+  <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
-    update t_short_url
+    update t_url
     set `key` = #{key,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},

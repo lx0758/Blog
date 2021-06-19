@@ -1,4 +1,4 @@
-package com.liux.blog.controller.blog
+package com.liux.blog.controller
 
 import com.liux.blog.exception.HttpNotFoundException
 import com.liux.blog.bean.vo.*
@@ -32,7 +32,7 @@ class IndexController {
     @GetMapping("/page/{pageNum}")
     fun page(model: Model, @PathVariable("pageNum") pageNum: Int): String {
         val articlePage = articleService.listByPage(pageNum)
-        val articles = articlePage.map { ArticleItemVO.of(it) }
+        val articles = articlePage.map { ArticlePageVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
         model.addAttribute("articles", articles)
@@ -48,7 +48,7 @@ class IndexController {
     @GetMapping("/archive/{pageNum}")
     fun archive(model: Model, @PathVariable("pageNum") pageNum: Int): String {
         val articlePage = articleService.listByArchive(pageNum)
-        val articles = articlePage.map { ArticleSimpleVO.of(it) }
+        val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
         model.addAttribute("articles", articles)
@@ -72,7 +72,7 @@ class IndexController {
     fun category(model: Model, @PathVariable("category") category: String, @PathVariable("pageNum") pageNum: Int): String {
         val category = categoryService.getByName(category) ?: throw HttpNotFoundException()
         val articlePage = articleService.listByCategory(category.id, pageNum)
-        val articles = articlePage.map { ArticleSimpleVO.of(it) }
+        val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
         model.addAttribute("category", category.name)
@@ -83,7 +83,7 @@ class IndexController {
 
     @GetMapping("/tag/")
     fun tag(model: Model): String {
-        val tags = tagService.list().map { TagVO.of(it) }
+        val tags = tagService.listByCount().map { TagVO.of(it) }
         model.addAttribute("tags", tags)
         return themeService.render(model, "tags")
     }
@@ -97,7 +97,7 @@ class IndexController {
     fun tag(model: Model, @PathVariable("tag") tag: String, @PathVariable("pageNum") pageNum: Int): String {
         val tag = tagService.getByName(tag) ?: throw HttpNotFoundException()
         val articlePage = articleService.listByTag(tag.id, pageNum)
-        val articles = articlePage.map { ArticleSimpleVO.of(it) }
+        val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
         model.addAttribute("tag", tag.name)
@@ -107,16 +107,17 @@ class IndexController {
     }
 
     @GetMapping("/article/{article}")
-    fun article(model: Model, @PathVariable("article") article: String): String {
-        val article = articleService.getArticleByUrl(article) ?: throw HttpNotFoundException()
-        val articleVO = ArticleVO.of(article)
+    fun article(model: Model, @PathVariable("article") articlePath: String): String {
+        val article = articleService.getArticleByUrl(articlePath) ?: throw HttpNotFoundException()
+        val catalogues = ArrayList<CatalogueVO>()
+        val articleVO = ArticleVO.of(article, catalogues)
         val prev = articleService.getArticleByPrev(article.id)
         val next = articleService.getArticleByNext(article.id)
-        val prevVO = if (prev != null) ArticleSimpleVO.of(prev) else null
-        val nextVO = if (next != null) ArticleSimpleVO.of(next) else null
+        val prevVO = if (prev != null) ArticleArchiveVO.of(prev) else null
+        val nextVO = if (next != null) ArticleArchiveVO.of(next) else null
 
         model.addAttribute("article", articleVO)
-        model.addAttribute("catalogues", articleVO.catalogues)
+        model.addAttribute("catalogues", catalogues)
         model.addAttribute("prev", prevVO)
         model.addAttribute("next", nextVO)
         return themeService.renderArticle(model, articleVO.title, articleVO.tags.joinToString(","))

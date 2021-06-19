@@ -95,7 +95,7 @@
                      LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
         where t_article_tag.article_id = #{articleId}
     </select>
-    <select id="select" resultMap="CountResultMap">
+    <select id="selectByCount" resultMap="CountResultMap">
         select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count FROM t_article_tag LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id GROUP BY tag_id ORDER BY name
     </select>
     <select id="selectCount" resultType="INTEGER">

@@ -41,3 +41,7 @@ mybatis:
 logging:
   level:
     com.liux.blog: info
+
+springfox:
+  documentation:
+    enabled: false

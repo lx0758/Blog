@@ -25,7 +25,7 @@ class ApiLogoutFilter : GenericFilterBean() {
         response.writer.flush()
     }
 
-    private val logoutRequestMatcher = AntPathRequestMatcher("/admin/api/session", "DELETE")
+    private val logoutRequestMatcher = AntPathRequestMatcher("/api/session", "DELETE")
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         doFilter(request as HttpServletRequest, response as HttpServletResponse, chain)

@@ -5,7 +5,7 @@ import java.util.*
 
 // 短连接数据
 @NoArgsConstructor
-class ShortUrl(
+class Url(
     // ID
     var id: Int,
     // 键
@@ -22,4 +22,7 @@ class ShortUrl(
     var updateTime: Date? = null,
     // 状态 -1_已删除 0_禁用 1_启用
     var status: Int? = null,
+
+    // 作者
+    var author: User? = null
 )

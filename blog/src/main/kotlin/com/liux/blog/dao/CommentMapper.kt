@@ -11,6 +11,7 @@ interface CommentMapper {
     fun selectByArticleId(articleId: Int): List<Comment>
     fun selectByPrimaryKey(id: Int?): Comment?
     fun selectCount(): Long
+    fun selectByAdmin(): List<Comment>
     fun updateByPrimaryKeySelective(record: Comment?): Int
     fun updateByPrimaryKey(record: Comment?): Int
     fun selectByLatest(size: Int): List<Comment>
