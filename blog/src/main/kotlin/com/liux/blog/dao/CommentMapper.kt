@@ -8,6 +8,7 @@ interface CommentMapper {
     fun deleteByPrimaryKey(id: Int?): Int
     fun insert(record: Comment?): Int
     fun insertSelective(record: Comment?): Int
+    fun selectByPage()
     fun selectByArticleId(articleId: Int): List<Comment>
     fun selectByPrimaryKey(id: Int?): Comment?
     fun selectCount(): Long

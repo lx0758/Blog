@@ -6,6 +6,7 @@ import com.liux.blog.bean.po.Article
 interface ArticleService {
 
     fun listByPage(pageNum: Int): Page<Article>
+    fun listByPage(pageNum: Int, pageSize: Int): Page<Article>
     fun listByArchive(pageNum: Int): Page<Article>
     fun listByCategory(categoryId: Int, pageNum: Int): Page<Article>
     fun listByTag(tagId: Int, pageNum: Int): Page<Article>

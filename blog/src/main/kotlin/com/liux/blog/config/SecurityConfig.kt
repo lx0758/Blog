@@ -48,7 +48,7 @@ class SecurityConfig: WebSecurityConfigurerAdapter() {
 
         http
             .authorizeRequests()
-            .antMatchers("/admin/api/**").authenticated()
+            .antMatchers("/api/**").authenticated()
             .anyRequest().permitAll()
 
         http

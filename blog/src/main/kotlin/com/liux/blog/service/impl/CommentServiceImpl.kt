@@ -16,6 +16,12 @@ class CommentServiceImpl: CommentService {
     @Autowired
     private lateinit var commentMapper: CommentMapper
 
+    override fun listByPage(pageNum: Int, pageSize: Int): Page<Comment> {
+        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
+        commentMapper.selectByPage()
+        return page
+    }
+
     override fun listByArticle(articleId: Int, pageNum: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, 10)
         commentMapper.selectByArticleId(articleId)

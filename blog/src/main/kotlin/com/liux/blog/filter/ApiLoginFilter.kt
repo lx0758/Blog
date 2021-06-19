@@ -15,7 +15,7 @@ class ApiLoginFilter(
     authenticationManager: AuthenticationManager,
     private val userService: UserService
 ) : AbstractAuthenticationProcessingFilter(
-    AntPathRequestMatcher("/admin/api/session", "POST"),
+    AntPathRequestMatcher("/api/session", "PUT"),
     authenticationManager
 ) {
 

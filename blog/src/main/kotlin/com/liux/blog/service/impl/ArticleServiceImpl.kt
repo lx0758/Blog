@@ -15,7 +15,11 @@ class ArticleServiceImpl: ArticleService {
     private lateinit var articleMapper: ArticleMapper
 
     override fun listByPage(pageNum: Int): Page<Article> {
-        val page = PageHelper.startPage<Article>(pageNum, 10)
+        return listByPage(pageNum, 10)
+    }
+
+    override fun listByPage(pageNum: Int, pageSize: Int): Page<Article> {
+        val page = PageHelper.startPage<Article>(pageNum, pageSize)
         articleMapper.selectByPage()
         return page
     }
