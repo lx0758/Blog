@@ -11,14 +11,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
-val JSON = jacksonObjectMapper()
-
 fun Any.toJSONString(): String {
-    return JSON.writeValueAsString(this)
+    return jacksonObjectMapper().writeValueAsString(this)
+}
+
+fun Any.toFormatJSONString(): String {
+    return jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this)
 }
 
 inline fun <reified T> String.toBean(): T {
-    return JSON.readValue(this)
+    return jacksonObjectMapper().readValue(this)
 }
 
 fun Date.toDateString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
