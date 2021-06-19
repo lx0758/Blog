@@ -13,6 +13,7 @@ interface ArticleMapper {
     fun selectByPrimaryKey(id: Int): Article?
     fun selectById(@Param("id") id: Int?): Article?
     fun selectByIdOrUrl(@Param("id") id: Int, @Param("url") url: String): Article?
+    fun selectByComment(@Param("id") id: Int?): Article?
     fun selectByPrev(articleId: Int): Article?
     fun selectByNext(articleId: Int): Article?
     fun selectByPage(): List<Article>
@@ -21,6 +22,7 @@ interface ArticleMapper {
     fun selectByTag(tagId: Int): List<Article>
     fun selectBySearch(): List<Article>
     fun selectBySitemap(): List<Article>
+    fun selectByAdmin(): List<Article>
     fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Article): Int
     fun updateByPrimaryKey(record: Article): Int

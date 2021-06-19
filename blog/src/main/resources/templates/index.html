@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="title" type="java.lang.String"*/-->
 <!--/*@thymesVar id="keywords" type="java.lang.String"*/-->
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BaseVO"*/-->
+<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
 <!--/*@thymesVar id="catalogues" type="java.util.List<com.liux.blog.bean.vo.CatalogueVO>"*/-->
 
 <head>
@@ -256,7 +256,7 @@
     <div class="reading-progress-bar"></div>
     <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-    <a th:href="${'https://github.com/' + base.masterGithub}" class="github-corner" title="Follow me on GitHub"
+    <a th:href="${'https://github.com/' + base.ownerGithub}" class="github-corner" title="Follow me on GitHub"
        aria-label="Follow me on GitHub" rel="noopener" target="_blank">
         <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
             <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -330,9 +330,9 @@
 
                     <div class="site-overview-wrap sidebar-panel">
                         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                            <img class="site-author-image" itemprop="image" th:alt="${base.masterNickname}" th:src="${base.masterAvatar}">
-                            <p class="site-author-name" itemprop="name" th:text="${base.masterNickname}"></p>
-                            <div class="site-description" itemprop="description" th:text="${base.masterDescription}"></div>
+                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" th:src="${base.ownerAvatar}">
+                            <p class="site-author-name" itemprop="name" th:text="${base.ownerNickname}"></p>
+                            <div class="site-description" itemprop="description" th:text="${base.ownerDescription}"></div>
                         </div>
                         <div class="site-state-wrap motion-element">
                             <nav class="site-state">
@@ -358,62 +358,62 @@
                         </div>
 
                         <div class="links-of-author motion-element">
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterGithub)}">
-                                <a th:href="${'https://github.com/' + base.masterGithub}" title="GitHub" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerGithub)}">
+                                <a th:href="${'https://github.com/' + base.ownerGithub}" title="GitHub" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-github"></i>
                                     GitHub
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterEmail)}">
-                                <a th:href="${'mailto:' + base.masterEmail}" title="E-Mail" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerEmail)}">
+                                <a th:href="${'mailto:' + base.ownerEmail}" title="E-Mail" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-envelope"></i>
                                     E-Mail
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterWeibo)}">
-                                <a th:href="${'https://weibo.com/' + base.masterWeibo}" title="Weibo" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerWeibo)}">
+                                <a th:href="${'https://weibo.com/' + base.ownerWeibo}" title="Weibo" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-weibo"></i>
                                     Weibo
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterGoogle)}">
-                                <a th:href="${'https://plus.google.com/' + base.masterGoogle}" title="Google" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerGoogle)}">
+                                <a th:href="${'https://plus.google.com/' + base.ownerGoogle}" title="Google" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-google"></i>
                                     Google
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterTwitter)}">
-                                <a th:href="${'https://twitter.com/' + base.masterTwitter}" title="Twitter" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerTwitter)}">
+                                <a th:href="${'https://twitter.com/' + base.ownerTwitter}" title="Twitter" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-twitter"></i>
                                     Twitter
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterFacebook)}">
-                                <a th:href="${'https://www.facebook.com/' + base.masterFacebook}" title="Facebook" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerFacebook)}">
+                                <a th:href="${'https://www.facebook.com/' + base.ownerFacebook}" title="Facebook" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-facebook"></i>
                                     Facebook
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterStackOverflow)}">
-                                <a th:href="${'https://stackoverflow.com/' + base.masterStackOverflow}" title="StackOverflow" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerStackOverflow)}">
+                                <a th:href="${'https://stackoverflow.com/' + base.ownerStackOverflow}" title="StackOverflow" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-stack-overflow"></i>
                                     StackOverflow
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterYoutube)}">
-                                <a th:href="${'https://youtube.com/' + base.masterYoutube}" title="YouTube" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerYoutube)}">
+                                <a th:href="${'https://youtube.com/' + base.ownerYoutube}" title="YouTube" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-youtube"></i>
                                     YouTube
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterInstagram)}">
-                                <a th:href="${'https://instagram.com/' + base.masterInstagram}" title="Instagram" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerInstagram)}">
+                                <a th:href="${'https://instagram.com/' + base.ownerInstagram}" title="Instagram" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-instagram"></i>
                                     Instagram
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.masterSkype)}">
-                                <a th:href="${'skype:' + base.masterSkype + '?call|chat'}" title="Skype" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerSkype)}">
+                                <a th:href="${'skype:' + base.ownerSkype + '?call|chat'}" title="Skype" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-skype"></i>
                                     Skype
                                 </a>
@@ -460,7 +460,7 @@
                 <span class="with-love">
                     <i class="fa fa-user"></i>
                 </span>
-                <span class="author" itemprop="copyrightHolder" th:text="${base.masterNickname}"></span>
+                <span class="author" itemprop="copyrightHolder" th:text="${base.ownerNickname}"></span>
             </div>
 
             <div class="powered-by">

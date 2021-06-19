@@ -16,9 +16,9 @@ class CommentServiceImpl: CommentService {
     @Autowired
     private lateinit var commentMapper: CommentMapper
 
-    override fun listByPage(pageNum: Int, pageSize: Int): Page<Comment> {
+    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, pageSize)
-        commentMapper.selectByPage()
+        commentMapper.selectByAdmin()
         return page
     }
 

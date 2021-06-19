@@ -17,19 +17,32 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
     <association property="childs" javaType="java.util.List" select="selectChildById" column="id" />
+  </resultMap>
+  <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Comment">
+    <!--@mbg.generated-->
+    <!--@Table t_comment-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="article_id" jdbcType="INTEGER" property="articleId" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="author_id" jdbcType="INTEGER" property="authorId" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="ua" jdbcType="VARCHAR" property="ua" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, article_id, parent_id, author, author_id, email, url, content, ip, ua, status,
     create_time, update_time
   </sql>
-  <select id="selectByPage" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select
-    <include refid="Base_Column_List" />
-    from t_comment
-  </select>
   <select id="selectByArticleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
@@ -37,7 +50,7 @@
     from t_comment
     where status = 1 and parent_id is NULL and article_id = #{articleId,jdbcType=INTEGER}
   </select>
-  <select id="selectChildById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectChildById" parameterType="java.lang.Integer" resultMap="ItemResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
@@ -55,6 +68,12 @@
     select count(id)
     from t_comment
     where status = 1
+  </select>
+  <select id="selectByAdmin" resultMap="ItemResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from t_comment
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->

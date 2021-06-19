@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BaseVO"*/-->
+<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
 <!--/*@thymesVar id="article" type="com.liux.blog.bean.vo.ArticleVO"*/-->
 <!--/*@thymesVar id="tags" type="java.util.List<com.liux.blog.bean.vo.TagVO>"*/-->
-<!--/*@thymesVar id="prev" type="com.liux.blog.bean.vo.ArticleSimpleVO"*/-->
-<!--/*@thymesVar id="next" type="com.liux.blog.bean.vo.ArticleSimpleVO"*/-->
+<!--/*@thymesVar id="prev" type="com.liux.blog.bean.vo.ArticleArchiveVO"*/-->
+<!--/*@thymesVar id="next" type="com.liux.blog.bean.vo.ArticleArchiveVO"*/-->
 
 <header th:if="${article.allowComment}">
     <link rel="stylesheet" href="/blog/css/comment.css">
@@ -19,9 +19,9 @@
         <link itemprop="mainEntityOfPage" th:href="${'/article/' + article.url}">
 
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <meta itemprop="image" th:content="${base.masterAvatar}">
-            <meta itemprop="name" th:content="${base.masterNickname}">
-            <meta itemprop="description" th:content="${base.masterDescription}">
+            <meta itemprop="image" th:content="${base.ownerAvatar}">
+            <meta itemprop="name" th:content="${base.ownerNickname}">
+            <meta itemprop="description" th:content="${base.ownerDescription}">
         </span>
 
         <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -56,8 +56,8 @@
                     </span>
                     <span class="post-meta-item-text">分类于</span>
                     <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                        <a th:href="${'/category/' + article.category.name}" itemprop="url" rel="index">
-                            <span itemprop="name" th:text="${article.category.name}"></span>
+                        <a th:href="${'/category/' + article.categoryName}" itemprop="url" rel="index">
+                            <span itemprop="name" th:text="${article.categoryName}"></span>
                         </a>
                     </span>
                 </span>
@@ -78,7 +78,7 @@
             <ul class="post-copyright">
                 <li class="post-copyright-author">
                     <strong>本文作者： </strong>
-                    <th:block th:text="${article.author.nickname}"></th:block>
+                    <th:block th:text="${article.authorNickname}"></th:block>
                 </li>
                 <li class="post-copyright-link">
                     <strong>本文链接：</strong>

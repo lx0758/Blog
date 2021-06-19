@@ -1,18 +1,20 @@
 package com.liux.blog.bean.po
 
-// 删除状态
+// 公用删除状态
 const val STATE_DELETED = -1
 // 文章/文件状态
 const val STATE_UNPUBLISHED = 0
 const val STATE_PUBLISHED = 1
-const val STATE_COMMENT_DISABLE = 0
-const val STATE_COMMENT_ENABLE = 1
 // 评论状态
 const val STATE_PENDING = 0
 const val STATE_AUDITED = 1
 // 用户状态
 const val STATE_NOT_ACTIVATED = 0
 const val STATE_ACTIVATED = 1
+
+// 文章评论权限
+const val COMMENT_DISABLE = 0
+const val COMMENT_ENABLE = 1
 
 // 文章格式
 const val FORMAT_MARKDOWN = 0

@@ -1,11 +1,16 @@
 package com.liux.blog.controller
 
+import com.liux.blog.bean.Resp
 import com.liux.blog.service.ThemeService
+import com.liux.blog.toBean
+import com.liux.blog.toJSONString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.servlet.error.ErrorAttributes
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -40,9 +45,10 @@ class ErrorController(
     }
 
     override fun error(request: HttpServletRequest): ResponseEntity<MutableMap<String, Any>> {
-        return super.error(request).apply {
-
-        }
+        val errorAttributes = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL))
+        val body = Resp.failed(errorAttributes["status"] as Int, (errorAttributes["message"] ?: "Unknown") as String)
+        val bodyMap = body.toJSONString().toBean<MutableMap<String, Any>>()
+        return ResponseEntity(bodyMap, HttpStatus.OK)
     }
 
     class ErrorModel(

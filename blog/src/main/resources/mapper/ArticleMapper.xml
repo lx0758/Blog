@@ -17,7 +17,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
                      column="category_id"/>
-        <association property="author" select="com.liux.blog.dao.UserMapper.selectByPrimaryKey"
+        <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
                      column="author_id"/>
         <collection property="tags" javaType="java.util.List" ofType="com.liux.blog.bean.po.Tag"
                     select="com.liux.blog.dao.TagMapper.selectByArticle" column="id"/>
@@ -26,6 +26,10 @@
         <!--@mbg.generated-->
         id, title, content, format, url, weight, views, enable_comment,
         status, create_time, update_time, category_id, author_id
+    </sql>
+    <sql id="Comment_Column_List">
+        <!--@mbg.generated-->
+        id, title
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -44,9 +48,30 @@
         <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
                      column="category_id"/>
     </resultMap>
+    <resultMap id="AdminItemResultMap" type="com.liux.blog.bean.po.Article">
+        <!--@mbg.generated-->
+        <!--@Table t_article-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="LONGVARCHAR" property="title"/>
+        <result column="format" jdbcType="TINYINT" property="format"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="weight" jdbcType="INTEGER" property="weight"/>
+        <result column="views" jdbcType="INTEGER" property="views"/>
+        <result column="enable_comment" jdbcType="TINYINT" property="enableComment"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
+                     column="category_id"/>
+    </resultMap>
     <sql id="Item_Column_List">
         <!--@mbg.generated-->
         id, title, content, format, url, weight, views, enable_comment,
+        status, create_time, update_time, category_id
+    </sql>
+    <sql id="Admin_Item_Column_List">
+        <!--@mbg.generated-->
+        id, title, format, url, weight, views, enable_comment,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Article">
@@ -93,7 +118,7 @@
         from t_article
         where status = 1 and id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectById" resultMap="BaseResultMap">
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_article
@@ -105,6 +130,12 @@
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and (id = #{id,jdbcType=INTEGER} OR url = #{url,jdbcType=VARCHAR})
+    </select>
+    <select id="selectByComment" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
+        select
+        <include refid="Simple_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
     </select>
     <select id="selectByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
@@ -166,6 +197,12 @@
         from t_article
         where status = 1
         order by id desc
+    </select>
+    <select id="selectByAdmin" resultMap="AdminItemResultMap">
+        select
+        <include refid="Admin_Item_Column_List"/>
+        from t_article
+        order by weight desc, id desc
     </select>
     <select id="selectCount" resultType="INTEGER">
         select

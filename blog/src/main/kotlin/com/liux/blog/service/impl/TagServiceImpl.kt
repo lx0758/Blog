@@ -12,8 +12,12 @@ class TagServiceImpl: TagService {
     @Autowired
     private lateinit var tagMapper: TagMapper
 
-    override fun list(): List<Tag> {
-        return tagMapper.select()
+    override fun listByCount(): List<Tag> {
+        return tagMapper.selectByCount()
+    }
+
+    override fun listByAdmin(): List<Tag> {
+        return tagMapper.selectByCount()
     }
 
     override fun getByName(name: String): Tag? {

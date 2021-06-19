@@ -1,8 +1,7 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.STATE_ACTIVATED
-import com.liux.blog.bean.po.STATE_COMMENT_ENABLE
+import com.liux.blog.bean.po.COMMENT_ENABLE
 import com.liux.blog.parseContent
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,16 +13,14 @@ data class ArticleVO(
     var content: String,
     var createTime: Date,
     var updateTime: Date,
-    var category: CategoryVO,
-    var author: UserVO,
+    var categoryName: String,
+    var authorNickname: String,
     var views: Int,
     var allowComment: Boolean,
     var tags: List<String>,
-    var catalogues: List<CatalogueVO>,
 ) {
     companion object {
-        fun of(article: Article): ArticleVO {
-            val catalogues = ArrayList<CatalogueVO>()
+        fun of(article: Article, catalogues: ArrayList<CatalogueVO>): ArticleVO {
             return ArticleVO(
                 article.id,
                 article.url ?: article.id.toString(),
@@ -31,12 +28,11 @@ data class ArticleVO(
                 article.parseContent(catalogues),
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
-                CategoryVO.of(article.category!!),
-                UserVO.of(article.author!!),
+                article.category!!.name!!,
+                article.author!!.nickname!!,
                 article.views!!,
-                article.enableComment == STATE_COMMENT_ENABLE,
+                article.enableComment == COMMENT_ENABLE,
                 article.tags?.map { it.name!! } ?: emptyList(),
-                catalogues,
             )
         }
     }

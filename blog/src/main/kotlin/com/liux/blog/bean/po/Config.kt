@@ -9,11 +9,11 @@ data class Config(
     // 键
     var key: String,
     // 值
-    var value: String,
+    var value: String? = null,
     // 描述
-    var description: String,
+    var description: String? = null,
     // 创建时间
-    var createTime: Date,
+    var createTime: Date? = null,
     // 更新时间
-    var updateTime: Date,
+    var updateTime: Date? = null,
 )

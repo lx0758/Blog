@@ -452,7 +452,7 @@ function Comment(options) {
     <div class="vreply-wrapper" data-self-id="${comment.id}"></div>
 </div>`
 
-        comment.childs.forEach(childComment => {
+        comment.children.forEach(childComment => {
             let newChildCard = utils.create('div', {'class': 'vcard', 'id': childComment.id})
             newChildCard.innerHTML = `
 <img class="vimg" src="${comment.avatar}">
@@ -511,7 +511,7 @@ function CommentApi(apiUrl, apiSubjectId) {
             //             system: "Windows 10.0",
             //             time: '2021-3-2 11:32:51',
             //             content: '我是评论内容',
-            //             childs: []
+            //             children: []
             //         },
             //     ]
             // }

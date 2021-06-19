@@ -10,9 +10,9 @@ interface TagMapper {
     fun insertSelective(record: Tag): Int
     fun selectByPrimaryKey(id: Int): Tag?
     fun selectByName(name: String): Tag?
+    fun selectByArticle(articleId: Int): List<Tag>
+    fun selectByCount(): List<Tag>
+    fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Tag): Int
     fun updateByPrimaryKey(record: Tag): Int
-    fun selectByArticle(articleId: Int): List<Tag>
-    fun select(): List<Tag>
-    fun selectCount(): Int
 }
