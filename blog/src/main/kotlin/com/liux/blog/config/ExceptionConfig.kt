@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse
 class ExceptionConfig {
 
     companion object {
-        private const val ignoreHttpError = false
+        private const val ignoreHttpError = true
         fun transformHttpStatus(httpStatus: HttpStatus): HttpStatus {
             return if (ignoreHttpError) {
                 HttpStatus.OK
