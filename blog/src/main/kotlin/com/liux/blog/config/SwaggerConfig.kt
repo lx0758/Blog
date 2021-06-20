@@ -33,7 +33,10 @@ class SwaggerConfig : ApiListingScannerPlugin {
             )
             .select()
             .apis(RequestHandlerSelectors.any())
-            .paths(PathSelectors.ant("/api/**"))
+            .paths(
+                PathSelectors.ant("/api/**")
+                    .or(PathSelectors.ant("/article/**/comment"))
+            )
             .build()
     }
 
@@ -48,7 +51,6 @@ class SwaggerConfig : ApiListingScannerPlugin {
                 .description("OK")
                 .examples(arrayListOf(
                     ExampleBuilder().id("example-1").mediaType(MediaType.APPLICATION_JSON_VALUE).value(Resp.succeed().toFormatJSONString()).build(),
-                    ExampleBuilder().id("example-2").mediaType(MediaType.APPLICATION_JSON_VALUE).value(Resp.failed("Test failed").toFormatJSONString()).build(),
                 ))
                 .build(),
             ResponseBuilder().code("401").description("Unauthorized").build(),
@@ -60,7 +62,7 @@ class SwaggerConfig : ApiListingScannerPlugin {
             .operations(
                 arrayListOf(
                     OperationBuilder(CachingOperationNameGenerator())
-                        .method(HttpMethod.PUT)
+                        .method(HttpMethod.POST)
                         .summary("login")
                         .uniqueId("login")
                         .tags(setOf("ApiFilter"))

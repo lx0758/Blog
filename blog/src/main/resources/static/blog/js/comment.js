@@ -543,7 +543,7 @@ function CommentApi(apiUrl, apiSubjectId) {
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: url,
-                type: 'PUT',
+                type: 'POST',
                 data: {
                     subjectId: subjectId,
                     parentId: parentId,

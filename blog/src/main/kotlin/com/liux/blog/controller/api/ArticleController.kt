@@ -1,7 +1,7 @@
 package com.liux.blog.controller.api
 
-import com.liux.blog.bean.vo.api.PaginationListVO
 import com.liux.blog.bean.Resp
+import com.liux.blog.bean.vo.api.PaginationListVO
 import com.liux.blog.bean.vo.api.ArticleItemVO
 import com.liux.blog.service.ArticleService
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,17 +21,17 @@ class ArticleController {
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }
 
-    @PutMapping
-    fun add(): Resp<*> {
+    @PostMapping
+    fun insert(): Resp<*> {
         TODO()
     }
 
-    @PostMapping("{id}")
+    @PutMapping("{id}")
     fun update(@PathVariable("id") id: Int): Resp<*> {
         TODO()
     }
 
-    @PostMapping("{id}/status")
+    @PutMapping("{id}/status")
     fun updateStatus(@PathVariable("id") id: Int, @RequestParam("status") status: Int): Resp<*> {
         TODO()
     }

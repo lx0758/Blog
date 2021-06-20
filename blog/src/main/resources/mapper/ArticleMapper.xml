@@ -202,7 +202,7 @@
         select
         <include refid="Admin_Item_Column_List"/>
         from t_article
-        order by weight desc, id desc
+        order by id desc
     </select>
     <select id="selectCount" resultType="INTEGER">
         select
