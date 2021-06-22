@@ -1,6 +1,6 @@
 package com.liux.blog.bean.vo.api
 
-import com.liux.blog.bean.po.*
+import com.liux.blog.bean.po.Config
 import java.util.*
 
 data class ConfigVO(

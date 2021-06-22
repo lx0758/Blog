@@ -4,7 +4,6 @@ import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.po.COMMENT_ENABLE
 import com.liux.blog.parseContent
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class ArticleVO(
     var id: Int,

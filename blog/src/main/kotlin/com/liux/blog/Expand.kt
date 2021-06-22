@@ -12,7 +12,6 @@ import ua_parser.Parser
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.servlet.http.HttpServletRequest
-import kotlin.collections.ArrayList
 
 fun Any.toJSONString(): String {
     return jacksonObjectMapper().writeValueAsString(this)

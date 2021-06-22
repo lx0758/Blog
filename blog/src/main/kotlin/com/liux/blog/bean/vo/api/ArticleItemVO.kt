@@ -1,7 +1,9 @@
 package com.liux.blog.bean.vo.api
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.*
+import com.liux.blog.bean.po.COMMENT_ENABLE
+import com.liux.blog.bean.po.FORMAT_MARKDOWN
+import com.liux.blog.bean.po.STATE_UNPUBLISHED
 import java.util.*
 
 data class ArticleItemVO(
