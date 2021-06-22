@@ -27,7 +27,7 @@ class ArticleCommentController {
         @PathVariable("id") articleId: Int,
         @RequestParam("subjectId", required = false) subjectId: Int?,
         @RequestParam("page") page: Int,
-    ): Resp<*> {
+    ): Resp<CommentPageVO> {
         val comments = commentService.listByArticle(articleId, page)
         val commentVO = CommentPageVO.of(comments)
         return Resp.succeed(commentVO)
