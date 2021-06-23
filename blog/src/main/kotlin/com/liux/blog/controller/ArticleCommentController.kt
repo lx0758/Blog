@@ -3,6 +3,7 @@ package com.liux.blog.controller
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.po.COMMENT_ENABLE
 import com.liux.blog.bean.vo.CommentPageVO
+import com.liux.blog.checkVerifyCode
 import com.liux.blog.getIp
 import com.liux.blog.getUserAgent
 import com.liux.blog.service.ArticleService
@@ -36,6 +37,7 @@ class ArticleCommentController {
     @PostMapping
     fun insert(
         request: HttpServletRequest,
+        @RequestParam("verifyCode") verifyCode: String,
         @PathVariable("id") articleId: Int,
         @RequestParam("subjectId", required = false) subjectId: Int?,
         @RequestParam("parentId", required = false) parentId: Int?,
@@ -44,9 +46,12 @@ class ArticleCommentController {
         @RequestParam("link", required = false) link: String?,
         @RequestParam("content") content: String,
     ): Resp<*> {
-        val ip = request.getIp()
-        val ua = request.getUserAgent()
-
+        if (verifyCode.isEmpty()) {
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "验证码不能为空")
+        }
+        if (!request.checkVerifyCode(verifyCode)) {
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "验证码错误")
+        }
         if (nickname.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "昵称不能为空")
         }
@@ -69,7 +74,9 @@ class ArticleCommentController {
             commentService.getCommentById(parentId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "父评论不存在")
         }
 
-        commentService.addByBlog(articleId, parentId, nickname, email, localLink, content, ip, ua)
+        val ip = request.getIp()
+        val ua = request.getUserAgent()
+        commentService.addByArticle(articleId, parentId, nickname, email, localLink, content, ip, ua)
         return Resp.succeed()
     }
 }

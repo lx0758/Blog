@@ -1,11 +1,13 @@
 function Comment(options) {
     let element = options['element'] || null;
+    let verifyCodeUrl = options['apiVerifyCodeUrl'] || null;
     let api = new CommentApi(options['apiUrl'], options['apiSubjectId']);
 
     let init = function () {
         initPanel();
         bindEvent();
 
+        Comment.panel.refreshVerifyCode()
         Comment.page.refresh()
     }
 
@@ -58,44 +60,13 @@ function Comment(options) {
                             </path>
                         </svg>
                     </span>
-                    <span title="预览" class="vicon vpreview-btn">
-                        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17688" width="22" height="22">
-                            <path
-                                d="M502.390154 935.384615a29.538462 29.538462 0 1 1 0 59.076923H141.430154C79.911385 994.461538 29.538462 946.254769 29.538462 886.153846V137.846154C29.538462 77.745231 79.950769 29.538462 141.390769 29.538462h741.218462c61.44 0 111.852308 48.206769 111.852307 108.307692v300.268308a29.538462 29.538462 0 1 1-59.076923 0V137.846154c0-26.899692-23.355077-49.230769-52.775384-49.230769H141.390769c-29.420308 0-52.775385 22.331077-52.775384 49.230769v748.307692c0 26.899692 23.355077 49.230769 52.775384 49.230769h360.999385z"
-                                p-id="17689">
-                            </path>
-                            <path
-                                d="M196.923077 216.615385m29.538461 0l374.153847 0q29.538462 0 29.538461 29.538461l0 0q0 29.538462-29.538461 29.538462l-374.153847 0q-29.538462 0-29.538461-29.538462l0 0q0-29.538462 29.538461-29.538461Z"
-                                p-id="17690">
-                            </path>
-                            <path
-                                d="M649.846154 846.769231a216.615385 216.615385 0 1 0 0-433.230769 216.615385 216.615385 0 0 0 0 433.230769z m0 59.076923a275.692308 275.692308 0 1 1 0-551.384616 275.692308 275.692308 0 0 1 0 551.384616z"
-                                p-id="17691">
-                            </path>
-                            <path
-                                d="M807.398383 829.479768m20.886847-20.886846l0 0q20.886846-20.886846 41.773692 0l125.321079 125.321079q20.886846 20.886846 0 41.773693l0 0q-20.886846 20.886846-41.773693 0l-125.321078-125.321079q-20.886846-20.886846 0-41.773693Z"
-                                p-id="17692">
-                            </path>
-                        </svg>
-                    </span>
                 </div>
             </div>
         </div>
-        <div class="vrow">
-            <div class="vcol vcol-30">
-                <a alt="Markdown is supported" href="https://guides.github.com/features/mastering-markdown/"
-                    class="vicon" target="_blank">
-                    <svg class="markdown" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
-                        <path
-                            d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"
-                            fill-rule="evenodd">
-                        </path>
-                    </svg>
-                </a>
-            </div>
-            <div class="vcol vcol-70 text-right">
-                <button type="button" title="Cmd|Ctrl+Enter" class="vsubmit vbtn">提交</button>
-            </div>
+        <div class="vrow text-right">
+            <img class="vcode-img vimg vcol">
+            <input name="code" placeholder="请输入验证码" class="vcode vinput vcol" type="text">
+            <button type="button" title="Cmd|Ctrl+Enter" class="vsubmit vbtn vcol">提交</button>
         </div>
         <div class="vemojis" style="display:none;">
             <i>😀</i>
@@ -295,8 +266,11 @@ function Comment(options) {
         let _email = utils.find(element, '.vmail');
         let _link = utils.find(element, '.vlink');
         let _content = utils.find(element, '.veditor');
+        let _code = utils.find(element, '.vcode');
+        let _code_img = utils.find(element, '.vcode-img');
         let _status = utils.find(element, '.status-bar');
         let _submit = utils.find(element, '.vsubmit');
+        let infoTimer = null;
         Comment.panel = {
             replyAt(newCard, comment) {
                 let _wrapper = utils.find(newCard, '.vreply-wrapper')
@@ -309,6 +283,12 @@ function Comment(options) {
                     _content.focus()
                 }
             },
+            clearContent() {
+                _nickname.value = null
+                _email.value = null
+                _link.value = null
+                _content.value = null
+            },
             replyCancel() {
                 utils.attr(_wrap, 'parent-id', null);
                 utils.attr(_cancel, 'style', 'display:none');
@@ -319,21 +299,39 @@ function Comment(options) {
             },
             showInfo(info) {
                 _status.innerHTML = info
-                setTimeout(function () {
+                if (infoTimer) clearTimeout(infoTimer);
+                infoTimer = setTimeout(function () {
                     _status.innerHTML = null
-                },3000);
-            }
+                },5000);
+            },
+            refreshVerifyCode() {
+                if (verifyCodeUrl) {
+                    _code.value = null
+                    utils.attr(_code_img, 'src', verifyCodeUrl);
+                }
+            },
         }
         utils.on('click', _cancel, (e) => {
             Comment.panel.replyCancel()
         });
+        utils.on('click', _code_img, (e) => {
+            Comment.panel.refreshVerifyCode()
+        });
         utils.on('click', _submit, (e) => {
-            let parentId = utils.attr(_wrap, 'parent-id')
+            let code = null
+            if (verifyCodeUrl) {
+                code = _code.value
+            }
+            let parentId = utils.attr(_wrap, 'parent-id', undefined)
             let nickname = _nickname.value
             let email = _email.value
             let link = _link.value
             let content = _content.value
 
+            if (verifyCodeUrl && (!code || code.length === 0)) {
+                Comment.panel.showInfo('验证码不能为空')
+                return
+            }
             if (!nickname || nickname.length === 0) {
                 Comment.panel.showInfo('昵称不能为空')
                 return
@@ -343,19 +341,22 @@ function Comment(options) {
                 return
             }
 
-            api.commit(parentId, nickname, email, link, content).then(data => {
-                _nickname.value = null
-                _email.value = null
-                _link.value = null
-                _content.value = null
+            api.commit(code, parentId, nickname, email, link, content).then(data => {
                 Comment.panel.showInfo('评论成功!')
+                Comment.panel.clearContent()
                 Comment.panel.replyCancel()
+                Comment.panel.refreshVerifyCode()
                 Comment.emoji.hide()
                 Comment.page.refresh()
             }).catch(function (error) {
                 Comment.panel.showInfo(error)
+                Comment.panel.refreshVerifyCode()
             })
         });
+        if (verifyCodeUrl) {
+            utils.attr(_code, 'style', 'display:inline');
+            utils.attr(_code_img, 'style', 'display:inline');
+        }
 
         let _total = utils.find(element, '.vnum');
         let _count = utils.find(element, '.vcount');
@@ -539,12 +540,13 @@ function CommentApi(apiUrl, apiSubjectId) {
         });
     }
 
-    let commit = function (parentId, nickname, email, link, content) {
+    let commit = function (verifyCode, parentId, nickname, email, link, content) {
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: url,
                 type: 'POST',
                 data: {
+                    verifyCode: verifyCode,
                     subjectId: subjectId,
                     parentId: parentId,
                     nickname: nickname,

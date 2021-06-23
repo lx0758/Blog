@@ -9,12 +9,17 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class KaptchaConfig {
 
+    companion object {
+        const val KAPTCHA_SESSION_CONFIG_KEY = Constants.KAPTCHA_SESSION_KEY
+        const val KAPTCHA_SESSION_CONFIG_DATE = Constants.KAPTCHA_SESSION_DATE
+    }
+
     @Bean
     fun registerKaptchaServlet(): ServletRegistrationBean<KaptchaServlet> {
         val servletRegistrationBean = ServletRegistrationBean(KaptchaServlet(), "/vcode");
         servletRegistrationBean.initParameters.apply {
-            put(Constants.KAPTCHA_SESSION_CONFIG_KEY, Constants.KAPTCHA_SESSION_KEY)
-            put(Constants.KAPTCHA_SESSION_CONFIG_DATE, Constants.KAPTCHA_SESSION_DATE)
+            put(Constants.KAPTCHA_SESSION_CONFIG_KEY, KAPTCHA_SESSION_CONFIG_KEY)
+            put(Constants.KAPTCHA_SESSION_CONFIG_DATE, KAPTCHA_SESSION_CONFIG_DATE)
             put(Constants.KAPTCHA_BORDER, "no")
             put(Constants.KAPTCHA_BORDER_COLOR, "")
             put(Constants.KAPTCHA_BORDER_THICKNESS, "")

@@ -11,7 +11,7 @@ interface CommentService {
 
     fun getCommentById(id: Int): Comment?
 
-    fun addByBlog(
+    fun addByArticle(
         articleId: Int,
         parentId: Int?,
         nickname: String?,

@@ -2,16 +2,19 @@ package com.liux.blog.filter
 
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.UserDetailsWapper
+import com.liux.blog.checkVerifyCode
 import com.liux.blog.service.UserService
 import com.liux.blog.toJSONString
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.*
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.jvm.Throws
 
 class ApiLoginFilter(
     authenticationManager: AuthenticationManager,
@@ -32,6 +35,7 @@ class ApiLoginFilter(
         }
         setAuthenticationFailureHandler { _, response, exception ->
             val reason = when(exception) {
+                is BadVerifyCodeException -> "验证码不正确"
                 is BadCredentialsException -> "账号或密码不正确"
                 is AccountExpiredException -> "账户已失效"
                 is CredentialsExpiredException -> "密码已失效"
@@ -43,13 +47,19 @@ class ApiLoginFilter(
         }
     }
 
-    override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
-        val username = request?.getParameter("username")?.trim() ?: ""
-        val password = request?.getParameter("password")?.trim() ?: ""
+    @Throws(AuthenticationException::class)
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+        val username = request.getParameter("username")?.trim() ?: ""
+        val password = request.getParameter("password")?.trim() ?: ""
+        val verifyCode = request.getParameter("verifyCode")?.trim() ?: ""
+
+        if (!request.checkVerifyCode(verifyCode, 1)) throw BadVerifyCodeException()
 
         val authRequest = UsernamePasswordAuthenticationToken(username, password)
         authRequest.details = authenticationDetailsSource.buildDetails(request)
 
         return authenticationManager.authenticate(authRequest)
     }
+
+    class BadVerifyCodeException : AuthenticationException("Incorrect verification code")
 }

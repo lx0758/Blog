@@ -32,7 +32,7 @@ class CommentServiceImpl: CommentService {
         return commentMapper.selectByPrimaryKey(id)
     }
 
-    override fun addByBlog(
+    override fun addByArticle(
         articleId: Int,
         parentId: Int?,
         nickname: String?,

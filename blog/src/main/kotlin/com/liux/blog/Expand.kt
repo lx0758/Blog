@@ -2,25 +2,27 @@ package com.liux.blog
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.code.kaptcha.Constants
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.po.Comment
 import com.liux.blog.bean.po.FORMAT_HTML
 import com.liux.blog.bean.po.FORMAT_MARKDOWN
 import com.liux.blog.bean.vo.CatalogueVO
+import com.liux.blog.config.KaptchaConfig
 import com.liux.blog.markdown.MarkdownHelper
 import ua_parser.Parser
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 fun Any.toJSONString(): String {
     return jacksonObjectMapper().writeValueAsString(this)
 }
-
 fun Any.toFormatJSONString(): String {
     return jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this)
 }
-
 inline fun <reified T> String.toBean(): T {
     return jacksonObjectMapper().readValue(this)
 }
@@ -28,6 +30,9 @@ inline fun <reified T> String.toBean(): T {
 fun Date.toDateString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
     val simpleDateFormat = SimpleDateFormat(pattern)
     return simpleDateFormat.format(this)
+}
+fun Date.toLocalDateTime(): LocalDateTime {
+    return LocalDateTime.ofInstant(toInstant(), ZoneId.systemDefault())
 }
 
 val IP_HEADERS = arrayOf(
@@ -37,7 +42,6 @@ val IP_HEADERS = arrayOf(
     "HTTP_CLIENT_IP",
     "X-Real-IP",
 )
-
 fun HttpServletRequest.getIp(): String {
     var index = 0
     var ip: String? = null
@@ -50,9 +54,20 @@ fun HttpServletRequest.getIp(): String {
     }
     return ip!!
 }
-
 fun HttpServletRequest.getUserAgent(): String {
     return getHeader("User-Agent")
+}
+fun HttpServletRequest.checkVerifyCode(verifyCode: String, validPeriodMinute: Int = 0): Boolean {
+    val sessionVerifyCode = session.getAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_KEY) ?: return false
+    if (sessionVerifyCode != verifyCode) return false
+    if (validPeriodMinute > 0) {
+        val sessionVerifyCodeDate = session.getAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_DATE) ?: return false
+        if (sessionVerifyCodeDate !is Date) return false
+        if (!sessionVerifyCodeDate.toLocalDateTime().plusMinutes(validPeriodMinute.toLong()).isAfter(LocalDateTime.now())) return false
+    }
+    session.removeAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_KEY)
+    session.removeAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_DATE)
+    return true
 }
 
 fun Article.parseContent(catalogues: ArrayList<CatalogueVO>? = null): String {

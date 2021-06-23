@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import springfox.documentation.builders.*
 import springfox.documentation.schema.ModelRef
 import springfox.documentation.service.ApiDescription
+import springfox.documentation.service.Parameter
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.ApiListingScannerPlugin
 import springfox.documentation.spi.service.contexts.DocumentationContext
@@ -66,26 +67,9 @@ class SwaggerConfig : ApiListingScannerPlugin {
                         .uniqueId("login")
                         .tags(setOf("ApiFilter"))
                         .parameters(arrayListOf(
-                            ParameterBuilder()
-                                .order(1)
-                                .name("username")
-                                .parameterType("query")
-                                .description("username")
-                                .type(TypeResolver().arrayType(String::class.java))
-                                .parameterAccess("access")
-                                .modelRef(ModelRef("string"))
-                                .required(true)
-                                .build(),
-                            ParameterBuilder()
-                                .order(2)
-                                .name("password")
-                                .parameterType("query")
-                                .description("password")
-                                .type(TypeResolver().arrayType(String::class.java))
-                                .parameterAccess("access")
-                                .modelRef(ModelRef("string"))
-                                .required(true)
-                                .build(),
+                            createStringParameter(1, "username", true),
+                            createStringParameter(2, "password", true),
+                            createStringParameter(3, "verifyCode", false),
                         ))
                         .responseMessages(responseMessages)
                         .build(),
@@ -104,5 +88,18 @@ class SwaggerConfig : ApiListingScannerPlugin {
         return arrayListOf(
             sessionApiDescription,
         )
+    }
+
+    private fun createStringParameter(order: Int, name: String, required: Boolean): Parameter {
+        return ParameterBuilder()
+            .order(order)
+            .name(name)
+            .parameterType("query")
+            .description(name)
+            .type(TypeResolver().arrayType(String::class.java))
+            .parameterAccess("access")
+            .modelRef(ModelRef("string"))
+            .required(required)
+            .build()
     }
 }
