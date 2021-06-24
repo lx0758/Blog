@@ -15,7 +15,7 @@ data class User(
     var password: String? = null,
     // 昵称
     var nickname: String? = null,
-    // 昵称
+    // 个性签名
     var description: String? = null,
     // Github
     var github: String? = null,

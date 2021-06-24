@@ -1,7 +1,7 @@
 package com.liux.blog.filter
 
 import com.liux.blog.bean.Resp
-import com.liux.blog.bean.UserDetailsWapper
+import com.liux.blog.bean.UserDetailsImpl
 import com.liux.blog.checkVerifyCode
 import com.liux.blog.service.UserService
 import com.liux.blog.toJSONString
@@ -26,7 +26,7 @@ class ApiLoginFilter(
 
     init {
         setAuthenticationSuccessHandler { _, response, authentication ->
-            userService.refreshLastLoginTime((authentication.principal as UserDetailsWapper).user.id)
+            userService.refreshLastLoginTime((authentication.principal as UserDetailsImpl).getId())
             response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE)
             response.writer.print(
                 Resp.succeed().toJSONString()
@@ -55,10 +55,10 @@ class ApiLoginFilter(
 
         if (!request.checkVerifyCode(verifyCode, 1)) throw BadVerifyCodeException()
 
-        val authRequest = UsernamePasswordAuthenticationToken(username, password)
-        authRequest.details = authenticationDetailsSource.buildDetails(request)
+        val authenticationToken = UsernamePasswordAuthenticationToken(username, password)
+        authenticationToken.details = authenticationDetailsSource.buildDetails(request)
 
-        return authenticationManager.authenticate(authRequest)
+        return authenticationManager.authenticate(authenticationToken)
     }
 
     class BadVerifyCodeException : AuthenticationException("Incorrect verification code")

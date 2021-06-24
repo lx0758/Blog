@@ -6,24 +6,29 @@ import com.liux.blog.bean.po.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetailsWapper(
-    val user: User
+class UserDetailsImpl(
+    user: User
 ) : UserDetails {
+
+    private val id = user.id
+    private val username = user.username
+    private val password = user.password
+    private val status = user.status
 
     override fun getAuthorities(): List<GrantedAuthority> {
         return emptyList()
     }
 
     override fun getPassword(): String {
-        return user.password!!
+        return password!!
     }
 
     override fun getUsername(): String {
-        return user.username!!
+        return username!!
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return user.status != STATE_DELETED
+        return status != STATE_DELETED
     }
 
     override fun isAccountNonLocked(): Boolean {
@@ -35,6 +40,10 @@ class UserDetailsWapper(
     }
 
     override fun isEnabled(): Boolean {
-        return user.status == STATE_ACTIVATED
+        return status == STATE_ACTIVATED
+    }
+
+    fun getId(): Int {
+        return id
     }
 }

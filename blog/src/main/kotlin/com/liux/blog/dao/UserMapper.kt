@@ -12,6 +12,7 @@ interface UserMapper {
     fun selectByAuthor(id: Int): User?
     fun selectByOwner(): User
     fun selectByUsername(username: String): User?
+    fun selectByAdmin(): List<User>
     fun updateByPrimaryKeySelective(record: User): Int
     fun updateByPrimaryKey(record: User): Int
 }
