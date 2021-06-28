@@ -73,8 +73,8 @@ router.beforeEach((to, from, next) => {
     return
   }
   // 检查本地登录状态
-  const islogin = localStorage.getItem("islogin") === "true";
-  if (islogin || to.path === "/login")
+  const isLogin = localStorage.getItem("isLogin") === "true";
+  if (isLogin || to.path === "/login")
     next()
   else
     next("/login")
