@@ -21,7 +21,7 @@ data class ArticleVO(
     companion object {
         fun of(article: Article, catalogues: ArrayList<CatalogueVO>): ArticleVO {
             return ArticleVO(
-                article.id,
+                article.id!!,
                 article.url ?: article.id.toString(),
                 article.title ?: "",
                 article.parseContent(catalogues),

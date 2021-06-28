@@ -8,7 +8,7 @@ import java.util.*
 @NoArgsConstructor
 data class Comment(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 文章ID
     var articleId: Int,
     // 父评论ID

@@ -8,7 +8,7 @@ import java.util.*
 @NoArgsConstructor
 data class User(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 用户名
     var username: String? = null,
     // 用户密码

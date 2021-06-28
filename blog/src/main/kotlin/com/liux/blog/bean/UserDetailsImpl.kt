@@ -10,7 +10,7 @@ class UserDetailsImpl(
     user: User
 ) : UserDetails {
 
-    private val id = user.id
+    private val id = user.id!!
     private val username = user.username
     private val password = user.password
     private val status = user.status

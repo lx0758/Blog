@@ -7,7 +7,7 @@ import java.util.*
 @NoArgsConstructor
 data class Link(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 标题
     var title: String? = null,
     // 地址

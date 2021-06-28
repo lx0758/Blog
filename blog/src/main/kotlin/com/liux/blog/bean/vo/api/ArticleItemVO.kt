@@ -22,7 +22,7 @@ data class ArticleItemVO(
     companion object {
         fun of(article: Article): ArticleItemVO {
             return ArticleItemVO(
-                article.id,
+                article.id!!,
                 article.title ?: "",
                 article.category!!.name!!,
                 article.format ?: FORMAT_MARKDOWN,

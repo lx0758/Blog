@@ -17,7 +17,7 @@ class UploadVO(
     companion object {
         fun of(upload: Upload): UploadVO {
             return UploadVO(
-                upload.id,
+                upload.id!!,
                 upload.displayName!!,
                 upload.length!!,
                 upload.type!!,

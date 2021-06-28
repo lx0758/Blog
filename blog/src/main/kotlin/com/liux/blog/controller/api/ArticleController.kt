@@ -15,8 +15,16 @@ class ArticleController {
     private lateinit var articleService: ArticleService
 
     @GetMapping
-    fun query(@RequestParam("pageNum") pageNum: Int, @RequestParam("pageSize") pageSize: Int): Resp<PaginationListVO<ArticleItemVO>> {
-        val articlePage = articleService.listByAdmin(pageNum, pageSize)
+    fun query(
+        @RequestParam("title") title: String?,
+        @RequestParam("category") category: Int?,
+        @RequestParam("format") format: Int?,
+        @RequestParam("comment") comment: Int?,
+        @RequestParam("status") status: Int?,
+        @RequestParam("pageNum") pageNum: Int,
+        @RequestParam("pageSize") pageSize: Int,
+    ): Resp<PaginationListVO<ArticleItemVO>> {
+        val articlePage = articleService.listByAdmin(title, category, format, comment, status, pageNum, pageSize)
         val articles = articlePage.map { ArticleItemVO.of(it) }
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }

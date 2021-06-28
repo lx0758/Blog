@@ -16,7 +16,7 @@ class ConfigServiceImpl: ConfigService {
         val configMap = HashMap<String, String?>()
         val configs = configMapper.select()
         for (config in configs) {
-            configMap[config.key] = config.value
+            configMap[config.key!!] = config.value
         }
         return configMap
     }

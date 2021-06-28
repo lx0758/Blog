@@ -23,7 +23,7 @@ data class CommentItemVO(
     companion object {
         fun of(comment: Comment): CommentItemVO {
             return CommentItemVO(
-                comment.id,
+                comment.id!!,
                 comment.article?.id ?: 0,
                 comment.article?.title ?: "",
                 comment.author ?: "匿名用户",

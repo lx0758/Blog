@@ -6,7 +6,7 @@ import java.util.*
 @NoArgsConstructor
 data class Upload(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 显示名称
     var displayName: String? = null,
     // 长度

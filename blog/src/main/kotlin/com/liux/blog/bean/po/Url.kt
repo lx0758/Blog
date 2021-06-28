@@ -7,7 +7,7 @@ import java.util.*
 @NoArgsConstructor
 class Url(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 键
     var key: String? = null,
     // 链接地址

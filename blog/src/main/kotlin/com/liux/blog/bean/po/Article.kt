@@ -8,13 +8,17 @@ import java.util.*
 @NoArgsConstructor
 data class Article(
     // ID
-    var id: Int,
+    var id: Int? = null,
+    // 分类ID
+    var categoryId: Int? = null,
     // 标题
     var title: String? = null,
     // 内容
     var content: String? = null,
     // 内容格式 0_markdown 1_html
     var format: Int? = null,
+    // 分类ID
+    var authorId: Int? = null,
     // 自定义url
     var url: String? = null,
     // 权重

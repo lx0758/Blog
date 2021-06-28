@@ -13,7 +13,7 @@ data class ConfigVO(
     companion object {
         fun of(config: Config): ConfigVO {
             return ConfigVO(
-                config.key,
+                config.key!!,
                 config.value ?: "",
                 config.description ?: "",
                 config.createTime!!,

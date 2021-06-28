@@ -46,14 +46,29 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.selectBySitemap()
     }
 
-    override fun getArticleById(id: Int): Article? {
-        return articleMapper.selectById(id)
+    override fun listByAdmin(
+        title: String?,
+        category: Int?,
+        format: Int?,
+        comment: Int?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Article> {
+        val page = PageHelper.startPage<Article>(pageNum, pageSize)
+        articleMapper.selectByAdmin(Article(
+            id = 0,
+            categoryId = category,
+            format = format,
+            title = title,
+            enableComment = comment,
+            status = status,
+        ))
+        return page
     }
 
-    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Article> {
-        val page = PageHelper.startPage<Article>(pageNum, pageSize)
-        articleMapper.selectByAdmin()
-        return page
+    override fun getArticleById(id: Int): Article? {
+        return articleMapper.selectById(id)
     }
 
     override fun getArticleByUrl(url: String): Article? {

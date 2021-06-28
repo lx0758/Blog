@@ -12,7 +12,7 @@ data class TagVO(
     companion object {
         fun of(tag: Tag): TagVO {
             return TagVO(
-                tag.id,
+                tag.id!!,
                 tag.name!!,
                 tag.createTime!!,
                 tag.articleCount!!,

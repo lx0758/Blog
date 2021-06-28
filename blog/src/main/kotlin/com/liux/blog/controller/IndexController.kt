@@ -72,7 +72,7 @@ class IndexController {
     @GetMapping("/category/{category}/{pageNum}")
     fun category(model: Model, @PathVariable("category") category: String, @PathVariable("pageNum") pageNum: Int): String {
         val category = categoryService.getByName(category) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
-        val articlePage = articleService.listByCategory(category.id, pageNum)
+        val articlePage = articleService.listByCategory(category.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
@@ -97,7 +97,7 @@ class IndexController {
     @GetMapping("/tag/{tag}/{pageNum}")
     fun tag(model: Model, @PathVariable("tag") tag: String, @PathVariable("pageNum") pageNum: Int): String {
         val tag = tagService.getByName(tag) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
-        val articlePage = articleService.listByTag(tag.id, pageNum)
+        val articlePage = articleService.listByTag(tag.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
@@ -112,8 +112,8 @@ class IndexController {
         val article = articleService.getArticleByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val catalogues = ArrayList<CatalogueVO>()
         val articleVO = ArticleVO.of(article, catalogues)
-        val prev = articleService.getArticleByPrev(article.id)
-        val next = articleService.getArticleByNext(article.id)
+        val prev = articleService.getArticleByPrev(article.id!!)
+        val next = articleService.getArticleByNext(article.id!!)
         val prevVO = if (prev != null) ArticleArchiveVO.of(prev) else null
         val nextVO = if (next != null) ArticleArchiveVO.of(next) else null
 

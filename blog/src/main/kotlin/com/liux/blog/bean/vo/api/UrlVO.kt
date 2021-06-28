@@ -17,7 +17,7 @@ data class UrlVO(
     companion object {
         fun of(url: Url): UrlVO {
             return UrlVO(
-                url.id,
+                url.id!!,
                 url.key!!,
                 url.description!!,
                 url.url!!,

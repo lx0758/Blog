@@ -7,7 +7,7 @@ import java.util.*
 @NoArgsConstructor
 data class Config(
     // 键
-    var key: String,
+    var key: String? = null,
     // 值
     var value: String? = null,
     // 描述

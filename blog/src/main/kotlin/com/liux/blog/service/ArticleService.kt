@@ -11,7 +11,15 @@ interface ArticleService {
     fun listByTag(tagId: Int, pageNum: Int): Page<Article>
     fun listBySearch(): List<Article>
     fun listBySitemap(): List<Article>
-    fun listByAdmin(pageNum: Int, pageSize: Int): Page<Article>
+    fun listByAdmin(
+        title: String?,
+        category: Int?,
+        format: Int?,
+        comment: Int?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Article>
 
     fun getArticleById(id: Int): Article?
     fun getArticleByUrl(url: String): Article?

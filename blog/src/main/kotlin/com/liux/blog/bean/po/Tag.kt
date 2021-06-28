@@ -8,7 +8,7 @@ import java.util.*
 @NoArgsConstructor
 data class Tag(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 名称
     var name: String? = null,
     // 创建时间

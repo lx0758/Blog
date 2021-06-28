@@ -12,7 +12,7 @@ data class CategoryVO(
     companion object {
         fun of(category: Category): CategoryVO {
             return CategoryVO(
-                category.id,
+                category.id!!,
                 category.name!!,
                 category.createTime!!,
                 category.articleCount ?: 0,

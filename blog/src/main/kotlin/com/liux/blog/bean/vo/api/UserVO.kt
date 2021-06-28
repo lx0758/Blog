@@ -18,7 +18,7 @@ data class UserVO(
     companion object {
         fun of(user: User): UserVO {
             return UserVO(
-                user.id,
+                user.id!!,
                 user.username!!,
                 user.nickname ?: "",
                 user.description ?: "",
