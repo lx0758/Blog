@@ -10,7 +10,20 @@ export const login = (username: string, password: string, verifyCode: string) =>
 export const logout = () => request('/api/session', 'DELETE');
 
 // 查询文章
-export const queryArticle = (pageNum: number, pageSize: number) => request('/api/article', 'GET', {
+export const queryArticle = (
+    title: string | null,
+    category: number | null,
+    format: number | null,
+    comment: number | null,
+    status: number | null,
+    pageNum: number,
+    pageSize: number,
+) => request('/api/article', 'GET', {
+    title: title,
+    category: category,
+    format: format,
+    comment: comment,
+    status: status,
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
