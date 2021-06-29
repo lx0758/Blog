@@ -8,12 +8,13 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, title, url, weight, create_time, update_time
+    id, title, url, weight, status, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -22,11 +23,28 @@
     from t_link
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="select" resultMap="BaseResultMap">
+  <select id="selectByBlog" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from t_link
+    where status = 1
     order by weight desc
+  </select>
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Link" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_link
+    where 1 = 1
+    <if test="title != null and title != ''">
+      and title like CONCAT('%', #{title}, '%')
+    </if>
+    <if test="url != null and url != ''">
+      and url like CONCAT('%', #{url}, '%')
+    </if>
+    <if test="status != null">
+      and status = #{status}
+    </if>
+    order by id desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->

@@ -61,6 +61,7 @@
     <if test="status != null">
       and `status` = #{status}
     </if>
+    order by id desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->

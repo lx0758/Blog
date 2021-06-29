@@ -40,7 +40,7 @@ class ThemeServiceImpl: ThemeService {
         val categoryCount = categoryMapper.selectCount()
         val tagCount = tagMapper.selectCount()
         val user = userMapper.selectByOwner()
-        val links = linkService.queryAll()
+        val links = linkService.listByBlog()
         cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links)
     }
 

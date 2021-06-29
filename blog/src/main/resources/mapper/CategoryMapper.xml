@@ -96,6 +96,7 @@
         <if test="name != null and name != ''">
             and name like CONCAT('%', #{name,jdbcType=LONGVARCHAR}, '%')
         </if>
+        order by id desc
     </select>
     <select id="selectCount" resultType="INTEGER">
         select

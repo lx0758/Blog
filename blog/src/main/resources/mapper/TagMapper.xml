@@ -109,7 +109,7 @@
             <if test="name != null and name != ''">
                 and name like CONCAT('%', #{name}, '%')
             </if>
-        GROUP BY tag_id
+        GROUP BY tag_id DESC
     </select>
     <select id="selectCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp
