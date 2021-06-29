@@ -96,7 +96,20 @@
         where t_article_tag.article_id = #{articleId}
     </select>
     <select id="selectByCount" resultMap="CountResultMap">
-        select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count FROM t_article_tag LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id GROUP BY tag_id ORDER BY name
+        select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count
+        FROM t_article_tag
+                     LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
+        GROUP BY tag_id, name ORDER BY name
+    </select>
+    <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Tag" resultMap="CountResultMap">
+        select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count
+        FROM t_article_tag
+                     LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
+            WHERE 1 = 1
+            <if test="name != null and name != ''">
+                and name like CONCAT('%', #{name}, '%')
+            </if>
+        GROUP BY tag_id
     </select>
     <select id="selectCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp

@@ -26,8 +26,12 @@ class UserServiceImpl: UserService {
         return userMapper.selectByPrimaryKey(id)
     }
 
-    override fun listByAdmin(): List<User> {
-        return userMapper.selectByAdmin()
+    override fun listByAdmin(username: String?, nickname: String?, status: Int?): List<User> {
+        return userMapper.selectByAdmin(User(
+            username = username,
+            nickname = nickname,
+            status = status,
+        ))
     }
 
     override fun refreshLastLoginTime(id: Int) {

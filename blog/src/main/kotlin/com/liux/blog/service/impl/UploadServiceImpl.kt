@@ -14,9 +14,13 @@ class UploadServiceImpl: UploadService {
     @Autowired
     private lateinit var uploadMapper: UploadMapper
 
-    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Upload> {
+    override fun listByAdmin(name: String?, type: String?, status: Int?, pageNum: Int, pageSize: Int): Page<Upload> {
         val page = PageHelper.startPage<Upload>(pageNum, pageSize)
-        uploadMapper.selectByAdmin()
+        uploadMapper.selectByAdmin(Upload(
+            displayName = name,
+            type = type,
+            status = status,
+        ))
         return page
     }
 }

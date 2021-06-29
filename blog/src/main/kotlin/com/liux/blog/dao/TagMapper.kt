@@ -12,6 +12,7 @@ interface TagMapper {
     fun selectByName(name: String): Tag?
     fun selectByArticle(articleId: Int): List<Tag>
     fun selectByCount(): List<Tag>
+    fun selectByAdmin(tag: Tag): List<Tag>
     fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Tag): Int
     fun updateByPrimaryKey(record: Tag): Int

@@ -21,10 +21,25 @@
     from t_config
     where `key` = #{key,jdbcType=VARCHAR}
   </select>
-  <select id="select" resultMap="BaseResultMap">
+  <select id="selectByTheme" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from t_config
+  </select>
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Config" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_config
+    where 1 = 1
+    <if test="key != null and key != ''">
+      and `key` like CONCAT('%', #{key}, '%')
+    </if>
+    <if test="value != null and value != ''">
+      and `value` like CONCAT('%', #{value}, '%')
+    </if>
+    <if test="description != null and description != ''">
+      and `description` like CONCAT('%', #{description}, '%')
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     <!--@mbg.generated-->

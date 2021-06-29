@@ -16,15 +16,31 @@ class CommentServiceImpl: CommentService {
     @Autowired
     private lateinit var commentMapper: CommentMapper
 
-    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Comment> {
-        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
-        commentMapper.selectByAdmin()
-        return page
-    }
-
     override fun listByArticle(articleId: Int, pageNum: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, 10)
         commentMapper.selectByArticleId(articleId)
+        return page
+    }
+
+    override fun listByAdmin(
+        articleId: Int?,
+        author: String?,
+        email: String?,
+        ip: String?,
+        content: String?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Comment> {
+        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
+        commentMapper.selectByAdmin(Comment(
+            articleId = articleId,
+            author = author,
+            email = email,
+            ip = ip,
+            content = content,
+            status = status,
+        ))
         return page
     }
 

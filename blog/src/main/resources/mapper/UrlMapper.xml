@@ -43,11 +43,24 @@
     from t_url
     where status = 1 and id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByAdmin" resultMap="BaseResultMap">
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Url" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_url
+    where 1 = 1
+    <if test="key != null and key != ''">
+      and `key` like CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="url != null and url != ''">
+      and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="description != null and description != ''">
+      and description like CONCAT('%', #{description,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="status != null">
+      and `status` = #{status}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->

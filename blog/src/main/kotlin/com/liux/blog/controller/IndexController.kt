@@ -59,7 +59,7 @@ class IndexController {
 
     @GetMapping("/category/")
     fun category(model: Model): String {
-        val categorys = categoryService.list().map { CategoryVO.of(it) }
+        val categorys = categoryService.listByCategory().map { CategoryVO.of(it) }
         model.addAttribute("categorys", categorys)
         return themeService.render(model, "categorys")
     }

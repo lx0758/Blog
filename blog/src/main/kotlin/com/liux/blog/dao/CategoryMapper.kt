@@ -10,8 +10,9 @@ interface CategoryMapper {
     fun insertSelective(record: Category): Int
     fun selectByPrimaryKey(id: Int): Category?
     fun selectByName(name: String): Category?
+    fun selectByCategory(): List<Category>
+    fun selectByAdmin(category: Category): List<Category>
+    fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Category): Int
     fun updateByPrimaryKey(record: Category): Int
-    fun select(): List<Category>
-    fun selectCount(): Int
 }

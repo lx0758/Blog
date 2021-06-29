@@ -14,15 +14,19 @@ class ConfigServiceImpl: ConfigService {
 
     override fun listByTheme(): Map<String, String?> {
         val configMap = HashMap<String, String?>()
-        val configs = configMapper.select()
+        val configs = configMapper.selectByTheme()
         for (config in configs) {
             configMap[config.key!!] = config.value
         }
         return configMap
     }
 
-    override fun listByAdmin(): List<Config> {
-        val configs = configMapper.select()
+    override fun listByAdmin(key: String?, value: String?, description: String?): List<Config> {
+        val configs = configMapper.selectByAdmin(Config(
+            key = key,
+            value = value,
+            description = description,
+        ))
         return configs;
     }
 }

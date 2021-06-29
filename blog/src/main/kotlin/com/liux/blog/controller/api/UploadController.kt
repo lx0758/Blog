@@ -18,8 +18,14 @@ class UploadController {
     private lateinit var uploadService: UploadService
 
     @GetMapping
-    fun query(@RequestParam("pageNum") pageNum: Int, @RequestParam("pageSize") pageSize: Int): Resp<PaginationListVO<UploadVO>> {
-        val uploads = uploadService.listByAdmin(pageNum, pageSize)
+    fun query(
+        @RequestParam("name", required = false) name: String?,
+        @RequestParam("type", required = false) type: String?,
+        @RequestParam("status", required = false) status: Int?,
+        @RequestParam("pageNum") pageNum: Int,
+        @RequestParam("pageSize") pageSize: Int,
+    ): Resp<PaginationListVO<UploadVO>> {
+        val uploads = uploadService.listByAdmin(name, type, status, pageNum, pageSize)
         val uploadVOs = uploads.map { UploadVO.of(it) }
         return Resp.succeed(PaginationListVO.of(uploadVOs, uploads))
     }

@@ -11,6 +11,9 @@ const val STATE_AUDITED = 1
 // 用户状态
 const val STATE_NOT_ACTIVATED = 0
 const val STATE_ACTIVATED = 1
+// 短链状态
+const val STATE_DISABLE = 0
+const val STATE_ENABLE = 1
 
 // 文章评论权限
 const val COMMENT_DISABLE = 0

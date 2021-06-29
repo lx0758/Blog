@@ -16,11 +16,11 @@ class ArticleController {
 
     @GetMapping
     fun query(
-        @RequestParam("title") title: String?,
-        @RequestParam("category") category: Int?,
-        @RequestParam("format") format: Int?,
-        @RequestParam("comment") comment: Int?,
-        @RequestParam("status") status: Int?,
+        @RequestParam("title", required = false) title: String?,
+        @RequestParam("category", required = false) category: Int?,
+        @RequestParam("format", required = false) format: Int?,
+        @RequestParam("comment", required = false) comment: Int?,
+        @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
     ): Resp<PaginationListVO<ArticleItemVO>> {

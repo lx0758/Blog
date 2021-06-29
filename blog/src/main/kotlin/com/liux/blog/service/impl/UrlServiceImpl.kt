@@ -1,5 +1,7 @@
 package com.liux.blog.service.impl
 
+import com.github.pagehelper.Page
+import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.po.Url
 import com.liux.blog.dao.UrlMapper
 import com.liux.blog.service.UrlService
@@ -16,7 +18,21 @@ class UrlServiceImpl : UrlService {
         return urlMapper.selectByKey(key)
     }
 
-    override fun listByAdmin(): List<Url> {
-        return urlMapper.selectByAdmin()
+    override fun listByAdmin(
+        key: String?,
+        url: String?,
+        description: String?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Url> {
+        val page = PageHelper.startPage<Url>(pageNum, pageSize)
+        urlMapper.selectByAdmin(Url(
+            key = key,
+            url = url,
+            description = description,
+            status = status,
+        ))
+        return page
     }
 }

@@ -9,7 +9,8 @@ interface ConfigMapper {
     fun insert(record: Config): Int
     fun insertSelective(record: Config): Int
     fun selectByPrimaryKey(key: String): Config?
-    fun select(): List<Config>
+    fun selectByTheme(): List<Config>
+    fun selectByAdmin(config: Config): List<Config>
     fun updateByPrimaryKeySelective(record: Config): Int
     fun updateByPrimaryKey(record: Config): Int
 }

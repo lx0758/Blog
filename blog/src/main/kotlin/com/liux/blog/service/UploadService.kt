@@ -4,5 +4,5 @@ import com.github.pagehelper.Page
 import com.liux.blog.bean.po.Upload
 
 interface UploadService {
-    fun listByAdmin(pageNum: Int, pageSize: Int): Page<Upload>
+    fun listByAdmin(name: String?, type: String?, status: Int?, pageNum: Int, pageSize: Int): Page<Upload>
 }

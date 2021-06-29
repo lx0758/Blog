@@ -23,10 +23,20 @@
     from t_upload
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByAdmin" resultMap="BaseResultMap">
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Upload" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from t_upload
+    where 1 = 1
+    <if test="displayName != null and displayName != ''">
+      and `display_name` like CONCAT('%', #{displayName,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="type != null and type != ''">
+      and `type` like CONCAT('%', #{type,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="status != null">
+      and `status` = #{status}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_upload

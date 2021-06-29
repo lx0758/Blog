@@ -18,8 +18,17 @@ class CommentController {
     private lateinit var commentService: CommentService
 
     @GetMapping
-    fun query(@RequestParam("pageNum") pageNum: Int, @RequestParam("pageSize") pageSize: Int): Resp<PaginationListVO<CommentItemVO>> {
-        val commentPage = commentService.listByAdmin(pageNum, pageSize)
+    fun query(
+        @RequestParam("article", required = false) article: Int?,
+        @RequestParam("author", required = false) author: String?,
+        @RequestParam("email", required = false) email: String?,
+        @RequestParam("ip", required = false) ip: String?,
+        @RequestParam("content", required = false) content: String?,
+        @RequestParam("status", required = false) status: Int?,
+        @RequestParam("pageNum") pageNum: Int,
+        @RequestParam("pageSize") pageSize: Int,
+    ): Resp<PaginationListVO<CommentItemVO>> {
+        val commentPage = commentService.listByAdmin(article, author, email, ip, content, status, pageNum, pageSize)
         val comments = commentPage.map { CommentItemVO.of(it) }
         return Resp.succeed(PaginationListVO.of(comments, commentPage))
     }

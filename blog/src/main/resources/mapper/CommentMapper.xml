@@ -69,11 +69,30 @@
     from t_comment
     where status = 1
   </select>
-  <select id="selectByAdmin" resultMap="ItemResultMap">
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Comment" resultMap="ItemResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_comment
+    where 1 = 1
+    <if test="articleId != null">
+      and article_id = #{articleId}
+    </if>
+    <if test="author != null and author != ''">
+      and author like CONCAT('%', #{author}, '%')
+    </if>
+    <if test="email != null and email != ''">
+      and email like CONCAT('%', #{email}, '%')
+    </if>
+    <if test="ip != null and ip != ''">
+      and ip like CONCAT('%', #{ip}, '%')
+    </if>
+    <if test="content != null and content != ''">
+      and content like CONCAT('%', #{content}, '%')
+    </if>
+    <if test="status != null">
+      and status = #{status}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->

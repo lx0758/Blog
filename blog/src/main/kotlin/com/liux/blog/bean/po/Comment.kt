@@ -10,7 +10,7 @@ data class Comment(
     // ID
     var id: Int? = null,
     // 文章ID
-    var articleId: Int,
+    var articleId: Int? = null,
     // 父评论ID
     var parentId: Int? = null,
     // 作者
