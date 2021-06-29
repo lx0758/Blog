@@ -38,8 +38,12 @@
             <i class="el-icon-picture"></i>
             <span>文件</span>
           </el-menu-item>
-          <el-menu-item index="url">
+          <el-menu-item index="link">
             <i class="el-icon-s-promotion"></i>
+            <span>友链</span>
+          </el-menu-item>
+          <el-menu-item index="url">
+            <i class="el-icon-info"></i>
             <span>短链</span>
           </el-menu-item>
         </el-submenu>

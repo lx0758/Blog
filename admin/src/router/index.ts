@@ -38,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/Upload.vue"),
       },
       {
+        path: '/link',
+        name: '友链',
+        component: () => import("@/views/Link.vue"),
+      },
+      {
         path: '/url',
         name: '短链',
         component: () => import("@/views/Url.vue"),

@@ -37,7 +37,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'HelloWorld',
+  name: 'ArticleEditor',
   props: {
     msg: String,
   },

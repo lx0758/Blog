@@ -3,9 +3,9 @@
 
     <el-space wrap>
       <el-input
-                placeholder="请输入标题"
-                v-model="filterTitle"
-                clearable/>
+            placeholder="请输入标题"
+            v-model="filterTitle"
+            clearable/>
       <el-select v-model="filterCategory" placeholder="分类">
         <el-option
             v-for="item in filterCategoryOptions"
@@ -49,14 +49,14 @@
         border
         stripe
         style="width: 100%; height: auto">
-      <el-table-column prop="id" label="ID" min-width="60" fixed></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="title" label="标题" min-width="250" fixed>
         <template #default="scope">
-          <el-link :href="'/article/' + scope.row.id" type="primary">{{ scope.row.title }}</el-link>
+          <el-link :href="'/article/' + scope.row.id" type="primary" target="_blank">{{ scope.row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="categoryName" label="分类" min-width="100"></el-table-column>
-      <el-table-column prop="format" label="格式" min-width="100">
+      <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
+      <el-table-column prop="format" label="格式" width="100">
         <template #default="scope">
           <el-tag
               :type="scope.row.format === 1 ? 'success' : 'danger'"
@@ -65,16 +65,16 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="url" min-width="100">
+      <el-table-column prop="url" label="url" width="100">
         <template #default="scope">
           {{ scope.row.url ? scope.row.url : '-'}}
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="权重" min-width="60"></el-table-column>
-      <el-table-column prop="views" label="浏览数" min-width="70"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" min-width="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" min-width="160"></el-table-column>
-      <el-table-column prop="enableComment" label="评论" min-width="70">
+      <el-table-column prop="weight" label="权重" width="60"></el-table-column>
+      <el-table-column prop="views" label="浏览数" width="70"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column prop="enableComment" label="评论" width="70">
         <template #default="scope">
           <el-tag
               :type="scope.row.enableComment ? 'success' : 'danger'"
@@ -83,7 +83,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="70">
+      <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
               :type="scope.row.status === 1 ? 'success' : 'danger'"
@@ -113,14 +113,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs"
-import {queryArticle,deleteArticle,queryCategory} from "../api"
+import {queryArticle, deleteArticle, queryCategoryOptions} from "@/api"
 
 export default defineComponent({
   name: 'Article',
   components: {},
   mounted() {
     this.onRefresh()
-    this.onLoadCategory()
+    this.onQueryCategoryOptions()
   },
   data() {
     return {
@@ -175,6 +175,12 @@ export default defineComponent({
     }
   },
   methods: {
+    onQueryCategoryOptions() {
+      queryCategoryOptions()
+          .then(data => {
+            this.filterCategoryOptions = data
+          })
+    },
     onFilterSearch() {
       this.onRefresh()
     },
@@ -223,17 +229,6 @@ export default defineComponent({
       )
           .then(data => {
             this.data = data.data;
-          })
-    },
-    onLoadCategory() {
-      queryCategory()
-          .then(data => {
-            this.filterCategoryOptions = data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              }
-            })
           })
     },
   }

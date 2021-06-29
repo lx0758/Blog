@@ -3,16 +3,12 @@
 
     <el-space wrap>
       <el-input
-          placeholder="请输入键"
-          v-model="filterKey"
+          placeholder="请输入标题"
+          v-model="filterTitle"
           clearable/>
       <el-input
           placeholder="请输入链接"
-          v-model="filterUrl"
-          clearable/>
-      <el-input
-          placeholder="请输入描述"
-          v-model="filterDescription"
+          v-model="filterLink"
           clearable/>
       <el-select v-model="filterStatus" placeholder="状态">
         <el-option
@@ -34,17 +30,16 @@
         stripe
         style="width: 100%; height: auto">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="key" label="KEY" width="120" fixed>
+      <el-table-column prop="title" label="标题" width="240" fixed>
         <template #default="scope">
-          <el-link :href="'/u/' + scope.row.key" type="primary" target="_blank">{{ scope.row.key }}</el-link>
+          <el-link :href="scope.row.url" type="primary" target="_blank">{{ scope.row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="URL" min-width="250" :show-overflow-tooltip="true">
+      <el-table-column prop="url" label="Link" min-width="250" :show-overflow-tooltip="true">
         <template  #default="scope">
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
       <el-table-column prop="status" label="状态" width="70">
@@ -58,8 +53,8 @@
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
-          <el-button plain size="mini" @click="onEditUrl(scope.row)">编辑</el-button>
-          <el-button plain type="danger" size="mini" @click="onDeleteUrl(scope.row)">删除</el-button>
+          <el-button plain size="mini" @click="onEditLink(scope.row)">编辑</el-button>
+          <el-button plain type="danger" size="mini" @click="onDeleteLink(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,19 +72,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
-import {deleteUrl, queryUrl} from "@/api";
+import {deleteLink, queryLink} from "@/api";
 
 export default defineComponent({
-  name: 'Url',
+  name: 'Link',
   components: {},
   mounted() {
     this.onRefresh()
   },
   data() {
     return {
-      filterKey: null,
-      filterUrl: null,
-      filterDescription: null,
+      filterTitle: null,
+      filterLink: null,
       filterStatus: null,
       filterStatusOptions: [
         {
@@ -120,9 +114,8 @@ export default defineComponent({
       this.onRefresh()
     },
     onFilterClear() {
-      this.filterKey = null
-      this.filterUrl = null
-      this.filterDescription = null
+      this.filterTitle = null
+      this.filterLink = null
       this.filterStatus = null
       this.onRefresh()
     },
@@ -134,17 +127,17 @@ export default defineComponent({
       this.data.pageNum = currentPage;
       this.onRefresh();
     },
-    onEditUrl(row: any) {
+    onEditLink(row: any) {
       // TODO: 2021-6-28
-      console.log("onEditUrl:" + row.key)
+      console.log("onEditLink:" + row.key)
     },
-    onDeleteUrl(row: any) {
+    onDeleteLink(row: any) {
       this.$confirm('确认删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUrl(row.id)
+        deleteLink(row.id)
             .then(() => {
               this.$message.success("删除成功");
               this.onRefresh()
@@ -152,10 +145,9 @@ export default defineComponent({
       });
     },
     onRefresh() {
-      queryUrl(
-          this.filterKey,
-          this.filterUrl,
-          this.filterDescription,
+      queryLink(
+          this.filterTitle,
+          this.filterLink,
           this.filterStatus,
           this.data.pageNum,
           this.data.pageSize,
