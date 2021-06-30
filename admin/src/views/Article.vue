@@ -38,8 +38,8 @@
             :value="item.value">
         </el-option>
       </el-select>
-      <el-button type="primary" plain @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain @click="onFilterClear">清空</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
     </el-space>
 
     <el-divider/>

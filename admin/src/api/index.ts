@@ -1,4 +1,4 @@
-import {request} from "./http";
+import {request, requestBody} from "./http";
 
 // 登录
 export const login = (username: string, password: string, verifyCode: string) => request('/api/session', 'POST', null, {
@@ -114,6 +114,16 @@ export const queryUpload = (
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 上传文件
+export const addUpload = (
+    files: [],
+) => {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+    return requestBody('/api/upload', 'POST', null, formData)
+}
 // 删除文件
 export const deleteUpload = (id: number) => request('/api/upload/' + id, 'DELETE', null, null)
 
@@ -131,6 +141,27 @@ export const queryLink = (
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 新增友链
+export const addLink = (
+    title: string,
+    url: string,
+    status: string,
+) => request('/api/link', 'POST', null, {
+    title: title,
+    url: url,
+    status: status,
+})
+// 更新友链
+export const updateLink = (
+    id: number,
+    title: string,
+    url: string,
+    status: string,
+) => request('/api/link/' + id, 'PUT', null, {
+    title: title,
+    url: url,
+    status: status,
+})
 // 删除友链
 export const deleteLink = (id: number) => request('/api/link/' + id, 'DELETE', null, null)
 
@@ -150,5 +181,26 @@ export const queryUrl = (
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 新增短链
+export const addUrl = (
+    key: string,
+    url: string,
+    status: string,
+) => request('/api/url', 'POST', null, {
+    key: key,
+    url: url,
+    status: status,
+})
+// 更新短链
+export const updateUrl = (
+    id: number,
+    key: string,
+    url: string,
+    status: string,
+) => request('/api/url/' + id, 'PUT', null, {
+    key: key,
+    url: url,
+    status: status,
+})
 // 删除短链
 export const deleteUrl = (id: number) => request('/api/url/' + id, 'DELETE', null, null)

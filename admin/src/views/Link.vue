@@ -18,8 +18,9 @@
             :value="item.value">
         </el-option>
       </el-select>
-      <el-button type="primary" plain @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain @click="onFilterClear">清空</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
+      <el-button type="primary" @click="onEditLink">新增短链</el-button>
     </el-space>
 
     <el-divider/>
@@ -35,7 +36,7 @@
           <el-link :href="scope.row.url" type="primary" target="_blank">{{ scope.row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="Link" min-width="250" :show-overflow-tooltip="true">
+      <el-table-column prop="url" label="链接地址" min-width="250" :show-overflow-tooltip="true">
         <template  #default="scope">
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
         </template>
@@ -67,12 +68,34 @@
         layout="prev, pager, next"/>
 
   </el-container>
+
+  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '友链'" v-model="dialog">
+    <el-form ref="dialog" :model="dialogData" :rules="dialogRules" label-width="120px">
+      <el-form-item label="标题" prop="title">
+        <el-input v-model="dialogData.title" placeholder="请输入标题"></el-input>
+      </el-form-item>
+      <el-form-item label="链接" prop="url">
+        <el-input v-model="dialogData.url" placeholder="请输入链接地址"></el-input>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="dialogData.status" placeholder="状态">
+          <el-option label="启用" :value="1"></el-option>
+          <el-option label="禁用" :value="0"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onDialogSubmit">确定</el-button>
+        <el-button @click="dialog = false">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
-import {deleteLink, queryLink} from "@/api";
+import {addLink, deleteLink, updateLink, queryLink} from "@/api";
 
 export default defineComponent({
   name: 'Link',
@@ -107,6 +130,20 @@ export default defineComponent({
         total: 0,
         list: [],
       },
+
+      dialog: false,
+      dialogData: {},
+      dialogRules: {
+        title: [
+          {required: true, message: '标题不能为空', trigger: 'blur'},
+        ],
+        url: [
+          {required: true, message: '链接不能为空', trigger: 'blur'},
+        ],
+        status: [
+          {required: true, message: '请选择状态', trigger: 'blur'},
+        ],
+      },
     }
   },
   methods: {
@@ -128,8 +165,17 @@ export default defineComponent({
       this.onRefresh();
     },
     onEditLink(row: any) {
-      // TODO: 2021-6-28
-      console.log("onEditLink:" + row.key)
+      if (row == null) {
+        this.dialogData = {}
+      } else {
+        this.dialogData = {
+          id: row.id,
+          title: row.title,
+          url: row.url,
+          status: row.status,
+        };
+      }
+      this.dialog = true
     },
     onDeleteLink(row: any) {
       this.$confirm('确认删除?', '提示', {
@@ -155,6 +201,36 @@ export default defineComponent({
           .then(data => {
             this.data = data.data;
           })
+    },
+
+    onDialogSubmit() {
+      let from: any = this.$refs['dialog'];
+      from.validate((valid: boolean) => {
+        if (!valid) return
+        let dialogData = this.dialogData as any
+        if (!dialogData.id) {
+          addLink(
+              dialogData.title,
+              dialogData.url,
+              dialogData.status,
+          )
+              .then(() => {
+                this.$message.success("新增成功");
+                this.onRefresh()
+              })
+        } else {
+          updateLink(
+              dialogData.id,
+              dialogData.title,
+              dialogData.url,
+              dialogData.status,
+          )
+              .then(() => {
+                this.$message.success("更新成功");
+                this.onRefresh()
+              })
+        }
+      })
     },
   }
 });

@@ -22,8 +22,9 @@
             :value="item.value">
         </el-option>
       </el-select>
-      <el-button type="primary" plain @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain @click="onFilterClear">清空</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
+      <el-button type="primary" @click="onEditUrl">新增短链</el-button>
     </el-space>
 
     <el-divider/>
@@ -72,12 +73,34 @@
         layout="prev, pager, next"/>
 
   </el-container>
+
+  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '短链'" v-model="dialog">
+    <el-form ref="dialog" :model="dialogData" :rules="dialogRules" label-width="120px">
+      <el-form-item label="主键" prop="key">
+        <el-input v-model="dialogData.key" placeholder="请输入键"></el-input>
+      </el-form-item>
+      <el-form-item label="链接" prop="url">
+        <el-input v-model="dialogData.url" placeholder="请输入链接"></el-input>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="dialogData.status" placeholder="状态">
+          <el-option label="启用" :value="1"></el-option>
+          <el-option label="禁用" :value="0"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onDialogSubmit">确定</el-button>
+        <el-button @click="dialog = false">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
-import {deleteUrl, queryUrl} from "@/api";
+import {addUrl, deleteUrl, updateUrl, queryUrl} from "@/api";
 
 export default defineComponent({
   name: 'Url',
@@ -113,6 +136,20 @@ export default defineComponent({
         total: 0,
         list: [],
       },
+
+      dialog: false,
+      dialogData: {},
+      dialogRules: {
+        key: [
+          {required: true, message: '键不能为空', trigger: 'blur'},
+        ],
+        url: [
+          {required: true, message: '链接不能为空', trigger: 'blur'},
+        ],
+        status: [
+          {required: true, message: '请选择状态', trigger: 'blur'},
+        ],
+      },
     }
   },
   methods: {
@@ -135,8 +172,17 @@ export default defineComponent({
       this.onRefresh();
     },
     onEditUrl(row: any) {
-      // TODO: 2021-6-28
-      console.log("onEditUrl:" + row.key)
+      if (row == null) {
+        this.dialogData = {}
+      } else {
+        this.dialogData = {
+          id: row.id,
+          key: row.key,
+          url: row.url,
+          status: row.status,
+        };
+      }
+      this.dialog = true
     },
     onDeleteUrl(row: any) {
       this.$confirm('确认删除?', '提示', {
@@ -163,6 +209,36 @@ export default defineComponent({
           .then(data => {
             this.data = data.data;
           })
+    },
+
+    onDialogSubmit() {
+      let from: any = this.$refs['dialog'];
+      from.validate((valid: boolean) => {
+        if (!valid) return
+        let dialogData = this.dialogData as any
+        if (!dialogData.id) {
+          addUrl(
+              dialogData.key,
+              dialogData.url,
+              dialogData.status,
+          )
+              .then(() => {
+                this.$message.success("新增成功");
+                this.onRefresh()
+              })
+        } else {
+          updateUrl(
+              dialogData.id,
+              dialogData.key,
+              dialogData.url,
+              dialogData.status,
+          )
+              .then(() => {
+                this.$message.success("更新成功");
+                this.onRefresh()
+              })
+        }
+      })
     },
   }
 });
