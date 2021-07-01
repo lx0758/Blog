@@ -4,19 +4,19 @@
     <el-space wrap>
       <el-input
           placeholder="请输入键"
-          v-model="filterKey"
+          v-model="filter.key"
           clearable/>
       <el-input
           placeholder="请输入链接"
-          v-model="filterUrl"
+          v-model="filter.url"
           clearable/>
       <el-input
           placeholder="请输入描述"
-          v-model="filterDescription"
+          v-model="filter.description"
           clearable/>
-      <el-select v-model="filterStatus" placeholder="状态">
+      <el-select v-model="filter.status" placeholder="状态">
         <el-option
-            v-for="item in filterStatusOptions"
+            v-for="item in filter.statusOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -35,12 +35,12 @@
         stripe
         style="width: 100%; height: auto">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="key" label="KEY" width="120" fixed>
+      <el-table-column prop="key" label="主键" width="120" fixed>
         <template #default="scope">
           <el-link :href="'/u/' + scope.row.key" type="primary" target="_blank">{{ scope.row.key }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="URL" min-width="250" :show-overflow-tooltip="true">
+      <el-table-column prop="url" label="链接" min-width="250" :show-overflow-tooltip="true">
         <template  #default="scope">
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
         </template>
@@ -51,7 +51,7 @@
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
               disable-transitions
               size="medium">{{ scope.row.status === 1 ? '启用' : scope.row.status === -1 ? '删除' : '禁用'}}
           </el-tag>
@@ -82,6 +82,9 @@
       <el-form-item label="链接" prop="url">
         <el-input v-model="dialogData.url" placeholder="请输入链接"></el-input>
       </el-form-item>
+      <el-form-item label="描述" prop="description">
+        <el-input v-model="dialogData.description" placeholder="请输入描述"></el-input>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="dialogData.status" placeholder="状态">
           <el-option label="启用" :value="1"></el-option>
@@ -110,24 +113,26 @@ export default defineComponent({
   },
   data() {
     return {
-      filterKey: null,
-      filterUrl: null,
-      filterDescription: null,
-      filterStatus: null,
-      filterStatusOptions: [
-        {
-          value: -1,
-          label: '已删除',
-        },
-        {
-          value: 0,
-          label: '禁用',
-        },
-        {
-          value: 1,
-          label: '启用',
-        },
-      ],
+      filter: {
+        key: null,
+        url: null,
+        description: null,
+        status: null,
+        statusOptions: [
+          {
+            value: -1,
+            label: '已删除',
+          },
+          {
+            value: 0,
+            label: '禁用',
+          },
+          {
+            value: 1,
+            label: '启用',
+          },
+        ],
+      },
 
       data: {
         pageNum: 1,
@@ -146,6 +151,9 @@ export default defineComponent({
         url: [
           {required: true, message: '链接不能为空', trigger: 'blur'},
         ],
+        description: [
+          {required: true, message: '链接不能为空', trigger: 'blur'},
+        ],
         status: [
           {required: true, message: '请选择状态', trigger: 'blur'},
         ],
@@ -157,10 +165,10 @@ export default defineComponent({
       this.onRefresh()
     },
     onFilterClear() {
-      this.filterKey = null
-      this.filterUrl = null
-      this.filterDescription = null
-      this.filterStatus = null
+      this.filter.key = null
+      this.filter.url = null
+      this.filter.description = null
+      this.filter.status = null
       this.onRefresh()
     },
     onFormatDate(row: any, column: any) {
@@ -179,6 +187,7 @@ export default defineComponent({
           id: row.id,
           key: row.key,
           url: row.url,
+          description: row.description,
           status: row.status,
         };
       }
@@ -199,10 +208,10 @@ export default defineComponent({
     },
     onRefresh() {
       queryUrl(
-          this.filterKey,
-          this.filterUrl,
-          this.filterDescription,
-          this.filterStatus,
+          this.filter.key,
+          this.filter.url,
+          this.filter.description,
+          this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
       )
@@ -220,6 +229,7 @@ export default defineComponent({
           addUrl(
               dialogData.key,
               dialogData.url,
+              dialogData.description,
               dialogData.status,
           )
               .then(() => {
@@ -231,6 +241,7 @@ export default defineComponent({
               dialogData.id,
               dialogData.key,
               dialogData.url,
+              dialogData.description,
               dialogData.status,
           )
               .then(() => {

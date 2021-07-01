@@ -4,10 +4,11 @@
     <el-space wrap>
       <el-input
           placeholder="请输入名称"
-          v-model="filterName"
+          v-model="filter.name"
           clearable/>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
+      <el-button type="primary" @click="onEditTag">新增标签</el-button>
     </el-space>
 
     <el-divider/>
@@ -37,12 +38,25 @@
         layout="prev, pager, next"/>
 
   </el-container>
+
+  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '标签'" v-model="dialog">
+    <el-form ref="dialog" :model="dialogData" :rules="dialogRules" label-width="120px">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="dialogData.name" placeholder="请输入名称"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onDialogSubmit">确定</el-button>
+        <el-button @click="dialog = false">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
-import {deleteTag, queryTag} from "@/api";
+import {addTag, deleteTag, updateTag, queryTag} from "@/api";
 
 export default defineComponent({
   name: 'Tag',
@@ -52,7 +66,9 @@ export default defineComponent({
   },
   data() {
     return {
-      filterName: null,
+      filter: {
+        name: null,
+      },
 
       data: {
         pageNum: 1,
@@ -61,6 +77,14 @@ export default defineComponent({
         total: 0,
         list: [],
       },
+
+      dialog: false,
+      dialogData: {},
+      dialogRules: {
+        name: [
+          {required: true, message: '名称不能为空', trigger: 'blur'},
+        ],
+      },
     }
   },
   methods: {
@@ -68,7 +92,7 @@ export default defineComponent({
       this.onRefresh()
     },
     onFilterClear() {
-      this.filterName = null
+      this.filter.name = null
       this.onRefresh()
     },
     onFormatDate(row: any, column: any) {
@@ -80,8 +104,15 @@ export default defineComponent({
       this.onRefresh();
     },
     onEditTag(row: any) {
-      // TODO: 2021-6-28
-      console.log("onEditTag:" + row.key)
+      if (row == null) {
+        this.dialogData = {}
+      } else {
+        this.dialogData = {
+          id: row.id,
+          name: row.name,
+        };
+      }
+      this.dialog = true
     },
     onDeleteTag(row: any) {
       this.$confirm('确认删除?', '提示', {
@@ -98,13 +129,39 @@ export default defineComponent({
     },
     onRefresh() {
       queryTag(
-          this.filterName,
+          this.filter.name,
           this.data.pageNum,
           this.data.pageSize,
       )
           .then(data => {
             this.data = data.data;
           })
+    },
+
+    onDialogSubmit() {
+      let from: any = this.$refs['dialog'];
+      from.validate((valid: boolean) => {
+        if (!valid) return
+        let dialogData = this.dialogData as any
+        if (!dialogData.id) {
+          addTag(
+              dialogData.name,
+          )
+              .then(() => {
+                this.$message.success("新增成功");
+                this.onRefresh()
+              })
+        } else {
+          updateTag(
+              dialogData.id,
+              dialogData.name,
+          )
+              .then(() => {
+                this.$message.success("更新成功");
+                this.onRefresh()
+              })
+        }
+      })
     },
   }
 });

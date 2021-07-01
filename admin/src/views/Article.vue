@@ -4,35 +4,35 @@
     <el-space wrap>
       <el-input
             placeholder="请输入标题"
-            v-model="filterTitle"
+            v-model="filter.title"
             clearable/>
-      <el-select v-model="filterCategory" placeholder="分类">
+      <el-select v-model="filter.category" placeholder="分类">
         <el-option
-            v-for="item in filterCategoryOptions"
+            v-for="item in filter.categoryOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-model="filterFormat" placeholder="格式">
+      <el-select v-model="filter.format" placeholder="格式">
         <el-option
-            v-for="item in filterFormatOptions"
+            v-for="item in filter.formatOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-model="filterComment" placeholder="评论">
+      <el-select v-model="filter.comment" placeholder="评论">
         <el-option
-            v-for="item in filterCommentOptions"
+            v-for="item in filter.commentOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-model="filterStatus" placeholder="状态">
+      <el-select v-model="filter.status" placeholder="状态">
         <el-option
-            v-for="item in filterStatusOptions"
+            v-for="item in filter.statusOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -86,7 +86,7 @@
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
               disable-transitions
               size="medium">{{ scope.row.status === 1 ? '发布' : scope.row.status === -1 ? '删除' : '草稿'}}
           </el-tag>
@@ -124,46 +124,48 @@ export default defineComponent({
   },
   data() {
     return {
-      filterTitle: null,
-      filterCategory: null,
-      filterCategoryOptions: [],
-      filterFormat: null,
-      filterFormatOptions: [
-        {
-          value: 0,
-          label: 'Markdown',
-        },
-        {
-          value: 1,
-          label: 'Html',
-        },
-      ],
-      filterComment: null,
-      filterCommentOptions: [
-        {
-          value: 0,
-          label: '禁止',
-        },
-        {
-          value: 1,
-          label: '允许',
-        },
-      ],
-      filterStatus: null,
-      filterStatusOptions: [
-        {
-          value: -1,
-          label: '删除',
-        },
-        {
-          value: 0,
-          label: '草稿',
-        },
-        {
-          value: 1,
-          label: '发布',
-        },
-      ],
+      filter: {
+        title: null,
+        category: null,
+        categoryOptions: [],
+        format: null,
+        formatOptions: [
+          {
+            value: 0,
+            label: 'Markdown',
+          },
+          {
+            value: 1,
+            label: 'Html',
+          },
+        ],
+        comment: null,
+        commentOptions: [
+          {
+            value: 0,
+            label: '禁止',
+          },
+          {
+            value: 1,
+            label: '允许',
+          },
+        ],
+        status: null,
+        statusOptions: [
+          {
+            value: -1,
+            label: '删除',
+          },
+          {
+            value: 0,
+            label: '草稿',
+          },
+          {
+            value: 1,
+            label: '发布',
+          },
+        ],
+      },
 
       data: {
         pageNum: 1,
@@ -178,18 +180,18 @@ export default defineComponent({
     onQueryCategoryOptions() {
       queryCategoryOptions()
           .then(data => {
-            this.filterCategoryOptions = data
+            this.filter.categoryOptions = data
           })
     },
     onFilterSearch() {
       this.onRefresh()
     },
     onFilterClear() {
-      this.filterTitle = null
-      this.filterCategory = null
-      this.filterFormat = null
-      this.filterComment = null
-      this.filterStatus = null
+      this.filter.title = null
+      this.filter.category = null
+      this.filter.format = null
+      this.filter.comment = null
+      this.filter.status = null
       this.onRefresh()
     },
     onFormatDate(row: any, column: any) {
@@ -219,11 +221,11 @@ export default defineComponent({
     },
     onRefresh() {
       queryArticle(
-          this.filterTitle,
-          this.filterCategory,
-          this.filterFormat,
-          this.filterComment,
-          this.filterStatus,
+          this.filter.title,
+          this.filter.category,
+          this.filter.format,
+          this.filter.comment,
+          this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
       )

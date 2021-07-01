@@ -4,15 +4,15 @@
     <el-space wrap>
       <el-input
           placeholder="请输入标题"
-          v-model="filterTitle"
+          v-model="filter.title"
           clearable/>
       <el-input
           placeholder="请输入链接"
-          v-model="filterLink"
+          v-model="filter.link"
           clearable/>
-      <el-select v-model="filterStatus" placeholder="状态">
+      <el-select v-model="filter.status" placeholder="状态">
         <el-option
-            v-for="item in filterStatusOptions"
+            v-for="item in filter.statusOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -46,7 +46,7 @@
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
               disable-transitions
               size="medium">{{ scope.row.status === 1 ? '启用' : scope.row.status === -1 ? '删除' : '禁用'}}
           </el-tag>
@@ -105,23 +105,25 @@ export default defineComponent({
   },
   data() {
     return {
-      filterTitle: null,
-      filterLink: null,
-      filterStatus: null,
-      filterStatusOptions: [
-        {
-          value: -1,
-          label: '已删除',
-        },
-        {
-          value: 0,
-          label: '禁用',
-        },
-        {
-          value: 1,
-          label: '启用',
-        },
-      ],
+      filter: {
+        title: null,
+        link: null,
+        status: null,
+        statusOptions: [
+          {
+            value: -1,
+            label: '已删除',
+          },
+          {
+            value: 0,
+            label: '禁用',
+          },
+          {
+            value: 1,
+            label: '启用',
+          },
+        ],
+      },
 
       data: {
         pageNum: 1,
@@ -151,9 +153,9 @@ export default defineComponent({
       this.onRefresh()
     },
     onFilterClear() {
-      this.filterTitle = null
-      this.filterLink = null
-      this.filterStatus = null
+      this.filter.title = null
+      this.filter.link = null
+      this.filter.status = null
       this.onRefresh()
     },
     onFormatDate(row: any, column: any) {
@@ -192,9 +194,9 @@ export default defineComponent({
     },
     onRefresh() {
       queryLink(
-          this.filterTitle,
-          this.filterLink,
-          this.filterStatus,
+          this.filter.title,
+          this.filter.link,
+          this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
       )

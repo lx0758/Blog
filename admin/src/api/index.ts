@@ -35,10 +35,6 @@ export const addArticle = (title: string) => request('/api/article', 'POST', nul
 export const updateArticle = (id: number, title: string) => request('/api/article/' + id, 'PUT', null, {
     title: title,
 })
-// 更新文章状态
-export const updateArticleStatus = (id: number, status: number) => request('/api/article/' + id + '/status', 'PUT', null, {
-    status: status,
-})
 // 删除文章
 export const deleteArticle = (id: number) => request('/api/article/' + id, 'DELETE', null, null)
 
@@ -62,6 +58,22 @@ export const queryComment = (
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 新增评论(回复)
+export const addCommentByReplay = (
+    articleId: string,
+    parentId: string,
+    content: string,
+) => request('/api/category', 'POST', null, {
+    articleId: articleId,
+    parentId: parentId,
+    content: content,
+})
+// 更新评论(审核通过)
+export const updateCommentToVerify = (
+    id: number,
+) => request('/api/comment/' + id, 'PUT', null, {
+    status: 1,
+})
 // 删除文章
 export const deleteComment = (id: number) => request('/api/comment/' + id, 'DELETE', null, null)
 
@@ -84,6 +96,19 @@ export const queryCategoryOptions = () => queryCategory(null, 1, 0x7fffffff).the
         }
     })
 })
+// 新增分类
+export const addCategory = (
+    name: string,
+) => request('/api/category', 'POST', null, {
+    name: name,
+})
+// 更新分类
+export const updateCategory = (
+    id: number,
+    name: string,
+) => request('/api/category/' + id, 'PUT', null, {
+    name: name,
+})
 // 删除分类
 export const deleteCategory = (id: number) => request('/api/category/' + id, 'DELETE', null, null)
 
@@ -97,6 +122,19 @@ export const queryTag = (
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 新增标签
+export const addTag = (
+    name: string,
+) => request('/api/tag', 'POST', null, {
+    name: name,
+})
+// 更新标签
+export const updateTag = (
+    id: number,
+    name: string,
+) => request('/api/tag/' + id, 'PUT', null, {
+    name: name,
+})
 // 删除标签
 export const deleteTag = (id: number) => request('/api/tag/' + id, 'DELETE', null, null)
 
@@ -185,10 +223,12 @@ export const queryUrl = (
 export const addUrl = (
     key: string,
     url: string,
+    description: string,
     status: string,
 ) => request('/api/url', 'POST', null, {
     key: key,
     url: url,
+    description: description,
     status: status,
 })
 // 更新短链
@@ -196,10 +236,12 @@ export const updateUrl = (
     id: number,
     key: string,
     url: string,
+    description: string,
     status: string,
 ) => request('/api/url/' + id, 'PUT', null, {
     key: key,
     url: url,
+    description: description,
     status: status,
 })
 // 删除短链
