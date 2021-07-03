@@ -22,14 +22,7 @@
           placeholder="请输入IP地址"
           v-model="filter.ip"
           clearable/>
-      <el-select v-model="filter.status" placeholder="状态">
-        <el-option
-            v-for="item in filter.statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
+      <blog-select v-model:value="filter.status" v-bind:type="5"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
     </el-space>
@@ -53,19 +46,20 @@
       <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
-      <el-table-column prop="status" label="状态" width="70">
+      <el-table-column prop="status" label="状态" width="80">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : 'danger'"
               disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '发布' : scope.row.status === -1 ? '删除' : '待审核'}}
+              size="medium">{{ scope.row.status === 1 ? '已发布' : '待审核'}}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
-          <el-button plain size="mini" @click="onShowReplyComment(scope.row)">回复</el-button>
-          <el-button plain type="danger" size="mini" @click="onEditComment(scope.row)" v-if="scope.row.status === 0">审核</el-button>
+          <el-button plain size="mini" @click="onShowReplyComment(scope.row)" v-if="scope.row.status === 1">回复</el-button>
+          <el-button plain size="mini" @click="onShowVerifyComment(scope.row)" v-if="scope.row.status === 0">审核</el-button>
+          <el-button plain type="danger" size="mini" @click="onDeleteComment(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,24 +75,23 @@
 
   <el-dialog title="审核评论" v-model="verify">
     <el-form ref="verify" :model="verifyData" label-width="120px">
-      <el-form-item label="文章标题" prop="title">
+      <el-form-item label="文章标题">
         <span>{{verifyData.articleTitle}}</span>
       </el-form-item>
-      <el-form-item label="用户信息" prop="nickname">
+      <el-form-item label="用户信息">
         <span>{{verifyData.nickname + ' / ' + verifyData.email + ' / ' + verifyData.url}}</span>
       </el-form-item>
-      <el-form-item label="设备信息" prop="nickname">
+      <el-form-item label="设备信息">
         <span>{{verifyData.ip + ' / ' + verifyData.browser + ' / ' + verifyData.system}}</span>
       </el-form-item>
-      <el-form-item label="评论时间" prop="nickname">
+      <el-form-item label="评论时间">
         <span>{{verifyData.time}}</span>
       </el-form-item>
-      <el-form-item label="评论内容" prop="nickname">
+      <el-form-item label="评论内容" style="word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
         <span>{{verifyData.content}}</span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onVerifyComment">通过</el-button>
-        <el-button type="primary" @click="onDeleteComment">删除</el-button>
         <el-button @click="verify = false">取消</el-button>
       </el-form-item>
     </el-form>
@@ -109,20 +102,20 @@
       <el-form-item label="文章标题" prop="title">
         <span>{{replayData.articleTitle}}</span>
       </el-form-item>
-      <el-form-item label="用户信息" prop="nickname">
+      <el-form-item label="用户信息">
         <span>{{replayData.nickname + ' / ' + replayData.email + ' / ' + replayData.url}}</span>
       </el-form-item>
-      <el-form-item label="设备信息" prop="nickname">
+      <el-form-item label="设备信息">
         <span>{{replayData.ip + ' / ' + replayData.browser + ' / ' + replayData.system}}</span>
       </el-form-item>
-      <el-form-item label="评论时间" prop="nickname">
+      <el-form-item label="评论时间">
         <span>{{replayData.time}}</span>
       </el-form-item>
-      <el-form-item label="评论内容" prop="nickname">
+      <el-form-item label="评论内容" style="word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
         <span>{{replayData.content}}</span>
       </el-form-item>
       <el-form-item label="答复内容" prop="replayContent">
-        <el-input type="textarea" v-model="replayData.replayContent"></el-input>
+        <el-input type="textarea" rows="6" v-model="replayData.replayContent" :placeholder="'@' + replayData.nickname"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onReplyComment">回复</el-button>
@@ -137,10 +130,13 @@
 import { defineComponent } from 'vue';
 import dayjs from "dayjs"
 import {addCommentByReplay, queryComment, updateCommentToVerify, deleteComment} from "@/api"
+import BlogSelect from "@/components/BlogSelect.vue";
 
 export default defineComponent({
   name: 'Comment',
-  components: {},
+  components: {
+    BlogSelect
+  },
   mounted() {
     this.onRefresh()
   },
@@ -153,20 +149,6 @@ export default defineComponent({
         email: null,
         ip: null,
         status: null,
-        statusOptions: [
-          {
-            value: -1,
-            label: '删除',
-          },
-          {
-            value: 0,
-            label: '草稿',
-          },
-          {
-            value: 1,
-            label: '发布',
-          },
-        ],
       },
 
       data: {
@@ -227,15 +209,17 @@ export default defineComponent({
       addCommentByReplay(
           replayData.articleId,
           replayData.parentId,
-          replayData.replayContent,
+          '@' + replayData.nickname + '\n' + replayData.replayContent,
       )
           .then(() => {
-            this.$message.success("删除成功");
+            this.$message.success("回复成功");
+            this.replay = false
             this.onRefresh()
           })
     },
-    onEditComment(row: any) {
+    onShowVerifyComment(row: any) {
       this.verifyData = {
+        id: row.id,
         articleTitle: row.articleTitle,
         nickname: row.nickname,
         email: row.email,
@@ -251,7 +235,8 @@ export default defineComponent({
     onVerifyComment() {
       updateCommentToVerify((this.verifyData as any).id)
           .then(() => {
-            this.$message.success("删除成功");
+            this.$message.success("审核成功");
+            this.verify = false
             this.onRefresh()
           })
     },

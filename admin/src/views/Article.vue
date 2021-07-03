@@ -6,40 +6,13 @@
             placeholder="请输入标题"
             v-model="filter.title"
             clearable/>
-      <el-select v-model="filter.category" placeholder="分类">
-        <el-option
-            v-for="item in filter.categoryOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
-      <el-select v-model="filter.format" placeholder="格式">
-        <el-option
-            v-for="item in filter.formatOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
-      <el-select v-model="filter.comment" placeholder="评论">
-        <el-option
-            v-for="item in filter.commentOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
-      <el-select v-model="filter.status" placeholder="状态">
-        <el-option
-            v-for="item in filter.statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
+      <blog-select v-model:value="filter.category" v-bind:type="1"></blog-select>
+      <blog-select v-model:value="filter.format" v-bind:type="2"></blog-select>
+      <blog-select v-model:value="filter.comment" v-bind:type="3"></blog-select>
+      <blog-select v-model:value="filter.status" v-bind:type="4"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
+      <el-button type="primary" @click="onEditArticle">新增文章</el-button>
     </el-space>
 
     <el-divider/>
@@ -86,9 +59,9 @@
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : 'danger'"
               disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '发布' : scope.row.status === -1 ? '删除' : '草稿'}}
+              size="medium">{{ scope.row.status === 1 ? '发布' : '草稿'}}
           </el-tag>
         </template>
       </el-table-column>
@@ -113,58 +86,25 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs"
-import {queryArticle, deleteArticle, queryCategoryOptions} from "@/api"
+import {queryArticle, deleteArticle} from "@/api"
+import BlogSelect from '@/components/BlogSelect.vue'
 
 export default defineComponent({
   name: 'Article',
-  components: {},
+  components: {
+    BlogSelect
+  },
   mounted() {
     this.onRefresh()
-    this.onQueryCategoryOptions()
   },
   data() {
     return {
       filter: {
         title: null,
         category: null,
-        categoryOptions: [],
         format: null,
-        formatOptions: [
-          {
-            value: 0,
-            label: 'Markdown',
-          },
-          {
-            value: 1,
-            label: 'Html',
-          },
-        ],
         comment: null,
-        commentOptions: [
-          {
-            value: 0,
-            label: '禁止',
-          },
-          {
-            value: 1,
-            label: '允许',
-          },
-        ],
         status: null,
-        statusOptions: [
-          {
-            value: -1,
-            label: '删除',
-          },
-          {
-            value: 0,
-            label: '草稿',
-          },
-          {
-            value: 1,
-            label: '发布',
-          },
-        ],
       },
 
       data: {
@@ -177,12 +117,6 @@ export default defineComponent({
     }
   },
   methods: {
-    onQueryCategoryOptions() {
-      queryCategoryOptions()
-          .then(data => {
-            this.filter.categoryOptions = data
-          })
-    },
     onFilterSearch() {
       this.onRefresh()
     },

@@ -20,6 +20,7 @@
         style="width: 100%; height: auto">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="name" label="名称" min-width="100" fixed></el-table-column>
+      <el-table-column prop="articleCount" label="文章数量" width="80"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
@@ -148,6 +149,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("新增成功");
+                this.dialog = false
                 this.onRefresh()
               })
         } else {
@@ -157,6 +159,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("更新成功");
+                this.dialog = false
                 this.onRefresh()
               })
         }

@@ -149,6 +149,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("新增成功");
+                this.dialog = false
                 this.onRefresh()
               })
         } else {
@@ -158,6 +159,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("更新成功");
+                this.dialog = false
                 this.onRefresh()
               })
         }

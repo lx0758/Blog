@@ -10,14 +10,7 @@
           placeholder="请输入链接"
           v-model="filter.link"
           clearable/>
-      <el-select v-model="filter.status" placeholder="状态">
-        <el-option
-            v-for="item in filter.statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
+      <blog-select v-model:value="filter.status" v-bind:type="6"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
       <el-button type="primary" @click="onEditLink">新增短链</el-button>
@@ -41,14 +34,15 @@
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column prop="weight" label="权重" width ="80"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : 'danger'"
               disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '启用' : scope.row.status === -1 ? '删除' : '禁用'}}
+              size="medium">{{ scope.row.status === 1 ? '启用' : '禁用'}}
           </el-tag>
         </template>
       </el-table-column>
@@ -77,11 +71,11 @@
       <el-form-item label="链接" prop="url">
         <el-input v-model="dialogData.url" placeholder="请输入链接地址"></el-input>
       </el-form-item>
+      <el-form-item label="权重" prop="weight">
+        <el-input v-model="dialogData.weight" placeholder="请输入链接权重" type="number"></el-input>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="dialogData.status" placeholder="状态">
-          <el-option label="启用" :value="1"></el-option>
-          <el-option label="禁用" :value="0"></el-option>
-        </el-select>
+        <blog-select v-model:value="dialogData.status" v-bind:type="6"></blog-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onDialogSubmit">确定</el-button>
@@ -96,10 +90,13 @@
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
 import {addLink, deleteLink, updateLink, queryLink} from "@/api";
+import BlogSelect from "@/components/BlogSelect.vue";
 
 export default defineComponent({
   name: 'Link',
-  components: {},
+  components: {
+    BlogSelect
+  },
   mounted() {
     this.onRefresh()
   },
@@ -109,20 +106,6 @@ export default defineComponent({
         title: null,
         link: null,
         status: null,
-        statusOptions: [
-          {
-            value: -1,
-            label: '已删除',
-          },
-          {
-            value: 0,
-            label: '禁用',
-          },
-          {
-            value: 1,
-            label: '启用',
-          },
-        ],
       },
 
       data: {
@@ -174,6 +157,7 @@ export default defineComponent({
           id: row.id,
           title: row.title,
           url: row.url,
+          weight: row.weight,
           status: row.status,
         };
       }
@@ -214,10 +198,12 @@ export default defineComponent({
           addLink(
               dialogData.title,
               dialogData.url,
+              dialogData.weight,
               dialogData.status,
           )
               .then(() => {
                 this.$message.success("新增成功");
+                this.dialog = false
                 this.onRefresh()
               })
         } else {
@@ -225,10 +211,12 @@ export default defineComponent({
               dialogData.id,
               dialogData.title,
               dialogData.url,
+              dialogData.weight,
               dialogData.status,
           )
               .then(() => {
                 this.$message.success("更新成功");
+                this.dialog = false
                 this.onRefresh()
               })
         }

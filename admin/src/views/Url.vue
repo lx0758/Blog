@@ -14,14 +14,7 @@
           placeholder="请输入描述"
           v-model="filter.description"
           clearable/>
-      <el-select v-model="filter.status" placeholder="状态">
-        <el-option
-            v-for="item in filter.statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
+      <blog-select v-model:value="filter.status" v-bind:type="7"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
       <el-button type="primary" @click="onEditUrl">新增短链</el-button>
@@ -51,9 +44,9 @@
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
+              :type="scope.row.status === 1 ? 'success' : 'danger'"
               disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '启用' : scope.row.status === -1 ? '删除' : '禁用'}}
+              size="medium">{{ scope.row.status === 1 ? '启用' : '禁用'}}
           </el-tag>
         </template>
       </el-table-column>
@@ -86,10 +79,7 @@
         <el-input v-model="dialogData.description" placeholder="请输入描述"></el-input>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="dialogData.status" placeholder="状态">
-          <el-option label="启用" :value="1"></el-option>
-          <el-option label="禁用" :value="0"></el-option>
-        </el-select>
+        <blog-select v-model:value="dialogData.status" v-bind:type="7"></blog-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onDialogSubmit">确定</el-button>
@@ -104,10 +94,13 @@
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
 import {addUrl, deleteUrl, updateUrl, queryUrl} from "@/api";
+import BlogSelect from "@/components/BlogSelect.vue";
 
 export default defineComponent({
   name: 'Url',
-  components: {},
+  components: {
+    BlogSelect
+  },
   mounted() {
     this.onRefresh()
   },
@@ -118,20 +111,6 @@ export default defineComponent({
         url: null,
         description: null,
         status: null,
-        statusOptions: [
-          {
-            value: -1,
-            label: '已删除',
-          },
-          {
-            value: 0,
-            label: '禁用',
-          },
-          {
-            value: 1,
-            label: '启用',
-          },
-        ],
       },
 
       data: {
@@ -234,6 +213,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("新增成功");
+                this.dialog = false
                 this.onRefresh()
               })
         } else {
@@ -246,6 +226,7 @@ export default defineComponent({
           )
               .then(() => {
                 this.$message.success("更新成功");
+                this.dialog = false
                 this.onRefresh()
               })
         }

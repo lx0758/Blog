@@ -63,7 +63,7 @@ export const addCommentByReplay = (
     articleId: string,
     parentId: string,
     content: string,
-) => request('/api/category', 'POST', null, {
+) => request('/api/comment', 'POST', null, {
     articleId: articleId,
     parentId: parentId,
     content: content,
@@ -142,20 +142,16 @@ export const deleteTag = (id: number) => request('/api/tag/' + id, 'DELETE', nul
 export const queryUpload = (
     displayName: string | null,
     type: string | null,
-    status: number | null,
     pageNum: number,
     pageSize: number,
 ) => request('/api/upload', 'GET', {
     name: displayName,
     type: type,
-    status: status,
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
 // 上传文件
-export const addUpload = (
-    files: [],
-) => {
+export const addUpload = (...files: any[]) => {
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i]);
@@ -183,10 +179,12 @@ export const queryLink = (
 export const addLink = (
     title: string,
     url: string,
+    weight: number,
     status: string,
 ) => request('/api/link', 'POST', null, {
     title: title,
     url: url,
+    weight: weight,
     status: status,
 })
 // 更新友链
@@ -194,10 +192,12 @@ export const updateLink = (
     id: number,
     title: string,
     url: string,
+    weight: number,
     status: string,
 ) => request('/api/link/' + id, 'PUT', null, {
     title: title,
     url: url,
+    weight: weight,
     status: status,
 })
 // 删除友链

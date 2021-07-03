@@ -10,14 +10,6 @@
           placeholder="请输入类型"
           v-model="filter.type"
           clearable/>
-      <el-select v-model="filter.status" placeholder="状态">
-        <el-option
-            v-for="item in filter.statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
       <el-button type="primary" @click="onAddUpload">上传文件</el-button>
@@ -33,27 +25,18 @@
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="displayName" label="文件名" width="300" fixed>
         <template #default="scope">
-          <el-link :href="scope.row.path" type="primary" target="_blank">{{ scope.row.displayName }}</el-link>
+          <el-link :href="scope.row.url" type="primary" target="_blank">{{ scope.row.displayName }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :formatter="onFormatSize" prop="length" label="大小" width="120"></el-table-column>
-      <el-table-column prop="type" label="类型" width="100"></el-table-column>
-      <el-table-column prop="path" label="路径" min-width="250" :show-overflow-tooltip="true">
+      <el-table-column :formatter="onFormatFileSize" prop="length" label="大小" width="100"></el-table-column>
+      <el-table-column prop="type" label="类型" width="120"></el-table-column>
+      <el-table-column prop="path" label="存储路径" min-width="250" :show-overflow-tooltip="true">
         <template  #default="scope">
-          <el-link :href="scope.row.path" type="info" target="_blank">{{ scope.row.path }}</el-link>
+          <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.path }}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="authorName" label="作者" width="80"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="上传时间" width ="160"></el-table-column>
-      <el-table-column prop="status" label="状态" width="70">
-        <template #default="scope">
-          <el-tag
-              :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'info' : 'danger'"
-              disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '启用' : scope.row.status === -1 ? '删除' : '禁用'}}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" width="80">
         <template #default="scope">
           <el-button plain type="danger" size="mini" @click="onDeleteUpload(scope.row)">删除</el-button>
@@ -69,6 +52,34 @@
         layout="prev, pager, next"/>
 
   </el-container>
+
+  <el-dialog title="上传文件" v-model="dialog" width="600px">
+    <el-form ref="verify" :model="dialogData" label-width="120px">
+      <el-form-item label="选择文件">
+        <el-upload
+            drag
+            action=""
+            :on-change="onUploadChange"
+            :multiple="false"
+            :auto-upload="false"
+            :show-file-list="false">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="文件名称">
+        <span>{{onFormatFileName(dialogData.name, '请先选择文件')}}</span>
+      </el-form-item>
+      <el-form-item label="文件长度">
+        <span>{{onFormatByteSize(dialogData.size, '请先选择文件')}}</span>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onDialogSubmit">上传</el-button>
+        <el-button @click="dialog = false">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script lang="ts">
@@ -87,21 +98,6 @@ export default defineComponent({
       filter: {
         displayName: null,
         type: null,
-        status: null,
-        statusOptions: [
-          {
-            value: -1,
-            label: '已删除',
-          },
-          {
-            value: 0,
-            label: '禁用',
-          },
-          {
-            value: 1,
-            label: '启用',
-          },
-        ],
       },
 
       data: {
@@ -111,6 +107,9 @@ export default defineComponent({
         total: 0,
         list: [],
       },
+
+      dialog: false,
+      dialogData: {},
     }
   },
   methods: {
@@ -120,24 +119,38 @@ export default defineComponent({
     onFilterClear() {
       this.filter.displayName = null
       this.filter.type = null
-      this.filter.status = null
       this.onRefresh()
     },
-    onFormatSize(row: any, column: any) {
+    onFormatFileSize(row: any, column: any) {
       let temp;
       const fileSize = row[column.property];
-      if (fileSize < 1024) {
-        return fileSize + ' B';
-      } else if (fileSize < (1024 * 1024)) {
-        temp = fileSize / 1024;
+      return this.onFormatByteSize(fileSize)
+    },
+    onFormatFileName(name: string, defaultText: string|null = null) {
+      if (!name) {
+        if (!defaultText) return '-'
+        return defaultText
+      }
+      return name
+    },
+    onFormatByteSize(size: number, defaultText: string|null = null): string {
+      if (!size) {
+        if (!defaultText) return '-'
+        return defaultText
+      }
+      let temp;
+      if (size < 1024) {
+        return size + ' B';
+      } else if (size < (1024 * 1024)) {
+        temp = size / 1024;
         temp = temp.toFixed(2);
         return temp + ' KB';
-      } else if (fileSize < (1024 * 1024 * 1024)) {
-        temp = fileSize / (1024 * 1024);
+      } else if (size < (1024 * 1024 * 1024)) {
+        temp = size / (1024 * 1024);
         temp = temp.toFixed(2);
         return temp + ' MB';
       } else {
-        temp = fileSize / (1024 * 1024 * 1024);
+        temp = size / (1024 * 1024 * 1024);
         temp = temp.toFixed(2);
         return temp + ' GB';
       }
@@ -150,9 +163,9 @@ export default defineComponent({
       this.data.pageNum = currentPage;
       this.onRefresh();
     },
-    onEditUpload(row: any) {
-      // TODO: 2021-6-28
-      console.log("onEditUpload:" + row.key)
+    onAddUpload() {
+      this.dialogData = {}
+      this.dialog = true
     },
     onDeleteUpload(row: any) {
       this.$confirm('确认删除?', '提示', {
@@ -171,12 +184,29 @@ export default defineComponent({
       queryUpload(
           this.filter.displayName,
           this.filter.type,
-          this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
       )
           .then(data => {
             this.data = data.data;
+          })
+    },
+
+    onUploadChange(file: any, fileList: any) {
+      if (fileList.length == 0) return
+      this.dialogData = fileList[fileList.length - 1]
+    },
+    onDialogSubmit() {
+      const dialogData = this.dialogData as any
+      if (!dialogData || !dialogData.raw) {
+        this.$message('文件不能为空');
+        return;
+      }
+      addUpload(dialogData.raw)
+          .then(() => {
+            this.$message.success("上传成功");
+            this.dialog = false
+            this.onRefresh()
           })
     },
   }
