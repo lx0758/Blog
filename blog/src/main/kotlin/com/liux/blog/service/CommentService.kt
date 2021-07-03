@@ -20,7 +20,7 @@ interface CommentService {
 
     fun getCommentById(id: Int): Comment?
 
-    fun addByArticle(
+    fun addByBlog(
         articleId: Int,
         parentId: Int?,
         nickname: String?,
@@ -30,4 +30,8 @@ interface CommentService {
         ip: String?,
         ua: String?
     )
+
+    fun addByAdmin(userId: Int, nickname: String, email: String, articleId: Int, parentId: Int, content: String, ip: String, ua: String)
+    fun updateByAdmin(id: Int, status: Int): Int
+    fun deleteByAdmin(id: Int): Int
 }

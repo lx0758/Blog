@@ -1,14 +1,21 @@
 package com.liux.blog.controller.api
 
+import com.liux.blog.annotation.CurrentUserId
 import com.liux.blog.bean.Resp
-import com.liux.blog.bean.vo.api.CommentItemVO
+import com.liux.blog.bean.po.CommentStatusEnum
+import com.liux.blog.bean.po.isValid
+import com.liux.blog.bean.vo.api.CommentVO
 import com.liux.blog.bean.vo.api.PaginationListVO
+import com.liux.blog.dao.ArticleMapper
+import com.liux.blog.dao.UserMapper
+import com.liux.blog.getIp
+import com.liux.blog.getUserAgent
 import com.liux.blog.service.CommentService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.HttpClientErrorException
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/api/comment")
@@ -16,6 +23,10 @@ class CommentController {
     
     @Autowired
     private lateinit var commentService: CommentService
+    @Autowired
+    private lateinit var articleMapper: ArticleMapper
+    @Autowired
+    private lateinit var userMapper: UserMapper
 
     @GetMapping
     fun query(
@@ -27,9 +38,55 @@ class CommentController {
         @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
-    ): Resp<PaginationListVO<CommentItemVO>> {
+    ): Resp<PaginationListVO<CommentVO>> {
         val commentPage = commentService.listByAdmin(article, author, email, ip, content, status, pageNum, pageSize)
-        val comments = commentPage.map { CommentItemVO.of(it) }
+        val comments = commentPage.map { CommentVO.of(it) }
         return Resp.succeed(PaginationListVO.of(comments, commentPage))
+    }
+
+    @PostMapping
+    fun add(
+        request: HttpServletRequest,
+        @CurrentUserId userId: Int,
+        @RequestParam("articleId") articleId: Int,
+        @RequestParam("parentId") parentId: Int,
+        @RequestParam("content") content: String,
+    ): Resp<*> {
+        articleMapper.selectById(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+        commentService.getCommentById(parentId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "父评论不存在")
+        if (content.isEmpty()) {
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "内容不能为空")
+        }
+        val user = userMapper.selectByPrimaryKey(userId)!!
+        val ip = request.getIp()
+        val ua = request.getUserAgent()
+        commentService.addByAdmin(userId, user.nickname!!, user.email!!, articleId, parentId, content, ip, ua)
+        return Resp.succeed()
+    }
+
+    @PutMapping("{id}")
+    fun update(
+        @PathVariable("id") id: Int,
+        @RequestParam("status") status: Int,
+    ): Resp<*> {
+        if (!CommentStatusEnum.values().isValid(status)) {
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "状态不正确")
+        }
+        val updateRow = commentService.updateByAdmin(id, status)
+        if (updateRow < 1) {
+            throw HttpClientErrorException(HttpStatus.NOT_FOUND, "更新失败")
+        }
+        return Resp.succeed()
+    }
+
+    @DeleteMapping("{id}")
+    fun delete(
+        @PathVariable("id") id: Int,
+    ): Resp<*> {
+        val deleteRow = commentService.deleteByAdmin(id)
+        if (deleteRow < 1) {
+            throw HttpClientErrorException(HttpStatus.NOT_FOUND, "删除失败")
+        }
+        return Resp.succeed()
     }
 }

@@ -26,7 +26,7 @@ class ApiLoginFilter(
 
     init {
         setAuthenticationSuccessHandler { _, response, authentication ->
-            userService.refreshLastLoginTime((authentication.principal as UserDetailsImpl).getId())
+            userService.updateByLogin((authentication.principal as UserDetailsImpl).getId())
             response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE)
             response.writer.print(
                 Resp.succeed().toJSONString()

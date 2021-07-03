@@ -16,4 +16,14 @@ data class Config(
     var createTime: Date? = null,
     // 更新时间
     var updateTime: Date? = null,
-)
+) {
+    companion object {
+        const val KEY_SITE_DOMAIN = "SITE_DOMAIN"
+        const val KEY_SITE_TITLE = "SITE_TITLE"
+        const val KEY_SITE_DESCRIPTION = "SITE_DESCRIPTION"
+        const val KEY_SITE_KEYWORDS = "SITE_KEYWORDS"
+        const val KEY_SITE_BEIAN = "SITE_BEIAN"
+        const val KEY_SITE_BAIDU = "SITE_BAIDU"
+        const val KEY_SITE_CREATE_YEAR = "SITE_CREATE_YEAR"
+    }
+}

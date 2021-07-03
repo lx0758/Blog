@@ -26,4 +26,5 @@ interface ArticleMapper {
     fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Article): Int
     fun updateByPrimaryKey(record: Article): Int
+    fun updateByMoveCategory(@Param("oldCategoryId") oldCategoryId: Int, @Param("newCategoryId") newCategoryId: Int)
 }

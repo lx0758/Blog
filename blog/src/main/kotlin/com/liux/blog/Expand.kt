@@ -2,11 +2,9 @@ package com.liux.blog
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.code.kaptcha.Constants
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.ArticleFormatEnum
 import com.liux.blog.bean.po.Comment
-import com.liux.blog.bean.po.FORMAT_HTML
-import com.liux.blog.bean.po.FORMAT_MARKDOWN
 import com.liux.blog.bean.vo.CatalogueVO
 import com.liux.blog.config.KaptchaConfig
 import com.liux.blog.markdown.MarkdownHelper
@@ -74,10 +72,10 @@ fun Article.parseContent(catalogues: ArrayList<CatalogueVO>? = null): String {
     val localContent = content
     if (localContent.isNullOrEmpty()) return ""
     return when (format) {
-        FORMAT_MARKDOWN -> {
+        ArticleFormatEnum.MARKDOWN.value -> {
             MarkdownHelper.parse(localContent, catalogues)
         }
-        FORMAT_HTML -> {
+        ArticleFormatEnum.HTML.value -> {
             localContent
         }
         else -> ""

@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import springfox.documentation.builders.*
 import springfox.documentation.schema.ModelRef
 import springfox.documentation.service.ApiDescription
+import springfox.documentation.service.ApiInfo
 import springfox.documentation.service.Parameter
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.ApiListingScannerPlugin
@@ -26,22 +27,38 @@ class SwaggerConfig : ApiListingScannerPlugin {
     private var enabled: Boolean = false
 
     @Bean
-    fun createRestApi(): Docket {
+    fun createBlogApi(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
             .enable(enabled)
-            .apiInfo(
-                ApiInfoBuilder()
-                    .title("接口文档")
-                    .description("博客后台接口文档")
-                    .version("1.0")
-                    .build()
-            )
+            .apiInfo(createApiInfo())
+            .groupName("博客接口")
+            .select()
+            .apis(RequestHandlerSelectors.any())
+            .paths(Predicates.or(
+                PathSelectors.ant("/article/**/comment")
+            ))
+            .build()
+    }
+
+    @Bean
+    fun createAdminApi(): Docket {
+        return Docket(DocumentationType.SWAGGER_2)
+            .enable(enabled)
+            .apiInfo(createApiInfo())
+            .groupName("管理接口")
             .select()
             .apis(RequestHandlerSelectors.any())
             .paths(Predicates.or(
                 PathSelectors.ant("/api/**"),
-                PathSelectors.ant("/article/**/comment")
             ))
+            .build()
+    }
+
+    private fun createApiInfo(): ApiInfo {
+        return ApiInfoBuilder()
+            .title("接口文档")
+            .description("博客后台接口文档")
+            .version("1.0")
             .build()
     }
 
@@ -59,13 +76,14 @@ class SwaggerConfig : ApiListingScannerPlugin {
         )
         val sessionApiDescription = ApiDescriptionBuilder(context.operationOrdering())
             .path("/api/session")
+            .groupName("管理接口")
             .operations(
                 arrayListOf(
                     OperationBuilder(CachingOperationNameGenerator())
                         .method(HttpMethod.POST)
                         .summary("login")
                         .uniqueId("login")
-                        .tags(setOf("ApiFilter"))
+                        .tags(setOf("api-filter"))
                         .parameters(arrayListOf(
                             createStringParameter(1, "username", true),
                             createStringParameter(2, "password", true),
@@ -77,7 +95,7 @@ class SwaggerConfig : ApiListingScannerPlugin {
                         .method(HttpMethod.DELETE)
                         .summary("logout")
                         .uniqueId("logout")
-                        .tags(setOf("ApiFilter"))
+                        .tags(setOf("api-filter"))
                         .produces(setOf(MediaType.APPLICATION_JSON_VALUE))
                         .responseMessages(responseMessages)
                         .build()

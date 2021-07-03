@@ -1,7 +1,6 @@
 package com.liux.blog.controller
 
 import com.liux.blog.bean.Resp
-import com.liux.blog.bean.po.COMMENT_ENABLE
 import com.liux.blog.bean.vo.CommentPageVO
 import com.liux.blog.checkVerifyCode
 import com.liux.blog.getIp
@@ -66,7 +65,7 @@ class ArticleCommentController {
 
         val article = articleService.getArticleById(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
 
-        if (article.enableComment != COMMENT_ENABLE) {
+        if (!article.enableComment!!) {
             throw HttpClientErrorException(HttpStatus.FORBIDDEN, "文章禁止评论")
         }
 
@@ -76,7 +75,7 @@ class ArticleCommentController {
 
         val ip = request.getIp()
         val ua = request.getUserAgent()
-        commentService.addByArticle(articleId, parentId, nickname, email, localLink, content, ip, ua)
+        commentService.addByBlog(articleId, parentId, nickname, email, localLink, content, ip, ua)
         return Resp.succeed()
     }
 }

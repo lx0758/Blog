@@ -1,7 +1,6 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.COMMENT_ENABLE
 import com.liux.blog.parseContent
 import java.util.*
 
@@ -30,7 +29,7 @@ data class ArticleVO(
                 article.category!!.name!!,
                 article.author!!.nickname!!,
                 article.views!!,
-                article.enableComment == COMMENT_ENABLE,
+                article.enableComment!!,
                 article.tags?.map { it.name!! } ?: emptyList(),
             )
         }

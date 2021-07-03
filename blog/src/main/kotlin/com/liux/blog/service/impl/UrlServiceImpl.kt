@@ -7,6 +7,7 @@ import com.liux.blog.dao.UrlMapper
 import com.liux.blog.service.UrlService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UrlServiceImpl : UrlService {
@@ -34,5 +35,34 @@ class UrlServiceImpl : UrlService {
             status = status,
         ))
         return page
+    }
+
+    override fun addByAdmin(userId: Int, key: String, url: String, description: String, status: Int) {
+        urlMapper.insertSelective(Url(
+            key = key,
+            url = url,
+            description = description,
+            authorId = userId,
+            status = status,
+            createTime = Date(),
+            updateTime = null,
+        ))
+    }
+
+    override fun updateByAdmin(id: Int, key: String, url: String, description: String, status: Int): Int {
+        val updateRow = urlMapper.updateByPrimaryKeySelective(Url(
+            id = id,
+            key = key,
+            url = url,
+            description = description,
+            status = status,
+            updateTime = Date(),
+        ))
+        return updateRow
+    }
+
+    override fun deleteByAdmin(id: Int): Int {
+        val deleteRow = urlMapper.deleteByPrimaryKey(id)
+        return deleteRow
     }
 }

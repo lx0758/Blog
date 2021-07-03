@@ -391,4 +391,10 @@
             update_time    = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
+    <update id="updateByMoveCategory">
+        <!--@mbg.generated-->
+        update t_article
+        set category_id    = #{newCategoryId,jdbcType=INTEGER}
+        where category_id = #{oldCategoryId,jdbcType=INTEGER}
+    </update>
 </mapper>

@@ -9,13 +9,12 @@
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
                  column="author_id"/>
   </resultMap>
   <sql id="Base_Column_List">
-    id, display_name, `length`, `type`, `path`, author_id, `status`, create_time
+    id, display_name, `length`, `type`, `path`, author_id, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -34,9 +33,6 @@
     <if test="type != null and type != ''">
       and `type` like CONCAT('%', #{type,jdbcType=LONGVARCHAR}, '%')
     </if>
-    <if test="status != null">
-      and `status` = #{status}
-    </if>
     order by id desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -45,11 +41,10 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Upload" useGeneratedKeys="true">
     insert into t_upload (display_name, `length`, `type`, 
-      `path`, author_id, `status`, 
+      `path`, author_id,
       create_time)
     values (#{displayName,jdbcType=VARCHAR}, #{length,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
-      #{path,jdbcType=VARCHAR}, #{authorId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      #{path,jdbcType=VARCHAR}, #{authorId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Upload" useGeneratedKeys="true">
     insert into t_upload
@@ -68,9 +63,6 @@
       </if>
       <if test="authorId != null">
         author_id,
-      </if>
-      <if test="status != null">
-        `status`,
       </if>
       <if test="createTime != null">
         create_time,
@@ -91,9 +83,6 @@
       </if>
       <if test="authorId != null">
         #{authorId,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -118,9 +107,6 @@
       <if test="authorId != null">
         author_id = #{authorId,jdbcType=INTEGER},
       </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=TINYINT},
-      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -134,7 +120,6 @@
       `type` = #{type,jdbcType=VARCHAR},
       `path` = #{path,jdbcType=VARCHAR},
       author_id = #{authorId,jdbcType=INTEGER},
-      `status` = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

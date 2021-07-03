@@ -6,5 +6,15 @@ import org.springframework.security.core.userdetails.UserDetailsService
 interface UserService: UserDetailsService {
     fun getById(id: Int): User?
     fun listByAdmin(username: String?, nickname: String?, status: Int?): List<User>
-    fun refreshLastLoginTime(id: Int)
+    fun updateByLogin(id: Int)
+    fun updateBySelf(
+        id: Int,
+        nickname: String,
+        description: String,
+        email: String,
+        github: String
+    ): Int
+
+    fun verifyPassword(id: Int, password: String): Boolean
+    fun updatePassword(id: Int, password: String): Boolean
 }

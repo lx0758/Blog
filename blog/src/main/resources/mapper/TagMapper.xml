@@ -7,6 +7,7 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <resultMap id="CountResultMap" type="com.liux.blog.bean.po.Tag">
         <!--@mbg.generated-->
@@ -14,11 +15,12 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="article_count" javaType="INTEGER" property="articleCount"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, `name`, create_time
+        id, `name`, create_time, update_time
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
@@ -40,6 +42,12 @@
         from t_tag
         where id = #{id,jdbcType=INTEGER}
     </delete>
+    <delete id="deleteByCleanTagLink" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete
+        from t_article_tag
+        where tag_id = #{tagId,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Tag"
             useGeneratedKeys="true">
         <!--@mbg.generated-->
@@ -57,6 +65,9 @@
             <if test="createTime != null">
                 create_time,
             </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">
@@ -64,6 +75,9 @@
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
@@ -77,6 +91,9 @@
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -84,25 +101,27 @@
         <!--@mbg.generated-->
         update t_tag
         set `name`      = #{name,jdbcType=VARCHAR},
-            create_time = #{createTime,jdbcType=TIMESTAMP}
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByArticle" resultMap="BaseResultMap">
         select t_tag.id,
                t_tag.`name`,
-               t_tag.create_time
+               t_tag.create_time,
+               t_tag.update_time
         from t_article_tag
                      LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
         where t_article_tag.article_id = #{articleId}
     </select>
     <select id="selectByCount" resultMap="CountResultMap">
-        select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count
+        select t_tag.id, t_tag.`name`, t_tag.create_time, t_tag.update_time, COUNT(`tag_id`) as article_count
         FROM t_article_tag
                      LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
         GROUP BY tag_id, name ORDER BY name
     </select>
     <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Tag" resultMap="CountResultMap">
-        select t_tag.id, t_tag.`name`, t_tag.create_time, COUNT(`tag_id`) as article_count
+        select t_tag.id, t_tag.`name`, t_tag.create_time, t_tag.update_time, COUNT(`tag_id`) as article_count
         FROM t_article_tag
                      LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
             WHERE 1 = 1
@@ -113,5 +132,15 @@
     </select>
     <select id="selectCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp
+    </select>
+    <select id="selectByTagCount" resultType="INTEGER">
+        SELECT count(1) FROM (select 1 from t_article_tag where tag_id = #{tagId}) as temp
+    </select>
+    <select id="insertByAddArticleLink" resultType="INTEGER">
+        insert into t_article_tag (article_id, tag_id, create_time)
+        values (#{articleId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}, now())
+    </select>
+    <select id="deleteByRemoveArticleLink" resultType="INTEGER">
+        delete from t_article_tag where article_id = #{articleId,jdbcType=INTEGER} and tag_id = #{tagId,jdbcType=INTEGER}
     </select>
 </mapper>

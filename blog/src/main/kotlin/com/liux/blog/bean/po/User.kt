@@ -23,7 +23,7 @@ data class User(
     var email: String? = null,
     // 最后登录时间
     var lastLoginTime: Date? = null,
-    // 状态 -1_已删除 0_未启用 1_已启用
+    // 状态
     var status: Int? = null,
     // 创建时间
     var createTime: Date? = null,

@@ -2,17 +2,29 @@ package com.liux.blog.service.impl
 
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
+import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
+import com.liux.blog.dao.TagMapper
 import com.liux.blog.service.ArticleService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 class ArticleServiceImpl: ArticleService {
 
     @Autowired
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
+
+    @Autowired
     private lateinit var articleMapper: ArticleMapper
+    @Autowired
+    private lateinit var tagMapper: TagMapper
 
     override fun listByPage(pageNum: Int): Page<Article> {
         val page = PageHelper.startPage<Article>(pageNum, 10)
@@ -50,7 +62,7 @@ class ArticleServiceImpl: ArticleService {
         title: String?,
         category: Int?,
         format: Int?,
-        comment: Int?,
+        enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
         pageSize: Int
@@ -61,7 +73,7 @@ class ArticleServiceImpl: ArticleService {
             categoryId = category,
             format = format,
             title = title,
-            enableComment = comment,
+            enableComment = enableComment,
             status = status,
         ))
         return page
@@ -89,5 +101,134 @@ class ArticleServiceImpl: ArticleService {
 
     override fun getArticleByNext(articleId: Int): Article? {
         return articleMapper.selectByNext(articleId)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun addByAdmin(
+        title: String,
+        categoryId: Int,
+        content: String,
+        format: Int,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>
+    ) {
+        val article = Article(
+            title = title,
+            categoryId = categoryId,
+            content = content,
+            format = format,
+            url = url,
+            weight = weight,
+            enableComment = enableComment,
+            status = status,
+            createTime = Date(),
+            updateTime = null,
+        )
+        articleMapper.insertSelective(article)
+
+        linkArticleAndTags(article.id!!, tags)
+
+        applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun updateByAdmin(
+        id: Int,
+        title: String,
+        categoryId: Int,
+        content: String,
+        format: Int,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>
+    ): Int {
+        val updateRow = articleMapper.updateByPrimaryKeySelective(Article(
+            id = id,
+            title = title,
+            categoryId = categoryId,
+            content = content,
+            format = format,
+            url = url,
+            weight = weight,
+            enableComment = enableComment,
+            status = status,
+            updateTime = Date(),
+        ))
+
+        val tagPOs = tagMapper.selectByArticle(id)
+        val tagStrings = ArrayList<String>().apply { addAll(tags) }
+        // 先检查已存在的 tag 和新的 tag 有没有一样的
+        tagPOs.forEach {
+            val tagId = it.id!!
+            val tagName = it.name!!
+            if (tagStrings.contains(tagName)) {
+                // 如果一样则不处理, 从新数组中移除避免后续检查
+                tagStrings.remove(tagName)
+            } else {
+                // 如果不一样则移除关联
+                // 并检查是否还被别的文章关联, 没有则删除
+                tagMapper.deleteByRemoveArticleLink(id, tagId)
+                if (tagMapper.selectByTagCount(tagId) == 0) {
+                    tagMapper.deleteByPrimaryKey(tagId)
+                }
+            }
+        }
+        // 上面处理剩下的都是新的 tag
+        // 只需要 查找/创建 然后关联起来即可
+        linkArticleAndTags(id, tagStrings.toTypedArray())
+
+        if (updateRow > 0) {
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+        }
+        return updateRow
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun updateStatusByAdmin(id: Int, status: Int): Int {
+        val updateRow = articleMapper.updateByPrimaryKeySelective(Article(
+            id = id,
+            status = status,
+            updateTime = Date(),
+        ))
+        if (updateRow > 0) {
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+        }
+        return updateRow
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun deleteByAdmin(id: Int): Int {
+        val deleteRow = articleMapper.deleteByPrimaryKey(id)
+        if (deleteRow > 0) {
+            val tagPOs = tagMapper.selectByArticle(id)
+            tagPOs.forEach {
+                val tagId = it.id!!
+                tagMapper.deleteByRemoveArticleLink(id, tagId)
+                if (tagMapper.selectByTagCount(tagId) == 0) {
+                    tagMapper.deleteByPrimaryKey(tagId)
+                }
+            }
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+        }
+        return deleteRow
+    }
+
+    private fun linkArticleAndTags(id: Int, tags: Array<String>) {
+        tags.forEach {
+            var tag = tagMapper.selectByName(it)
+            if (tag == null) {
+                tag = Tag(
+                    name = it,
+                    createTime = Date(),
+                )
+                tagMapper.insertSelective(tag)
+            }
+            tagMapper.insertByAddArticleLink(id, tag.id!!)
+        }
     }
 }

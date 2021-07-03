@@ -64,14 +64,14 @@ class IndexController {
         return themeService.render(model, "categorys")
     }
 
-    @GetMapping("/category/{category}")
-    fun category(model: Model, @PathVariable("category") category: String): String {
-        return category(model, category, 1)
+    @GetMapping("/category/{categoryName}")
+    fun category(model: Model, @PathVariable("categoryName") categoryName: String): String {
+        return category(model, categoryName, 1)
     }
 
-    @GetMapping("/category/{category}/{pageNum}")
-    fun category(model: Model, @PathVariable("category") category: String, @PathVariable("pageNum") pageNum: Int): String {
-        val category = categoryService.getByName(category) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+    @GetMapping("/category/{categoryName}/{pageNum}")
+    fun category(model: Model, @PathVariable("categoryName") categoryName: String, @PathVariable("pageNum") pageNum: Int): String {
+        val category = categoryService.getByByName(categoryName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val articlePage = articleService.listByCategory(category.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
@@ -89,14 +89,14 @@ class IndexController {
         return themeService.render(model, "tags")
     }
 
-    @GetMapping("/tag/{tag}")
-    fun tag(model: Model, @PathVariable("tag") tag: String): String {
-        return tag(model, tag, 1)
+    @GetMapping("/tag/{tagName}")
+    fun tag(model: Model, @PathVariable("tagName") tagName: String): String {
+        return tag(model, tagName, 1)
     }
 
-    @GetMapping("/tag/{tag}/{pageNum}")
-    fun tag(model: Model, @PathVariable("tag") tag: String, @PathVariable("pageNum") pageNum: Int): String {
-        val tag = tagService.getByName(tag) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+    @GetMapping("/tag/{tagName}/{pageNum}")
+    fun tag(model: Model, @PathVariable("tagName") tagName: String, @PathVariable("pageNum") pageNum: Int): String {
+        val tag = tagService.getByName(tagName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val articlePage = articleService.listByTag(tag.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)

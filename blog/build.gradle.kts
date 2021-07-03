@@ -28,7 +28,7 @@ dependencies {
     implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.3.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.4")
-    implementation("com.github.xiaoymin:knife4j-spring-ui:3.0.2")
+    implementation("com.github.xiaoymin:knife4j-spring-ui:3.0.3")
     implementation("io.springfox:springfox-swagger2:2.9.2")
     implementation("com.github.ua-parser:uap-java:1.5.2")
     implementation("com.github.penggle:kaptcha:2.3.2")

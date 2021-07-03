@@ -15,7 +15,7 @@ interface ArticleService {
         title: String?,
         category: Int?,
         format: Int?,
-        comment: Int?,
+        enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
         pageSize: Int
@@ -25,4 +25,32 @@ interface ArticleService {
     fun getArticleByUrl(url: String): Article?
     fun getArticleByPrev(articleId: Int): Article?
     fun getArticleByNext(articleId: Int): Article?
+
+    fun addByAdmin(
+        title: String,
+        categoryId: Int,
+        content: String,
+        format: Int,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>
+    )
+
+    fun updateByAdmin(
+        id: Int,
+        title: String,
+        categoryId: Int,
+        content: String,
+        format: Int,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>
+    ): Int
+    fun updateStatusByAdmin(id: Int, status: Int): Int
+
+    fun deleteByAdmin(id: Int): Int
 }

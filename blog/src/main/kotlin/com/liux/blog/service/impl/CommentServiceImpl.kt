@@ -3,11 +3,12 @@ package com.liux.blog.service.impl
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.po.Comment
-import com.liux.blog.bean.po.STATE_NOT_ACTIVATED
+import com.liux.blog.bean.po.CommentStatusEnum
 import com.liux.blog.dao.CommentMapper
 import com.liux.blog.service.CommentService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -48,7 +49,7 @@ class CommentServiceImpl: CommentService {
         return commentMapper.selectByPrimaryKey(id)
     }
 
-    override fun addByArticle(
+    override fun addByBlog(
         articleId: Int,
         parentId: Int?,
         nickname: String?,
@@ -59,7 +60,6 @@ class CommentServiceImpl: CommentService {
         ua: String?
     ) {
         val comment = Comment(
-            id = 0,
             articleId = articleId,
             parentId = parentId,
             author = nickname,
@@ -69,10 +69,55 @@ class CommentServiceImpl: CommentService {
             content = content,
             ip = ip,
             ua = ua,
-            status = STATE_NOT_ACTIVATED,
+            status = CommentStatusEnum.PENDING.value,
             createTime = Date(),
             updateTime = null,
         )
         commentMapper.insert(comment)
+    }
+
+    override fun addByAdmin(
+        userId: Int,
+        nickname: String,
+        email: String,
+        articleId: Int,
+        parentId: Int,
+        content: String,
+        ip: String,
+        ua: String
+    ) {
+        val comment = Comment(
+            articleId = articleId,
+            parentId = parentId,
+            author = nickname,
+            authorId = null,
+            email = email,
+            url = null,
+            content = content,
+            ip = ip,
+            ua = ua,
+            status = CommentStatusEnum.AUDITED.value,
+            createTime = Date(),
+            updateTime = null,
+        )
+        commentMapper.insert(comment)
+    }
+
+    override fun updateByAdmin(id: Int, status: Int): Int {
+        val comment = Comment(
+            id = id,
+            status = status,
+            updateTime = Date(),
+        )
+        return commentMapper.updateByPrimaryKeySelective(comment)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun deleteByAdmin(id: Int): Int {
+        val deleteRow = commentMapper.deleteByPrimaryKey(id)
+        if (deleteRow > 0) {
+            commentMapper.deleteByCleanChild(id)
+        }
+        return deleteRow
     }
 }

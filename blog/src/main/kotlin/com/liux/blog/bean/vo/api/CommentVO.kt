@@ -5,10 +5,10 @@ import com.liux.blog.browser
 import com.liux.blog.system
 import java.util.*
 
-data class CommentItemVO(
+data class CommentVO(
     val id: Int,
     val articleId: Int,
-    val articleName: String,
+    val articleTitle: String,
     val nickname: String,
     val email: String,
     val url: String,
@@ -21,8 +21,8 @@ data class CommentItemVO(
     val status: Int,
 ) {
     companion object {
-        fun of(comment: Comment): CommentItemVO {
-            return CommentItemVO(
+        fun of(comment: Comment): CommentVO {
+            return CommentVO(
                 comment.id!!,
                 comment.article?.id ?: 0,
                 comment.article?.title ?: "",

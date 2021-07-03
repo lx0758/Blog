@@ -13,6 +13,8 @@ data class Category(
     var name: String? = null,
     // 创建时间
     var createTime: Date? = null,
+    // 创建时间
+    var updateTime: Date? = null,
 
     // 文章数量
     var articleCount: Int? = null,

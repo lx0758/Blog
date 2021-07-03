@@ -27,7 +27,7 @@ data class Comment(
     var ip: String? = null,
     // 浏览器标识
     var ua: String? = null,
-    // 状态 -1_已删除 0_未审核 1_已审核
+    // 状态
     var status: Int? = null,
     // 创建时间
     var createTime: Date? = null,

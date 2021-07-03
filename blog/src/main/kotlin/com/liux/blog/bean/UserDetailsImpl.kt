@@ -1,8 +1,7 @@
 package com.liux.blog.bean
 
-import com.liux.blog.bean.po.STATE_ACTIVATED
-import com.liux.blog.bean.po.STATE_DELETED
 import com.liux.blog.bean.po.User
+import com.liux.blog.bean.po.UserStatusEnum
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
@@ -28,7 +27,7 @@ class UserDetailsImpl(
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return status != STATE_DELETED
+        return status == UserStatusEnum.ACTIVATED.value
     }
 
     override fun isAccountNonLocked(): Boolean {
@@ -40,7 +39,7 @@ class UserDetailsImpl(
     }
 
     override fun isEnabled(): Boolean {
-        return status == STATE_ACTIVATED
+        return status == UserStatusEnum.ACTIVATED.value
     }
 
     fun getId(): Int {

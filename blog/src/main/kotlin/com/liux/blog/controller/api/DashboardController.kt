@@ -12,6 +12,7 @@ class DashboardController {
 
     @GetMapping
     fun query(): Resp<DashboardVO> {
+        // TODO: 2021/7/3
         val dashboardVO = DashboardVO()
         return Resp.succeed(dashboardVO)
     }

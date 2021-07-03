@@ -1,9 +1,6 @@
 package com.liux.blog.bean.vo.api
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.COMMENT_ENABLE
-import com.liux.blog.bean.po.FORMAT_MARKDOWN
-import com.liux.blog.bean.po.STATE_UNPUBLISHED
 import java.util.*
 
 data class ArticleItemVO(
@@ -25,14 +22,14 @@ data class ArticleItemVO(
                 article.id!!,
                 article.title ?: "",
                 article.category!!.name!!,
-                article.format ?: FORMAT_MARKDOWN,
+                article.format!!,
                 article.url ?: "",
                 article.weight ?: 0,
                 article.views ?: 0,
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
-                article.enableComment == COMMENT_ENABLE,
-                article.status ?: STATE_UNPUBLISHED,
+                article.enableComment!!,
+                article.status!!,
             )
         }
     }

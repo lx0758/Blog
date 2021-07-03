@@ -35,13 +35,13 @@ data class BlogVO(
     companion object {
         fun of(configs: Map<String, String?>, articleCount: Int, categoryCount: Int, tagCount: Int, user: User, links: List<Link>): BlogVO {
             return BlogVO(
-                configs[SITE_DOMAIN] ?: "domain.org",
-                configs[SITE_TITLE] ?: "Blog",
-                configs[SITE_DESCRIPTION] ?: "",
-                configs[SITE_KEYWORDS] ?: "",
-                configs[SITE_BEIAN] ?: "",
-                configs[SITE_BAIDU] ?: "",
-                configs[SITE_CREATE_YEAR] ?: "2020",
+                configs[Config.KEY_SITE_DOMAIN] ?: "domain.org",
+                configs[Config.KEY_SITE_TITLE] ?: "Blog",
+                configs[Config.KEY_SITE_DESCRIPTION] ?: "",
+                configs[Config.KEY_SITE_KEYWORDS] ?: "",
+                configs[Config.KEY_SITE_BEIAN] ?: "",
+                configs[Config.KEY_SITE_BAIDU] ?: "",
+                configs[Config.KEY_SITE_CREATE_YEAR] ?: "2020",
 
                 articleCount,
                 categoryCount,

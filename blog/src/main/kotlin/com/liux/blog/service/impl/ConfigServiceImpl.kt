@@ -1,13 +1,20 @@
 package com.liux.blog.service.impl
 
+import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Config
 import com.liux.blog.dao.ConfigMapper
 import com.liux.blog.service.ConfigService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.collections.HashMap
 
 @Service
 class ConfigServiceImpl: ConfigService {
+
+    @Autowired
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @Autowired
     private lateinit var configMapper: ConfigMapper
@@ -28,5 +35,37 @@ class ConfigServiceImpl: ConfigService {
             description = description,
         ))
         return configs;
+    }
+
+    override fun addByAdmin(key: String, value: String, description: String) {
+        configMapper.insertSelective(Config(
+            key = key,
+            value = value,
+            description = description,
+            createTime = Date(),
+            updateTime = null,
+        ))
+        applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CONFIG)
+    }
+
+    override fun updateByAdmin(key: String, value: String, description: String): Int {
+        val updateRow = configMapper.updateByPrimaryKeySelective(Config(
+            key = key,
+            value = value,
+            description = description,
+            updateTime = Date(),
+        ))
+        if (updateRow > 0) {
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CONFIG)
+        }
+        return updateRow
+    }
+
+    override fun deleteByAdmin(key: String): Int {
+        val deleteRow = configMapper.deleteByPrimaryKey(key)
+        if (deleteRow > 0) {
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CONFIG)
+        }
+        return deleteRow
     }
 }

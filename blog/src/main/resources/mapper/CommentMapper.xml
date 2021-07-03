@@ -100,6 +100,11 @@
     delete from t_comment
     where id = #{id,jdbcType=INTEGER}
   </delete>
+  <delete id="deleteByCleanChild" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from t_comment
+    where parent_id = #{parentId,jdbcType=INTEGER}
+  </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Comment" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into t_comment (article_id, parent_id, author,
