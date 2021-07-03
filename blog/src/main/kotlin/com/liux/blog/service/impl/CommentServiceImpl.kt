@@ -59,9 +59,10 @@ class CommentServiceImpl: CommentService {
         ip: String?,
         ua: String?
     ) {
+        val finalParentId = findTopParentId(parentId)
         val comment = Comment(
             articleId = articleId,
-            parentId = parentId,
+            parentId = finalParentId,
             author = nickname,
             authorId = null,
             email = email,
@@ -86,9 +87,10 @@ class CommentServiceImpl: CommentService {
         ip: String,
         ua: String
     ) {
+        val finalParentId = findTopParentId(parentId)
         val comment = Comment(
             articleId = articleId,
-            parentId = parentId,
+            parentId = finalParentId,
             author = nickname,
             authorId = null,
             email = email,
@@ -119,5 +121,19 @@ class CommentServiceImpl: CommentService {
             commentMapper.deleteByCleanChild(id)
         }
         return deleteRow
+    }
+
+    /**
+     * 找到最顶层的评论ID
+     */
+    private fun findTopParentId(parentId: Int?): Int? {
+        if (parentId == null) return null
+        var finalParentId = parentId
+        while (true) {
+            val localComment = commentMapper.selectByPrimaryKey(finalParentId!!) ?: break
+            val localParentId = localComment.parentId ?: break
+            finalParentId = localParentId
+        }
+        return finalParentId
     }
 }

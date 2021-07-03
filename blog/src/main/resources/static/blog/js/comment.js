@@ -64,127 +64,23 @@ function Comment(options) {
             </div>
         </div>
         <div class="vrow text-right">
-            <img class="vcode-img vimg vcol">
+            <img class="vcode-img vcol">
             <input name="code" placeholder="请输入验证码" class="vcode vinput vcol" type="text">
             <button type="button" title="Cmd|Ctrl+Enter" class="vsubmit vbtn vcol">提交</button>
         </div>
         <div class="vemojis" style="display:none;">
-            <i>😀</i>
-            <i>😃</i>
-            <i>😄</i>
-            <i>😁</i>
-            <i>😆</i>
-            <i>😅</i>
-            <i>😂</i>
-            <i>😊</i>
-            <i>😇</i>
-            <i>😉</i>
-            <i>😌</i>
-            <i>😍</i>
-            <i>😘</i>
-            <i>😗</i>
-            <i>😙</i>
-            <i>😚</i>
-            <i>😋</i>
-            <i>😜</i>
-            <i>😝</i>
-            <i>😛</i>
-            <i>😎</i>
-            <i>😏</i>
-            <i>😒</i>
-            <i>😞</i>
-            <i>😔</i>
-            <i>😟</i>
-            <i>😕</i>
-            <i>😣</i>
-            <i>😖</i>
-            <i>😫</i>
-            <i>😩</i>
-            <i>😠</i>
-            <i>😡</i>
-            <i>😶</i>
-            <i>😐</i>
-            <i>😑</i>
-            <i>😯</i>
-            <i>😦</i>
-            <i>😧</i>
-            <i>😮</i>
-            <i>😲</i>
-            <i>😵</i>
-            <i>😳</i>
-            <i>😱</i>
-            <i>😨</i>
-            <i>😰</i>
-            <i>😢</i>
-            <i>😥</i>
-            <i>😭</i>
-            <i>😓</i>
-            <i>😪</i>
-            <i>😴</i>
-            <i>😷</i>
-            <i>😈</i>
-            <i>😺</i>
-            <i>😸</i>
-            <i>😹</i>
-            <i>😻</i>
-            <i>😼</i>
-            <i>😽</i>
-            <i>🙀</i>
-            <i>😿</i>
-            <i>😾</i>
-            <i>🐱</i>
-            <i>🐭</i>
-            <i>🐮</i>
-            <i>🐵</i>
-            <i>✋</i>
-            <i>✊</i>
-            <i>✌️</i>
-            <i>👆</i>
-            <i>👇</i>
-            <i>👈</i>
-            <i>👉</i>
-            <i>👊</i>
-            <i>👋</i>
-            <i>👏</i>
-            <i>👐</i>
-            <i>👍</i>
-            <i>👎</i>
-            <i>👌</i>
-            <i>🙏</i>
-            <i>👂</i>
-            <i>👀</i>
-            <i>👃</i>
-            <i>👄</i>
-            <i>👅</i>
-            <i>❤️</i>
-            <i>💘</i>
-            <i>💖</i>
-            <i>⭐️</i>
-            <i>✨</i>
-            <i>⚡️</i>
-            <i>☀️</i>
-            <i>☁️</i>
-            <i>❄️</i>
-            <i>☔️</i>
-            <i>☕️</i>
-            <i>✈️</i>
-            <i>⚓️</i>
-            <i>⌚️</i>
-            <i>☎️</i>
-            <i>⌛️</i>
-            <i>✉️</i>
-            <i>✂️</i>
-            <i>✒️</i>
-            <i>✏️</i>
-            <i>❌</i>
-            <i>♻️</i>
-            <i>✅</i>
-            <i>❎</i>
-            <i>Ⓜ️</i>
-            <i>ℹ️</i>
-            <i>™️</i>
-            <i>©️</i>
-            <i>®️</i>
+            <i>😀</i><i>😃</i><i>😄</i><i>😁</i><i>😆</i><i>😅</i><i>😂</i><i>😊</i><i>😇</i><i>😉</i>
+            <i>😌</i><i>😍</i><i>😘</i><i>😗</i><i>😙</i><i>😚</i><i>😋</i><i>😜</i><i>😝</i><i>😛</i>
+            <i>😎</i><i>😏</i><i>😒</i><i>😞</i><i>😔</i><i>😟</i><i>😕</i><i>😣</i><i>😖</i><i>😫</i>
+            <i>😩</i><i>😠</i><i>😡</i><i>😶</i><i>😐</i><i>😑</i><i>😯</i><i>😦</i><i>😧</i><i>😮</i>
+            <i>😲</i><i>😵</i><i>😳</i><i>😱</i><i>😨</i><i>😰</i><i>😢</i><i>😥</i><i>😭</i><i>😓</i>
+            <i>😪</i><i>😴</i><i>😷</i><i>😈</i><i>😺</i><i>😸</i><i>😹</i><i>😻</i><i>😼</i><i>😽</i>
+            <i>🙀</i><i>😿</i><i>😾</i><i>🐱</i><i>🐭</i><i>🐮</i><i>🐵</i><i>✋</i><i>✊</i><i>✌️</i>
+            <i>👆</i><i>👇</i><i>👈</i><i>👉</i><i>👊</i><i>👋</i><i>👏</i><i>👐</i><i>👍</i><i>👎</i>
+            <i>👌</i><i>🙏</i><i>👂</i><i>👀</i><i>👃</i><i>👄</i><i>👅</i><i>❤️</i><i>💘</i><i>💖</i>
+            <i>⭐️</i><i>✨</i><i>⚡️</i><i>☀️</i><i>☁️</i><i>❄️</i><i>☔️</i><i>☕️</i><i>✈️</i><i>⚓️</i>
+            <i>⌚️</i><i>☎️</i><i>⌛️</i><i>✉️</i><i>✂️</i><i>✒️</i><i>✏️</i><i>❌</i><i>♻️</i><i>✅</i>
+            <i>❎</i><i>Ⓜ️</i><i>ℹ️</i><i>™️</i><i>©️</i><i>®️</i>
         </div>
         <div style="display:none;" class="vmark"></div>
     </div>
@@ -276,6 +172,7 @@ function Comment(options) {
                 let _wrapper = utils.find(newCard, '.vreply-wrapper')
                 if (_wrapper) {
                     utils.attr(_wrap, 'parent-id', comment.id);
+                    utils.attr(_wrap, 'parent-name', comment.nickname);
                     utils.attr(_cancel, 'style', 'display:block');
                     _wrap.parentNode.removeChild(_wrap)
                     _wrapper.appendChild(_wrap)
@@ -291,6 +188,7 @@ function Comment(options) {
             },
             replyCancel() {
                 utils.attr(_wrap, 'parent-id', null);
+                utils.attr(_wrap, 'parent-name', null);
                 utils.attr(_cancel, 'style', 'display:none');
                 _wrap.parentNode.removeChild(_wrap)
                 _panel.appendChild(_wrap)
@@ -323,6 +221,7 @@ function Comment(options) {
                 code = _code.value
             }
             let parentId = utils.attr(_wrap, 'parent-id', undefined)
+            let parentName = utils.attr(_wrap, 'parent-name', undefined)
             let nickname = _nickname.value
             let email = _email.value
             let link = _link.value
@@ -339,6 +238,10 @@ function Comment(options) {
             if (!content || content.length === 0) {
                 Comment.panel.showInfo('评论内容不能为空')
                 return
+            }
+
+            if (parentName) {
+                content = '@' + parentName + '\n' + content
             }
 
             api.commit(code, parentId, nickname, email, link, content).then(data => {
@@ -465,10 +368,16 @@ function Comment(options) {
     </div>
     <div class="vmeta">
         <span class="vtime">${childComment.time}</span>
+        <span class="vat" data-vm-id="${childComment.id}" data-self-id="${childComment.id}">回复</span>
     </div>
     <pre class="vcontent" data-expand="查看更多...">${childComment.content}</pre>
 </div>`
             utils.find(newCard, '.vquote').appendChild(newChildCard)
+
+            let _replay = utils.find(newChildCard, '.vat')
+            utils.on('click', _replay, (e) => {
+                Comment.panel.replyAt(newCard, childComment)
+            })
         })
 
         let _replay = utils.find(newCard, '.vat')
