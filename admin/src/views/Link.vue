@@ -13,7 +13,7 @@
       <blog-select v-model:value="filter.status" v-bind:type="6"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onEditLink">新增短链</el-button>
+      <el-button type="primary" @click="onAddLink">新增短链</el-button>
     </el-space>
 
     <el-divider/>
@@ -63,7 +63,7 @@
 
   </el-container>
 
-  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '友链'" v-model="dialog">
+  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '友链'" v-model="dialog" :close-on-click-modal="false">
     <el-form ref="dialog" :model="dialogData" :rules="dialogRules" label-width="120px">
       <el-form-item label="标题" prop="title">
         <el-input v-model="dialogData.title" placeholder="请输入标题"></el-input>
@@ -149,18 +149,18 @@ export default defineComponent({
       this.data.pageNum = currentPage;
       this.onRefresh();
     },
+    onAddLink() {
+      this.dialogData = {}
+      this.dialog = true
+    },
     onEditLink(row: any) {
-      if (row == null) {
-        this.dialogData = {}
-      } else {
-        this.dialogData = {
-          id: row.id,
-          title: row.title,
-          url: row.url,
-          weight: row.weight,
-          status: row.status,
-        };
-      }
+      this.dialogData = {
+        id: row.id,
+        title: row.title,
+        url: row.url,
+        weight: row.weight,
+        status: row.status,
+      };
       this.dialog = true
     },
     onDeleteLink(row: any) {

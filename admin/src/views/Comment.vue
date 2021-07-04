@@ -73,7 +73,7 @@
 
   </el-container>
 
-  <el-dialog title="审核评论" v-model="verify">
+  <el-dialog title="审核评论" v-model="verify" :close-on-click-modal="false">
     <el-form ref="verify" :model="verifyData" label-width="120px">
       <el-form-item label="文章标题">
         <span>{{verifyData.articleTitle}}</span>
@@ -97,7 +97,7 @@
     </el-form>
   </el-dialog>
 
-  <el-dialog title="回复评论" v-model="replay">
+  <el-dialog title="回复评论" v-model="replay" :close-on-click-modal="false">
     <el-form ref="replay" :model="replayData" label-width="120px">
       <el-form-item label="文章标题" prop="title">
         <span>{{replayData.articleTitle}}</span>

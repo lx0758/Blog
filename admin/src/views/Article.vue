@@ -12,7 +12,7 @@
       <blog-select v-model:value="filter.status" v-bind:type="4"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onEditArticle">新增文章</el-button>
+      <el-button type="primary" @click="onAddArticle">新增文章</el-button>
     </el-space>
 
     <el-divider/>
@@ -136,9 +136,13 @@ export default defineComponent({
       this.data.pageNum = currentPage;
       this.onRefresh();
     },
+    onAddArticle() {
+      // TODO: 2021-6-28
+      this.$alert("别点了, 还没实现呢!")
+    },
     onEditArticle(row: any) {
       // TODO: 2021-6-28
-      console.log("onEditArticle:" + row.title)
+      this.$alert("别点了, 还没实现呢!")
     },
     onDeleteArticle(row: any) {
       this.$confirm('确认删除?', '提示', {

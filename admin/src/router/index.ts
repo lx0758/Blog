@@ -48,14 +48,9 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/Url.vue"),
       },
       {
-        path: '/profile',
-        name: '个人资料',
-        component: () => import("@/views/Profile.vue"),
-      },
-      {
-        path: '/website',
+        path: '/setting',
         name: '网站设置',
-        component: () => import("@/views/Website.vue"),
+        component: () => import("@/views/Setting.vue"),
       },
     ]
   },

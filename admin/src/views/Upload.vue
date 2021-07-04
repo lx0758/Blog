@@ -53,8 +53,8 @@
 
   </el-container>
 
-  <el-dialog title="上传文件" v-model="dialog" width="600px">
-    <el-form ref="verify" :model="dialogData" label-width="120px">
+  <el-dialog title="上传文件" v-model="dialog" width="500px" :close-on-click-modal="false">
+    <el-form ref="verify" :model="dialogData" label-width="80px">
       <el-form-item label="选择文件">
         <el-upload
             drag

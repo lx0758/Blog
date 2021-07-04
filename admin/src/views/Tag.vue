@@ -8,7 +8,7 @@
           clearable/>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onEditTag">新增标签</el-button>
+      <el-button type="primary" @click="onAddTag">新增标签</el-button>
     </el-space>
 
     <el-divider/>
@@ -39,7 +39,7 @@
 
   </el-container>
 
-  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '标签'" v-model="dialog">
+  <el-dialog :title="(!dialogData.id ? '新增' : '编辑') + '标签'" v-model="dialog" :close-on-click-modal="false">
     <el-form ref="dialog" :model="dialogData" :rules="dialogRules" label-width="120px">
       <el-form-item label="名称" prop="name">
         <el-input v-model="dialogData.name" placeholder="请输入名称"></el-input>
@@ -103,15 +103,15 @@ export default defineComponent({
       this.data.pageNum = currentPage;
       this.onRefresh();
     },
+    onAddTag() {
+      this.dialogData = {}
+      this.dialog = true
+    },
     onEditTag(row: any) {
-      if (row == null) {
-        this.dialogData = {}
-      } else {
-        this.dialogData = {
-          id: row.id,
-          name: row.name,
-        };
-      }
+      this.dialogData = {
+        id: row.id,
+        name: row.name,
+      };
       this.dialog = true
     },
     onDeleteTag(row: any) {
