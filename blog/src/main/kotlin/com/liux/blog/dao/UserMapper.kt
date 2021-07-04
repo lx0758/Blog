@@ -8,10 +8,10 @@ interface UserMapper {
     fun deleteByPrimaryKey(id: Int): Int
     fun insert(record: User): Int
     fun insertSelective(record: User): Int
-    fun selectByPrimaryKey(id: Int): User?
-    fun selectByAuthor(id: Int): User?
-    fun selectByOwner(): User
-    fun selectByUsername(username: String): User?
+    fun getByPrimaryKey(id: Int): User?
+    fun getByAuthor(id: Int): User?
+    fun getByOwner(): User
+    fun getByUsername(username: String): User?
     fun selectByAdmin(user: User): List<User>
     fun updateByPrimaryKeySelective(record: User): Int
     fun updateByPrimaryKey(record: User): Int

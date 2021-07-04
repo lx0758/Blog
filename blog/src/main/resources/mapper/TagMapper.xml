@@ -22,14 +22,14 @@
         <!--@mbg.generated-->
         id, `name`, create_time, update_time
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_tag
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="getByName" parameterType="java.lang.String" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
@@ -133,14 +133,14 @@
     <select id="selectCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp
     </select>
-    <select id="selectByTagCount" resultType="INTEGER">
+    <select id="getByTagCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag where tag_id = #{tagId}) as temp
     </select>
-    <select id="insertByAddArticleLink" resultType="INTEGER">
+    <select id="insertByAddArticleLink">
         insert into t_article_tag (article_id, tag_id, create_time)
         values (#{articleId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}, now())
     </select>
-    <select id="deleteByRemoveArticleLink" resultType="INTEGER">
+    <select id="deleteByRemoveArticleLink">
         delete from t_article_tag where article_id = #{articleId,jdbcType=INTEGER} and tag_id = #{tagId,jdbcType=INTEGER}
     </select>
 </mapper>

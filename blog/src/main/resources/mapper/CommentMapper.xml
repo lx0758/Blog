@@ -17,7 +17,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
     <association property="childs" javaType="java.util.List" select="selectChildById" column="id" />
   </resultMap>
   <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Comment">
@@ -36,7 +36,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
@@ -57,14 +57,14 @@
     from t_comment
     where status = 1 and parent_id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_comment
     where status = 1 and id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectCount" resultType="java.lang.Integer">
+  <select id="getCount" resultType="java.lang.Integer">
     select count(id)
     from t_comment
     where status = 1

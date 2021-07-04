@@ -54,7 +54,7 @@ class UploadServiceImpl: UploadService {
     }
 
     override fun deleteByAdmin(id: Int): Int {
-        val upload = uploadMapper.selectByPrimaryKey(id) ?: return 0
+        val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
         val deleteRow = uploadMapper.deleteByPrimaryKey(id)
         if (deleteRow > 0) {
             File(UploadConfig.UPLOAD_DIR, upload.path!!).delete()

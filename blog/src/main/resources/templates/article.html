@@ -6,7 +6,7 @@
 <!--/*@thymesVar id="prev" type="com.liux.blog.bean.vo.ArticleArchiveVO"*/-->
 <!--/*@thymesVar id="next" type="com.liux.blog.bean.vo.ArticleArchiveVO"*/-->
 
-<header th:if="${article.allowComment}">
+<header th:if="${article.enableComment}">
     <link rel="stylesheet" href="/blog/css/comment.css">
     <script type="text/javascript" src="/blog/js/comment.js"></script>
 </header>
@@ -145,7 +145,7 @@
 
         <div style="height: 50px"></div>
 
-        <th:block th:if="${article.allowComment}">
+        <th:block th:if="${article.enableComment}">
             <div class="blog-comment"></div>
             <script type="text/javascript" th:inline="javascript">
                 window.onload = function () {

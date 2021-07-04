@@ -22,7 +22,7 @@ class TagServiceImpl: TagService {
     private lateinit var tagMapper: TagMapper
 
     override fun getByName(name: String): Tag? {
-        return tagMapper.selectByName(name)
+        return tagMapper.getByName(name)
     }
 
     override fun listByCount(): List<Tag> {

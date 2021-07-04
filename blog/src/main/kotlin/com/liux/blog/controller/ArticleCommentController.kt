@@ -63,7 +63,7 @@ class ArticleCommentController {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "内容不能为空")
         }
 
-        val article = articleService.getArticleById(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+        val article = articleService.getByBlog(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
 
         if (!article.enableComment!!) {
             throw HttpClientErrorException(HttpStatus.FORBIDDEN, "文章禁止评论")

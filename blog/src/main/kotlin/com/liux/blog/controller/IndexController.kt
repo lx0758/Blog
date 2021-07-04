@@ -109,11 +109,11 @@ class IndexController {
 
     @GetMapping("/article/{article}")
     fun article(model: Model, @PathVariable("article") articlePath: String): String {
-        val article = articleService.getArticleByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val catalogues = ArrayList<CatalogueVO>()
         val articleVO = ArticleVO.of(article, catalogues)
-        val prev = articleService.getArticleByPrev(article.id!!)
-        val next = articleService.getArticleByNext(article.id!!)
+        val prev = articleService.getByPrev(article.id!!)
+        val next = articleService.getByNext(article.id!!)
         val prevVO = if (prev != null) ArticleArchiveVO.of(prev) else null
         val nextVO = if (next != null) ArticleArchiveVO.of(next) else null
 

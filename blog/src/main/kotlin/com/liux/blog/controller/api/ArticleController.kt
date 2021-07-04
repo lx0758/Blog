@@ -6,6 +6,7 @@ import com.liux.blog.bean.po.ArticleFormatEnum
 import com.liux.blog.bean.po.ArticleStatusEnum
 import com.liux.blog.bean.po.isValid
 import com.liux.blog.bean.vo.api.ArticleItemVO
+import com.liux.blog.bean.vo.api.ArticleVO
 import com.liux.blog.bean.vo.api.PaginationListVO
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CategoryService
@@ -38,18 +39,27 @@ class ArticleController {
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }
 
+    @GetMapping("{id}")
+    fun queryInfo(
+        @PathVariable("id") id: Int,
+    ): Resp<ArticleVO> {
+        val article = articleService.getByAdmin(id) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+        val articleVO = ArticleVO.of(article)
+        return Resp.succeed(articleVO)
+    }
+
     @PostMapping
     fun insert(
         @CurrentUserId userId: Int,
         @RequestParam("title") title: String,
-        @RequestParam("category") categoryId: Int,
+        @RequestParam("categoryId") categoryId: Int,
         @RequestParam("content") content: String,
         @RequestParam("format") format: Int,
-        @RequestParam("url") url: String?,
-        @RequestParam("weight") weight: Int?,
-        @RequestParam("enableComment") enableComment: Boolean,
+        @RequestParam("url", required = false) url: String?,
+        @RequestParam("weight", required = false) weight: Int?,
+        @RequestParam("enableComment", required = false) enableComment: Boolean,
         @RequestParam("status") status: Int,
-        @RequestParam("tags") tags: Array<String>,
+        @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<*> {
         checkParams(title, categoryId, content, format, url, weight, status)
         articleService.addByAdmin(
@@ -70,14 +80,14 @@ class ArticleController {
     fun update(
         @PathVariable("id") id: Int,
         @RequestParam("title") title: String,
-        @RequestParam("category") categoryId: Int,
+        @RequestParam("categoryId") categoryId: Int,
         @RequestParam("content") content: String,
         @RequestParam("format") format: Int,
-        @RequestParam("url") url: String?,
-        @RequestParam("weight") weight: Int?,
-        @RequestParam("enableComment") enableComment: Boolean,
+        @RequestParam("url", required = false) url: String?,
+        @RequestParam("weight", required = false) weight: Int?,
+        @RequestParam("enableComment", required = false) enableComment: Boolean,
         @RequestParam("status") status: Int,
-        @RequestParam("tags") tags: Array<String>,
+        @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<*> {
         checkParams(title, categoryId, content, format, url, weight, status)
         val updateRow = articleService.updateByAdmin(

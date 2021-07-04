@@ -6,11 +6,11 @@ import com.liux.blog.bean.po.CommentStatusEnum
 import com.liux.blog.bean.po.isValid
 import com.liux.blog.bean.vo.api.CommentVO
 import com.liux.blog.bean.vo.api.PaginationListVO
-import com.liux.blog.dao.ArticleMapper
-import com.liux.blog.dao.UserMapper
 import com.liux.blog.getIp
 import com.liux.blog.getUserAgent
+import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CommentService
+import com.liux.blog.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -24,9 +24,9 @@ class CommentController {
     @Autowired
     private lateinit var commentService: CommentService
     @Autowired
-    private lateinit var articleMapper: ArticleMapper
+    private lateinit var articleService: ArticleService
     @Autowired
-    private lateinit var userMapper: UserMapper
+    private lateinit var userService: UserService
 
     @GetMapping
     fun query(
@@ -52,12 +52,12 @@ class CommentController {
         @RequestParam("parentId") parentId: Int,
         @RequestParam("content") content: String,
     ): Resp<*> {
-        articleMapper.selectById(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+        articleService.getByAdmin(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
         commentService.getCommentById(parentId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "父评论不存在")
         if (content.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "内容不能为空")
         }
-        val user = userMapper.selectByPrimaryKey(userId)!!
+        val user = userService.getById(userId)!!
         val ip = request.getIp()
         val ua = request.getUserAgent()
         commentService.addByAdmin(userId, user.nickname!!, user.email!!, articleId, parentId, content, ip, ua)

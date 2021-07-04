@@ -46,7 +46,7 @@ class CommentServiceImpl: CommentService {
     }
 
     override fun getCommentById(id: Int): Comment? {
-        return commentMapper.selectByPrimaryKey(id)
+        return commentMapper.getByPrimaryKey(id)
     }
 
     override fun addByBlog(
@@ -130,7 +130,7 @@ class CommentServiceImpl: CommentService {
         if (parentId == null) return null
         var finalParentId = parentId
         while (true) {
-            val localComment = commentMapper.selectByPrimaryKey(finalParentId!!) ?: break
+            val localComment = commentMapper.getByPrimaryKey(finalParentId!!) ?: break
             val localParentId = localComment.parentId ?: break
             finalParentId = localParentId
         }

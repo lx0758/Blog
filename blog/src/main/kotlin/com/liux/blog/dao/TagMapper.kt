@@ -10,8 +10,8 @@ interface TagMapper {
     fun deleteByCleanTagLink(tagId: Int): Int
     fun insert(record: Tag): Int
     fun insertSelective(record: Tag): Int
-    fun selectByPrimaryKey(id: Int): Tag?
-    fun selectByName(name: String): Tag?
+    fun getByPrimaryKey(id: Int): Tag?
+    fun getByName(name: String): Tag?
     fun selectByArticle(articleId: Int): List<Tag>
     fun selectByCount(): List<Tag>
     fun selectByAdmin(tag: Tag): List<Tag>
@@ -19,7 +19,7 @@ interface TagMapper {
     fun updateByPrimaryKeySelective(record: Tag): Int
     fun updateByPrimaryKey(record: Tag): Int
 
-    fun selectByTagCount(tagId: Int): Int
-    fun insertByAddArticleLink(@Param("articleId") articleId: Int, @Param("tagId") tagId: Int): Int
-    fun deleteByRemoveArticleLink(@Param("articleId") articleId: Int, @Param("tagId") tagId: Int): Int
+    fun getByTagCount(tagId: Int): Int
+    fun insertByAddArticleLink(@Param("articleId") articleId: Int, @Param("tagId") tagId: Int)
+    fun deleteByRemoveArticleLink(@Param("articleId") articleId: Int, @Param("tagId") tagId: Int)
 }

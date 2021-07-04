@@ -27,12 +27,12 @@ class UserServiceImpl: UserService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = userMapper.selectByUsername(username) ?: throw UsernameNotFoundException("Account does not exist")
+        val user = userMapper.getByUsername(username) ?: throw UsernameNotFoundException("Account does not exist")
         return UserDetailsImpl(user)
     }
 
     override fun getById(id: Int): User? {
-        return userMapper.selectByPrimaryKey(id)
+        return userMapper.getByPrimaryKey(id)
     }
 
     override fun listByAdmin(username: String?, nickname: String?, status: Int?): List<User> {

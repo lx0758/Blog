@@ -10,12 +10,13 @@ interface ArticleMapper {
     fun deleteByPrimaryKey(id: Int): Int
     fun insert(record: Article): Int
     fun insertSelective(record: Article): Int
-    fun selectByPrimaryKey(id: Int): Article?
-    fun selectById(@Param("id") id: Int?): Article?
-    fun selectByIdOrUrl(@Param("id") id: Int, @Param("url") url: String): Article?
-    fun selectByComment(@Param("id") id: Int?): Article?
-    fun selectByPrev(articleId: Int): Article?
-    fun selectByNext(articleId: Int): Article?
+    fun getByPrimaryKey(id: Int): Article?
+    fun getByBlog(@Param("id") id: Int?): Article?
+    fun getByIdOrUrl(@Param("id") id: Int, @Param("url") url: String): Article?
+    fun getByPrev(articleId: Int): Article?
+    fun getByNext(articleId: Int): Article?
+    fun getByAdmin(@Param("id") id: Int?): Article?
+    fun getCount(): Int
     fun selectByPage(): List<Article>
     fun selectByArchive(): List<Article>
     fun selectByCategory(categoryId: Int): List<Article>
@@ -23,7 +24,6 @@ interface ArticleMapper {
     fun selectBySearch(): List<Article>
     fun selectBySitemap(): List<Article>
     fun selectByAdmin(article: Article): List<Article>
-    fun selectCount(): Int
     fun updateByPrimaryKeySelective(record: Article): Int
     fun updateByPrimaryKey(record: Article): Int
     fun updateByMoveCategory(@Param("oldCategoryId") oldCategoryId: Int, @Param("newCategoryId") newCategoryId: Int)

@@ -8,7 +8,7 @@ interface LinkMapper {
     fun deleteByPrimaryKey(id: Int): Int
     fun insert(record: Link): Int
     fun insertSelective(record: Link): Int
-    fun selectByPrimaryKey(id: Int): Link?
+    fun getByPrimaryKey(id: Int): Link?
     fun selectByBlog(): List<Link>
     fun selectByAdmin(link: Link): List<Link>
     fun updateByPrimaryKeySelective(record: Link): Int

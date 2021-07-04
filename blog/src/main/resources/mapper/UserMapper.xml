@@ -32,7 +32,7 @@
         id, username, `password`, avatar, nickname, description, email, accounts, last_login_time, status,
         create_time, update_time
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
@@ -40,21 +40,21 @@
         where status = 1
           and id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByAuthor" parameterType="java.lang.Integer" resultMap="AuthorResultMap">
+    <select id="getByMapper" parameterType="java.lang.Integer" resultMap="AuthorResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_user
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByOwner" resultMap="BaseResultMap">
+    <select id="getByOwner" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_user
         where id = 1
     </select>
-    <select id="selectByUsername" resultMap="BaseResultMap">
+    <select id="getByUsername" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_user

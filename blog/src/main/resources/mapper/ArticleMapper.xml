@@ -17,21 +17,14 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
-        <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
-                     column="author_id"/>
-        <collection property="tags" javaType="java.util.List" ofType="com.liux.blog.bean.po.Tag"
-                    select="com.liux.blog.dao.TagMapper.selectByArticle" column="id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
+        <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
+        <collection property="tags" javaType="java.util.List" ofType="com.liux.blog.bean.po.Tag" select="com.liux.blog.dao.TagMapper.selectByArticle" column="id"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         id, title, content, format, url, weight, views, enable_comment,
         status, create_time, update_time, category_id, author_id
-    </sql>
-    <sql id="Comment_Column_List">
-        <!--@mbg.generated-->
-        id, title
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -48,9 +41,13 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
     </resultMap>
+    <sql id="Item_Column_List">
+        <!--@mbg.generated-->
+        id, title, content, format, url, weight, views, enable_comment,
+        status, create_time, update_time, category_id
+    </sql>
     <resultMap id="AdminItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
         <!--@Table t_article-->
@@ -65,14 +62,8 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
     </resultMap>
-    <sql id="Item_Column_List">
-        <!--@mbg.generated-->
-        id, title, content, format, url, weight, views, enable_comment,
-        status, create_time, update_time, category_id
-    </sql>
     <sql id="Admin_Item_Column_List">
         <!--@mbg.generated-->
         id, title, format, url, weight, views, enable_comment,
@@ -115,33 +106,27 @@
         <!--@mbg.generated-->
         id, url, create_time, update_time
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByBlog" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and id=#{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByIdOrUrl" resultMap="BaseResultMap">
+    <select id="getByIdOrUrl" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and (id = #{id,jdbcType=INTEGER} OR url = #{url,jdbcType=VARCHAR})
     </select>
-    <select id="selectByComment" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
-        select
-        <include refid="Simple_Column_List"/>
-        from t_article
-        where id=#{id,jdbcType=INTEGER}
-    </select>
-    <select id="selectByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
+    <select id="getByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Simple_Column_List"/>
@@ -150,7 +135,7 @@
         order by id desc
         limit 1
     </select>
-    <select id="selectByNext" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
+    <select id="getByNext" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Simple_Column_List"/>
@@ -158,6 +143,18 @@
         where status = 1 and id &gt; #{articleId,jdbcType=INTEGER}
         order by id
         limit 1
+    </select>
+    <select id="getByMapper" parameterType="java.lang.Integer" resultMap="ItemResultMap">
+        select
+        <include refid="Item_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="getByAdmin" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
     </select>
     <select id="selectByPage" resultMap="ItemResultMap">
         select
@@ -224,7 +221,7 @@
         </if>
         order by id desc
     </select>
-    <select id="selectCount" resultType="INTEGER">
+    <select id="getCount" resultType="INTEGER">
         select
                 count(id)
         from t_article

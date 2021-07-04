@@ -12,8 +12,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
-                 column="author_id"/>
+    <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
   </resultMap>
   <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
@@ -29,14 +28,14 @@
     <!--@mbg.generated-->
     `key`, url
   </sql>
-  <select id="selectByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
+  <select id="getByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Simple_Column_List" />
     from t_url
     where status = 1 and `key` = #{key,jdbcType=VARCHAR}
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />

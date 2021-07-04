@@ -16,7 +16,7 @@ class UrlServiceImpl : UrlService {
     private lateinit var urlMapper: UrlMapper
 
     override fun getByKey(key: String): Url? {
-        return urlMapper.selectByKey(key)
+        return urlMapper.getByKey(key)
     }
 
     override fun listByAdmin(

@@ -14,7 +14,7 @@ data class ArticleVO(
     var categoryName: String,
     var authorNickname: String,
     var views: Int,
-    var allowComment: Boolean,
+    var enableComment: Boolean,
     var tags: List<String>,
 ) {
     companion object {

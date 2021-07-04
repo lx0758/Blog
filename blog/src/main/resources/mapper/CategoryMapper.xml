@@ -14,21 +14,28 @@
         <!--@mbg.generated-->
         id, `name`, create_time, update_time
     </sql>
-    <select id="selectDefaultCategory" resultMap="BaseResultMap">
+    <select id="getDefaultCategory" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_category
         where name = '默认分类'
     </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_category
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="getByMapper" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_category
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="getByName" parameterType="java.lang.String" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
@@ -116,7 +123,7 @@
         </if>
         order by id desc
     </select>
-    <select id="selectCount" resultType="INTEGER">
+    <select id="getCount" resultType="INTEGER">
         select
         count(id)
         from t_category

@@ -10,13 +10,12 @@
     <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
-                 column="author_id"/>
+    <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, display_name, `length`, `type`, `path`, author_id, create_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from t_upload

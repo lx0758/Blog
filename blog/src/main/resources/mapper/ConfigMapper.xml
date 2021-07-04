@@ -14,7 +14,7 @@
     <!--@mbg.generated-->
     `key`, `value`, description, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />

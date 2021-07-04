@@ -21,10 +21,11 @@ interface ArticleService {
         pageSize: Int
     ): Page<Article>
 
-    fun getArticleById(id: Int): Article?
-    fun getArticleByUrl(url: String): Article?
-    fun getArticleByPrev(articleId: Int): Article?
-    fun getArticleByNext(articleId: Int): Article?
+    fun getByBlog(id: Int): Article?
+    fun getByUrl(url: String): Article?
+    fun getByPrev(articleId: Int): Article?
+    fun getByNext(articleId: Int): Article?
+    fun getByAdmin(id: Int): Article?
 
     fun addByAdmin(
         title: String,
@@ -35,7 +36,7 @@ interface ArticleService {
         weight: Int?,
         enableComment: Boolean,
         status: Int,
-        tags: Array<String>
+        tags: Array<String>?
     )
 
     fun updateByAdmin(
@@ -48,7 +49,7 @@ interface ArticleService {
         weight: Int?,
         enableComment: Boolean,
         status: Int,
-        tags: Array<String>
+        tags: Array<String>?
     ): Int
     fun updateStatusByAdmin(id: Int, status: Int): Int
 

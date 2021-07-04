@@ -36,10 +36,10 @@ class ThemeServiceImpl: ThemeService {
     override fun updateBase() {
         logger.info("Update base info, current base info is ${if (cacheBlogVO != null) "not null" else "null"}")
         val configs = configService.listByTheme()
-        val articleCount = articleMapper.selectCount()
-        val categoryCount = categoryMapper.selectCount()
+        val articleCount = articleMapper.getCount()
+        val categoryCount = categoryMapper.getCount()
         val tagCount = tagMapper.selectCount()
-        val user = userMapper.selectByOwner()
+        val user = userMapper.getByOwner()
         val links = linkService.listByBlog()
         cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links)
     }

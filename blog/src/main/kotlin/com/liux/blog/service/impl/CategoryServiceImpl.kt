@@ -26,15 +26,15 @@ class CategoryServiceImpl: CategoryService {
     private lateinit var articleMapper: ArticleMapper
 
     override fun getDefaultCategory(): Category? {
-        return categoryMapper.selectDefaultCategory()
+        return categoryMapper.getDefaultCategory()
     }
 
     override fun getById(id: Int): Category? {
-        return categoryMapper.selectByPrimaryKey(id)
+        return categoryMapper.getByPrimaryKey(id)
     }
 
     override fun getByByName(name: String): Category? {
-        return categoryMapper.selectByName(name)
+        return categoryMapper.getByName(name)
     }
 
     override fun listByCategory(): List<Category> {

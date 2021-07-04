@@ -8,7 +8,7 @@ interface UploadMapper {
     fun deleteByPrimaryKey(id: Int?): Int
     fun insert(record: Upload?): Int
     fun insertSelective(record: Upload?): Int
-    fun selectByPrimaryKey(id: Int?): Upload?
+    fun getByPrimaryKey(id: Int?): Upload?
     fun selectByAdmin(upload: Upload): List<Upload>
     fun updateByPrimaryKeySelective(upload: Upload?): Int
     fun updateByPrimaryKey(upload: Upload?): Int

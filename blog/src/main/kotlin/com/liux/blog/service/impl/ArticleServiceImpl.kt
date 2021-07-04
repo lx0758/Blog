@@ -79,28 +79,32 @@ class ArticleServiceImpl: ArticleService {
         return page
     }
 
-    override fun getArticleById(id: Int): Article? {
-        return articleMapper.selectById(id)
+    override fun getByBlog(id: Int): Article? {
+        return articleMapper.getByBlog(id)
     }
 
-    override fun getArticleByUrl(url: String): Article? {
+    override fun getByUrl(url: String): Article? {
         val id = try {
             url.toInt()
         } catch (e: NumberFormatException) {
             0
         }
-        return articleMapper.selectByIdOrUrl(id, url)?.apply {
+        return articleMapper.getByIdOrUrl(id, url)?.apply {
             views = views?.plus(1)
             articleMapper.updateByPrimaryKeySelective(Article(id, views = views))
         }
     }
 
-    override fun getArticleByPrev(articleId: Int): Article? {
-        return articleMapper.selectByPrev(articleId)
+    override fun getByPrev(articleId: Int): Article? {
+        return articleMapper.getByPrev(articleId)
     }
 
-    override fun getArticleByNext(articleId: Int): Article? {
-        return articleMapper.selectByNext(articleId)
+    override fun getByNext(articleId: Int): Article? {
+        return articleMapper.getByNext(articleId)
+    }
+
+    override fun getByAdmin(id: Int): Article? {
+        return articleMapper.getByAdmin(id)
     }
 
     @Transactional(rollbackFor = [Exception::class])
@@ -113,7 +117,7 @@ class ArticleServiceImpl: ArticleService {
         weight: Int?,
         enableComment: Boolean,
         status: Int,
-        tags: Array<String>
+        tags: Array<String>?
     ) {
         val article = Article(
             title = title,
@@ -145,7 +149,7 @@ class ArticleServiceImpl: ArticleService {
         weight: Int?,
         enableComment: Boolean,
         status: Int,
-        tags: Array<String>
+        tags: Array<String>?
     ): Int {
         val updateRow = articleMapper.updateByPrimaryKeySelective(Article(
             id = id,
@@ -161,7 +165,9 @@ class ArticleServiceImpl: ArticleService {
         ))
 
         val tagPOs = tagMapper.selectByArticle(id)
-        val tagStrings = ArrayList<String>().apply { addAll(tags) }
+        val tagStrings = ArrayList<String>().apply {
+            if (tags != null) addAll(tags)
+        }
         // 先检查已存在的 tag 和新的 tag 有没有一样的
         tagPOs.forEach {
             val tagId = it.id!!
@@ -173,7 +179,7 @@ class ArticleServiceImpl: ArticleService {
                 // 如果不一样则移除关联
                 // 并检查是否还被别的文章关联, 没有则删除
                 tagMapper.deleteByRemoveArticleLink(id, tagId)
-                if (tagMapper.selectByTagCount(tagId) == 0) {
+                if (tagMapper.getByTagCount(tagId) == 0) {
                     tagMapper.deleteByPrimaryKey(tagId)
                 }
             }
@@ -209,7 +215,7 @@ class ArticleServiceImpl: ArticleService {
             tagPOs.forEach {
                 val tagId = it.id!!
                 tagMapper.deleteByRemoveArticleLink(id, tagId)
-                if (tagMapper.selectByTagCount(tagId) == 0) {
+                if (tagMapper.getByTagCount(tagId) == 0) {
                     tagMapper.deleteByPrimaryKey(tagId)
                 }
             }
@@ -218,9 +224,9 @@ class ArticleServiceImpl: ArticleService {
         return deleteRow
     }
 
-    private fun linkArticleAndTags(id: Int, tags: Array<String>) {
-        tags.forEach {
-            var tag = tagMapper.selectByName(it)
+    private fun linkArticleAndTags(id: Int, tags: Array<String>?) {
+        tags?.forEach {
+            var tag = tagMapper.getByName(it)
             if (tag == null) {
                 tag = Tag(
                     name = it,
