@@ -37,19 +37,32 @@ class UserController {
     @PutMapping("profile")
     fun updateProfile(
         @CurrentUserId userId: Int,
+        @RequestParam("avatar", required = false) avatar: String?,
         @RequestParam("nickname") nickname: String,
-        @RequestParam("description") description: String,
+        @RequestParam("description", required = false) description: String?,
         @RequestParam("email") email: String,
-        @RequestParam("github") github: String,
+
+        @RequestParam("github", required = false) github: String?,
+        @RequestParam("weibo", required = false) weibo: String?,
+        @RequestParam("google", required = false) google: String?,
+        @RequestParam("twitter", required = false) twitter: String?,
+        @RequestParam("facebook", required = false) facebook: String?,
+        @RequestParam("stackOverflow", required = false) stackOverflow: String?,
+        @RequestParam("youtube", required = false) youtube: String?,
+        @RequestParam("instagram", required = false) instagram: String?,
+        @RequestParam("skype", required = false) skype: String?,
     ): Resp<*> {
-        val updateRow = userService.updateBySelf(userId, nickname, description, email, github)
+        val updateRow = userService.updateBySelf(
+            userId, avatar, nickname, description, email,
+            github, weibo, google, twitter, facebook, stackOverflow, youtube, instagram, skype
+        )
         if (updateRow < 1) {
             throw HttpClientErrorException(HttpStatus.NOT_FOUND, "更新失败")
         }
         return Resp.succeed()
     }
 
-    @PutMapping("profile/password")
+    @PutMapping("password")
     fun updatePassword(
         @CurrentUserId userId: Int,
         @RequestParam("oldPassword") oldPassword: String,

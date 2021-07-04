@@ -2,6 +2,7 @@ package com.liux.blog.controller.api
 
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.vo.api.ConfigVO
+import com.liux.blog.bean.vo.api.PaginationListVO
 import com.liux.blog.service.ConfigService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -20,10 +21,12 @@ class ConfigController {
         @RequestParam("key", required = false) key: String?,
         @RequestParam("value", required = false) value: String?,
         @RequestParam("description", required = false) description: String?,
-    ): Resp<List<ConfigVO>> {
-        val configs = configService.listByAdmin(key, value, description)
+        @RequestParam("pageNum") pageNum: Int,
+        @RequestParam("pageSize") pageSize: Int,
+    ): Resp<PaginationListVO<ConfigVO>> {
+        val configs = configService.listByAdmin(key, value, description, pageNum, pageSize)
         val configVOs = configs.map { ConfigVO.of(it) }
-        return Resp.succeed(configVOs)
+        return Resp.succeed(PaginationListVO.of(configVOs, configs))
     }
 
     @PostMapping

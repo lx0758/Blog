@@ -52,19 +52,42 @@ class UserServiceImpl: UserService {
 
     override fun updateBySelf(
         id: Int,
+        avatar: String?,
         nickname: String,
-        description: String,
+        description: String?,
         email: String,
-        github: String,
+
+        github: String?,
+        weibo: String?,
+        google: String?,
+        twitter: String?,
+        facebook: String?,
+        stackOverflow: String?,
+        youtube: String?,
+        instagram: String?,
+        skype: String?,
     ): Int {
-        val updateRow = userMapper.updateByPrimaryKeySelective(User(
+        val accounts = User.Accounts(
+            github = github,
+            weibo = weibo,
+            google = google,
+            twitter = twitter,
+            facebook = facebook,
+            stackOverflow = stackOverflow,
+            youtube = youtube,
+            instagram = instagram,
+            skype = skype,
+        )
+        val user = User(
             id = id,
+            avatar = avatar,
             nickname = nickname,
             description = description,
             email = email,
-            github = github,
+            accounts = accounts,
             updateTime = Date(),
-        ))
+        )
+        val updateRow = userMapper.updateByPrimaryKeySelective(user)
         if (updateRow > 0) {
             applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.USER)
         }

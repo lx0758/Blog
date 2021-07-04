@@ -79,7 +79,7 @@ class UploadTest {
 
     private fun getFileMediaType(file: File): String {
         val extension = getFileExtension(file)
-        return MimeMappings.DEFAULT.get(extension) ?: throw TODO("getFileMediaType failed:$file")
+        return MimeMappings.DEFAULT.get(extension)!!
     }
 }
 

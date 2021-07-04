@@ -19,8 +19,9 @@ data class BlogVO(
     var ownerAvatar: String,
     var ownerNickname: String,
     var ownerDescription: String,
-    var ownerGithub: String,
     var ownerEmail: String,
+
+    var ownerGithub: String,
     var ownerWeibo: String,
     var ownerGoogle: String,
     var ownerTwitter: String,
@@ -47,19 +48,20 @@ data class BlogVO(
                 categoryCount,
                 tagCount,
 
-                "/blog/images/avatar.gif",
-                user.nickname ?: "无名氏",
-                user.description ?: "这个人很懒，什么也没留下。",
-                user.github ?: "",
+                user.avatar ?: "",
+                user.nickname ?: "",
+                user.description ?: "",
                 user.email ?: "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
+
+                user.accounts?.github ?: "",
+                user.accounts?.weibo ?: "",
+                user.accounts?.google ?: "",
+                user.accounts?.twitter ?: "",
+                user.accounts?.facebook ?: "",
+                user.accounts?.stackOverflow ?: "",
+                user.accounts?.youtube ?: "",
+                user.accounts?.instagram ?: "",
+                user.accounts?.skype ?: "",
 
                 links.map { LinkVO.of(it) }
             )

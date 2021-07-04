@@ -9,10 +9,20 @@ interface UserService: UserDetailsService {
     fun updateByLogin(id: Int)
     fun updateBySelf(
         id: Int,
+        avatar: String?,
         nickname: String,
-        description: String,
+        description: String?,
         email: String,
-        github: String
+
+        github: String?,
+        weibo: String?,
+        google: String?,
+        twitter: String?,
+        facebook: String?,
+        stackOverflow: String?,
+        youtube: String?,
+        instagram: String?,
+        skype: String?,
     ): Int
 
     fun verifyPassword(id: Int, password: String): Boolean

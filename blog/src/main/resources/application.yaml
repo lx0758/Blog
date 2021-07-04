@@ -28,6 +28,7 @@ server:
   max-http-header-size: 1MB
 
 mybatis:
+  type-handlers-package: com.liux.blog.dao.typehandler
   mapper-locations: classpath:mapper/*Mapper.xml
   configuration:
     mapUnderscoreToCamelCase: true

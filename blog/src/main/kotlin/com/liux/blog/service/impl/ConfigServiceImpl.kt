@@ -1,5 +1,7 @@
 package com.liux.blog.service.impl
 
+import com.github.pagehelper.Page
+import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Config
 import com.liux.blog.dao.ConfigMapper
@@ -28,13 +30,14 @@ class ConfigServiceImpl: ConfigService {
         return configMap
     }
 
-    override fun listByAdmin(key: String?, value: String?, description: String?): List<Config> {
-        val configs = configMapper.selectByAdmin(Config(
+    override fun listByAdmin(key: String?, value: String?, description: String?, pageNum: Int, pageSize: Int): Page<Config> {
+        val page = PageHelper.startPage<Config>(pageNum, pageSize)
+        configMapper.selectByAdmin(Config(
             key = key,
             value = value,
             description = description,
         ))
-        return configs;
+        return page
     }
 
     override fun addByAdmin(key: String, value: String, description: String) {

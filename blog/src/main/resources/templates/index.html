@@ -330,7 +330,8 @@
 
                     <div class="site-overview-wrap sidebar-panel">
                         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" th:src="${base.ownerAvatar}">
+                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" src="/blog/images/avatar.gif" th:if="${base.ownerAvatar.isEmpty()}">
+                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" th:src="${base.ownerAvatar}" th:if="${!base.ownerAvatar.isEmpty()}">
                             <p class="site-author-name" itemprop="name" th:text="${base.ownerNickname}"></p>
                             <div class="site-description" itemprop="description" th:text="${base.ownerDescription}"></div>
                         </div>
