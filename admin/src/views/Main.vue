@@ -2,7 +2,7 @@
   <el-container style="height: 100%">
 
     <el-aside unique-opened="true" style="width: auto">
-      <el-menu :default-active="nowRoute" style="height: 100%" unique-opened router :collapse="isCollapse">
+      <el-menu :default-active="menuNowRoute" style="height: 100%" unique-opened router :collapse="menuIsCollapse">
         <el-menu-item index="dashboard">
           <i class="el-icon-s-data"></i>
           <span>仪表盘</span>
@@ -56,13 +56,14 @@
 
     <el-container>
 
-      <el-header style="box-shadow: 0 -8px 20px 2px #DEDEE3;">
-        <el-row type="flex" align="middle" style="height: 100%">
+      <el-header style="box-shadow: 0 -8px 20px 2px #DEDEE3; height: 50px">
+
+        <el-row type="flex" align="middle" style="height: 50px">
           <el-col :span="16">
             <el-container style="align-items: center">
               <div @click="onToggleMenu()" style="padding: 10px 10px 10px 0; font-size: 20px">
-                <i v-if="!isCollapse" class="el-icon-s-unfold"></i>
-                <i v-if="isCollapse" class="el-icon-s-fold"></i>
+                <i v-if="!menuIsCollapse" class="el-icon-s-unfold"></i>
+                <i v-if="menuIsCollapse" class="el-icon-s-fold"></i>
               </div>
               <el-breadcrumb separator="/">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -91,12 +92,15 @@
             </el-container>
           </el-col>
         </el-row>
+
       </el-header>
 
       <el-main>
-
-        <router-view v-if="isRouterAlive"/>
-
+        <router-view v-slot="{ Component }" v-if="isRouterAvailable">
+          <keep-alive exclude="ArticleEditor">
+            <component :is="Component"/>
+          </keep-alive>
+        </router-view>
       </el-main>
 
     </el-container>
@@ -145,7 +149,6 @@
       <el-form-item prop="skype" label="Skype">
         <el-input v-model="changeProfile.skype" auto-complete="off" placeholder="请输入 Skype 账号"></el-input>
       </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onChangeProfile()">更新</el-button>
         <el-button @click="changeProfile.show = false">取消</el-button>
@@ -200,13 +203,15 @@ export default defineComponent({
       }
     };
     return {
-      isCollapse: false,
-      nowRoute: '',
+      menuIsCollapse: false,
+      menuNowRoute: '',
+
+      isRouterAvailable: true,
+
       user: {
         avatar: '',
         nickname: '',
       },
-      isRouterAlive: true,
 
       changeProfile: {
         show: false,
@@ -253,7 +258,7 @@ export default defineComponent({
   },
   methods: {
     onToggleMenu() {
-      this.isCollapse = !this.isCollapse;
+      this.menuIsCollapse = !this.menuIsCollapse;
     },
     onFullScreen() {
       if (!screenfull.isEnabled) {
@@ -263,9 +268,9 @@ export default defineComponent({
       screenfull.toggle()
     },
     onRefresh() {
-      this.isRouterAlive = false
+      this.isRouterAvailable = false
       this.$nextTick(() => {
-        this.isRouterAlive = true
+        this.isRouterAvailable = true
       });
     },
     onOption(command: string) {

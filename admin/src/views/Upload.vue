@@ -21,7 +21,8 @@
         :data="data.list"
         border
         stripe
-        style="width: 100%; height: auto">
+        style="width: 100%;"
+        :height="mainContentHeight">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="displayName" label="文件名" width="300" fixed>
         <template #default="scope">
@@ -92,9 +93,20 @@ export default defineComponent({
   components: {},
   mounted() {
     this.onRefresh()
+    window.onresize = () => {
+      this.onRefreshMainContentHeight()
+    }
+    this.onRefreshMainContentHeight()
+  },
+  unmounted() {
+    window.onresize = null;
   },
   data() {
+    const mainContentBottom = 250
     return {
+      mainContentBottom,
+      mainContentHeight: window.innerHeight - mainContentBottom,
+
       filter: {
         displayName: null,
         type: null,
@@ -113,6 +125,10 @@ export default defineComponent({
     }
   },
   methods: {
+    onRefreshMainContentHeight() {
+      this.mainContentHeight = window.innerHeight - this.mainContentBottom
+    },
+
     onFilterSearch() {
       this.onRefresh()
     },

@@ -22,7 +22,8 @@
         :data="data.list"
         border
         stripe
-        style="width: 100%; height: auto">
+        style="width: 100%;"
+        :height="mainContentHeight">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="title" label="标题" width="240" fixed>
         <template #default="scope">
@@ -99,9 +100,20 @@ export default defineComponent({
   },
   mounted() {
     this.onRefresh()
+    window.onresize = () => {
+      this.onRefreshMainContentHeight()
+    }
+    this.onRefreshMainContentHeight()
+  },
+  unmounted() {
+    window.onresize = null;
   },
   data() {
+    const mainContentBottom = 250
     return {
+      mainContentBottom,
+      mainContentHeight: window.innerHeight - mainContentBottom,
+
       filter: {
         title: null,
         link: null,
@@ -132,6 +144,10 @@ export default defineComponent({
     }
   },
   methods: {
+    onRefreshMainContentHeight() {
+      this.mainContentHeight = window.innerHeight - this.mainContentBottom
+    },
+
     onFilterSearch() {
       this.onRefresh()
     },

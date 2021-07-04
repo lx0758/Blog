@@ -25,7 +25,8 @@
         :data="data.list"
         border
         stripe
-        style="width: 100%; height: auto">
+        style="width: 100%;"
+        :height="mainContentHeight">
       <el-table-column prop="key" label="键" width="250" fixed></el-table-column>
       <el-table-column prop="value" label="值" min-width="300"></el-table-column>
       <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
@@ -78,9 +79,20 @@ export default defineComponent({
   components: {},
   mounted() {
     this.onRefresh()
+    window.onresize = () => {
+      this.onRefreshMainContentHeight()
+    }
+    this.onRefreshMainContentHeight()
+  },
+  unmounted() {
+    window.onresize = null;
   },
   data() {
+    const mainContentBottom = 250
     return {
+      mainContentBottom,
+      mainContentHeight: window.innerHeight - mainContentBottom,
+
       filter: {
         key: null,
         value: null,
@@ -111,6 +123,10 @@ export default defineComponent({
     }
   },
   methods: {
+    onRefreshMainContentHeight() {
+      this.mainContentHeight = window.innerHeight - this.mainContentBottom
+    },
+
     onFilterSearch() {
       this.onRefresh()
     },

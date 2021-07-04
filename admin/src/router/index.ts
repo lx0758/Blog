@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import {createMemoryHistory, createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw} from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,6 +16,14 @@ const routes: Array<RouteRecordRaw> = [
         path: '/article',
         name: '文章',
         component: () => import("@/views/Article.vue"),
+      },
+      {
+        path: '/editor',
+        name: '文章编辑',
+        component: () => import("@/views/ArticleEditor.vue"),
+        meta: {
+          notKeepAlive: true
+        }
       },
       {
         path: '/comment',
@@ -62,7 +70,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createMemoryHistory(process.env.BASE_URL),
   routes
 })
 

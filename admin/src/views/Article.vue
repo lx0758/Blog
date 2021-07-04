@@ -21,7 +21,8 @@
         :data="data.list"
         border
         stripe
-        style="width: 100%; height: auto">
+        style="width: 100%;"
+        :height="mainContentHeight">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="title" label="标题" min-width="250" fixed>
         <template #default="scope">
@@ -96,9 +97,20 @@ export default defineComponent({
   },
   mounted() {
     this.onRefresh()
+    window.onresize = () => {
+      this.onRefreshMainContentHeight()
+    }
+    this.onRefreshMainContentHeight()
+  },
+  unmounted() {
+    window.onresize = null;
   },
   data() {
+    const mainContentBottom = 250
     return {
+      mainContentBottom,
+      mainContentHeight: window.innerHeight - mainContentBottom,
+
       filter: {
         title: null,
         category: null,
@@ -117,6 +129,10 @@ export default defineComponent({
     }
   },
   methods: {
+    onRefreshMainContentHeight() {
+      this.mainContentHeight = window.innerHeight - this.mainContentBottom
+    },
+
     onFilterSearch() {
       this.onRefresh()
     },
@@ -137,12 +153,19 @@ export default defineComponent({
       this.onRefresh();
     },
     onAddArticle() {
-      // TODO: 2021-6-28
-      this.$alert("别点了, 还没实现呢!")
+      this.$router.push({
+        path: 'editor',
+        name: '编写文章',
+      })
     },
     onEditArticle(row: any) {
-      // TODO: 2021-6-28
-      this.$alert("别点了, 还没实现呢!")
+      this.$router.push({
+        path: 'editor',
+        name: '文章编辑',
+        params: {
+          articleId: row.id,
+        }
+      })
     },
     onDeleteArticle(row: any) {
       this.$confirm('确认删除?', '提示', {

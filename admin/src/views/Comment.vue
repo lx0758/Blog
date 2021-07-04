@@ -33,7 +33,8 @@
         :data="data.list"
         border
         stripe
-        style="width: 100%; height: auto">
+        style="width: 100%;"
+        :height="mainContentHeight">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
       <el-table-column prop="articleName" label="文章标题" min-width="200" :show-overflow-tooltip="true" fixed>
         <template #default="scope">
@@ -139,9 +140,20 @@ export default defineComponent({
   },
   mounted() {
     this.onRefresh()
+    window.onresize = () => {
+      this.onRefreshMainContentHeight()
+    }
+    this.onRefreshMainContentHeight()
+  },
+  unmounted() {
+    window.onresize = null;
   },
   data() {
+    const mainContentBottom = 250
     return {
+      mainContentBottom,
+      mainContentHeight: window.innerHeight - mainContentBottom,
+
       filter: {
         article: null,
         author: null,
@@ -167,6 +179,10 @@ export default defineComponent({
     }
   },
   methods: {
+    onRefreshMainContentHeight() {
+      this.mainContentHeight = window.innerHeight - this.mainContentBottom
+    },
+
     onFilterSearch() {
       this.onRefresh()
     },

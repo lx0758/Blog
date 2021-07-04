@@ -24,21 +24,90 @@ export const queryArticle = (
     pageSize: number,
 ) => request('/api/article', 'GET', {
     title: title,
-    category: category,
+    categoryId: category,
     format: format,
     comment: comment,
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,
 }, null)
+// 查询文章
+export const queryArticleInfo = (id: number) => request('/api/article/' + id, 'GET', null, null)
+// 构建文章表单
+export const createFormData = (
+    title: string,
+    category: number,
+    url: string | null,
+    tags: string[],
+    format: number,
+    content: string,
+    weight: number,
+    enableComment: boolean,
+    status: number,
+): FormData => {
+    const formData = new FormData();
+    formData.append("title", title + '')
+    formData.append("categoryId", category + '')
+    if (url) {
+        formData.append("url", url + '')
+    }
+    if (tags) {
+        for (let i = 0; i < tags.length; i++) {
+            formData.append("tags", tags[i]);
+        }
+    }
+    formData.append("format", format + '')
+    formData.append("content", content + '')
+    formData.append("weight", weight + '')
+    formData.append("enableComment", enableComment + '')
+    formData.append("status", status + '')
+    return formData
+}
 // 新增文章
-export const addArticle = (title: string) => request('/api/article', 'POST', null, {
-    title: title,
-})
+export const addArticle = (
+    title: string,
+    category: number,
+    url: string | null,
+    tags: string[],
+    format: number,
+    content: string,
+    weight: number,
+    enableComment: boolean,
+    status: number,
+) => requestBody('/api/article', 'POST', null, createFormData(
+    title,
+    category,
+    url,
+    tags,
+    format,
+    content,
+    weight,
+    enableComment,
+    status,
+))
 // 更新文章
-export const updateArticle = (id: number, title: string) => request('/api/article/' + id, 'PUT', null, {
-    title: title,
-})
+export const updateArticle = (
+    id: number,
+    title: string,
+    category: number,
+    url: string | null,
+    tags: string[],
+    format: number,
+    content: string,
+    weight: number,
+    enableComment: boolean,
+    status: number,
+) => requestBody('/api/article/' + id, 'PUT', null, createFormData(
+    title,
+    category,
+    url,
+    tags,
+    format,
+    content,
+    weight,
+    enableComment,
+    status,
+))
 // 删除文章
 export const deleteArticle = (id: number) => request('/api/article/' + id, 'DELETE', null, null)
 
