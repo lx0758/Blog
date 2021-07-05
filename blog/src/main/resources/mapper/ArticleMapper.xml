@@ -8,7 +8,6 @@
         <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
         <result column="author_id" jdbcType="VARCHAR" property="authorId"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
@@ -23,7 +22,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, title, content, format, url, weight, views, enable_comment,
+        id, title, content, url, weight, views, enable_comment,
         status, create_time, update_time, category_id, author_id
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
@@ -33,7 +32,6 @@
         <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
@@ -45,7 +43,7 @@
     </resultMap>
     <sql id="Item_Column_List">
         <!--@mbg.generated-->
-        id, title, content, format, url, weight, views, enable_comment,
+        id, title, content, url, weight, views, enable_comment,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="AdminItemResultMap" type="com.liux.blog.bean.po.Article">
@@ -54,7 +52,6 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
@@ -66,7 +63,7 @@
     </resultMap>
     <sql id="Admin_Item_Column_List">
         <!--@mbg.generated-->
-        id, title, format, url, weight, views, enable_comment,
+        id, title, url, weight, views, enable_comment,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Article">
@@ -87,12 +84,11 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
     </resultMap>
     <sql id="Search_Column_List">
         <!--@mbg.generated-->
-        id, title, content, format, url
+        id, title, content, url
     </sql>
     <resultMap id="SitemapResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -210,9 +206,6 @@
         <if test="title != null and title != ''">
             and title like CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%')
         </if>
-        <if test="format != null">
-            and format = #{format,jdbcType=INTEGER}
-        </if>
         <if test="enableComment != null">
             and enable_comment = #{enableComment,jdbcType=INTEGER}
         </if>
@@ -237,12 +230,12 @@
             useGeneratedKeys="true">
         <!--@mbg.generated-->
         insert into t_article (category_id, title,
-                               content, format, author_id,
+                               content, author_id,
                                url, weight, views,
                                enable_comment, status,
                                create_time, update_time)
         values (#{category.id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
-                #{content,jdbcType=LONGVARCHAR}, #{format,jdbcType=TINYINT}, #{author.id,jdbcType=INTEGER},
+                #{content,jdbcType=LONGVARCHAR}, #{author.id,jdbcType=INTEGER},
                 #{url,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{views,jdbcType=INTEGER},
                 #{enableComment,jdbcType=TINYINT}, #{status,jdbcType=TINYINT},
                 #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
@@ -260,9 +253,6 @@
             </if>
             <if test="content != null">
                 content,
-            </if>
-            <if test="format != null">
-                format,
             </if>
             <if test="author != null">
                 author_id,
@@ -298,9 +288,6 @@
             </if>
             <if test="content != null">
                 #{content,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="format != null">
-                #{format,jdbcType=TINYINT},
             </if>
             <if test="author != null">
                 #{author.id,jdbcType=INTEGER},
@@ -341,9 +328,6 @@
             <if test="content != null">
                 content = #{content,jdbcType=LONGVARCHAR},
             </if>
-            <if test="format != null">
-                format = #{format,jdbcType=TINYINT},
-            </if>
             <if test="author != null">
                 author_id = #{author.id,jdbcType=INTEGER},
             </if>
@@ -377,7 +361,6 @@
         set category_id    = #{category.id,jdbcType=INTEGER},
             title          = #{title,jdbcType=VARCHAR},
             content        = #{content,jdbcType=LONGVARCHAR},
-            format         = #{format,jdbcType=TINYINT},
             author_id      = #{author.id,jdbcType=INTEGER},
             url            = #{url,jdbcType=VARCHAR},
             weight          = #{weight,jdbcType=INTEGER},

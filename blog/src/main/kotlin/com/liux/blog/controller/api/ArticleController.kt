@@ -2,7 +2,6 @@ package com.liux.blog.controller.api
 
 import com.liux.blog.annotation.CurrentUserId
 import com.liux.blog.bean.Resp
-import com.liux.blog.bean.po.ArticleFormatEnum
 import com.liux.blog.bean.po.ArticleStatusEnum
 import com.liux.blog.bean.po.isValid
 import com.liux.blog.bean.vo.api.ArticleItemVO
@@ -28,13 +27,12 @@ class ArticleController {
     fun query(
         @RequestParam("title", required = false) title: String?,
         @RequestParam("category", required = false) category: Int?,
-        @RequestParam("format", required = false) format: Int?,
         @RequestParam("enableComment", required = false) enableComment: Boolean?,
         @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
     ): Resp<PaginationListVO<ArticleItemVO>> {
-        val articlePage = articleService.listByAdmin(title, category, format, enableComment, status, pageNum, pageSize)
+        val articlePage = articleService.listByAdmin(title, category, enableComment, status, pageNum, pageSize)
         val articles = articlePage.map { ArticleItemVO.of(it) }
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }
@@ -54,19 +52,17 @@ class ArticleController {
         @RequestParam("title") title: String,
         @RequestParam("categoryId") categoryId: Int,
         @RequestParam("content") content: String,
-        @RequestParam("format") format: Int,
         @RequestParam("url", required = false) url: String?,
         @RequestParam("weight", required = false) weight: Int?,
         @RequestParam("enableComment", required = false) enableComment: Boolean,
         @RequestParam("status") status: Int,
         @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<*> {
-        checkParams(title, categoryId, content, format, url, weight, status)
+        checkParams(title, categoryId, content, url, weight, status)
         articleService.addByAdmin(
             title,
             categoryId,
             content,
-            format,
             url,
             weight,
             enableComment,
@@ -82,20 +78,18 @@ class ArticleController {
         @RequestParam("title") title: String,
         @RequestParam("categoryId") categoryId: Int,
         @RequestParam("content") content: String,
-        @RequestParam("format") format: Int,
         @RequestParam("url", required = false) url: String?,
         @RequestParam("weight", required = false) weight: Int?,
         @RequestParam("enableComment", required = false) enableComment: Boolean,
         @RequestParam("status") status: Int,
         @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<*> {
-        checkParams(title, categoryId, content, format, url, weight, status)
+        checkParams(title, categoryId, content, url, weight, status)
         val updateRow = articleService.updateByAdmin(
             id,
             title,
             categoryId,
             content,
-            format,
             url,
             weight,
             enableComment,
@@ -135,7 +129,6 @@ class ArticleController {
         title: String,
         categoryId: Int,
         content: String,
-        format: Int,
         url: String?,
         weight: Int?,
         status: Int
@@ -148,9 +141,6 @@ class ArticleController {
         }
         if (content.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "内容不能为空")
-        }
-        if (!ArticleFormatEnum.values().isValid(format)) {
-            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "格式类型不正确")
         }
         if (!ArticleStatusEnum.values().isValid(status)) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "状态类型不正确")

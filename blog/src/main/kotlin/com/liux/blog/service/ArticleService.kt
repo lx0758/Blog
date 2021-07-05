@@ -14,7 +14,6 @@ interface ArticleService {
     fun listByAdmin(
         title: String?,
         category: Int?,
-        format: Int?,
         enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
@@ -31,7 +30,6 @@ interface ArticleService {
         title: String,
         categoryId: Int,
         content: String,
-        format: Int,
         url: String?,
         weight: Int?,
         enableComment: Boolean,
@@ -44,7 +42,6 @@ interface ArticleService {
         title: String,
         categoryId: Int,
         content: String,
-        format: Int,
         url: String?,
         weight: Int?,
         enableComment: Boolean,

@@ -15,8 +15,6 @@ data class Article(
     var title: String? = null,
     // 内容
     var content: String? = null,
-    // 内容格式
-    var format: Int? = null,
     // 分类ID
     var authorId: Int? = null,
     // 自定义url

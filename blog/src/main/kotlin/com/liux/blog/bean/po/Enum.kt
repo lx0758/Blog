@@ -24,15 +24,6 @@ enum class UserStatusEnum(
     ;
 }
 
-enum class ArticleFormatEnum(
-    override val value: Int,
-    val description: String,
-): Enum {
-    MARKDOWN(0, "Markdown"),
-    HTML(1, "Html"),
-    ;
-}
-
 enum class ArticleStatusEnum(
     override val value: Int,
     val description: String,

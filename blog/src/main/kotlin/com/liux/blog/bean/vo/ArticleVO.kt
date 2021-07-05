@@ -1,7 +1,7 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.parseContent
+import com.liux.blog.renderMarkdown
 import java.util.*
 
 data class ArticleVO(
@@ -23,7 +23,7 @@ data class ArticleVO(
                 article.id!!,
                 article.url ?: article.id.toString(),
                 article.title ?: "",
-                article.parseContent(catalogues),
+                article.renderMarkdown(catalogues),
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
                 article.category!!.name!!,
