@@ -17,7 +17,6 @@ export const logout = () => request('/api/session', 'DELETE');
 export const queryArticle = (
     title: string | null,
     category: number | null,
-    format: number | null,
     comment: number | null,
     status: number | null,
     pageNum: number,
@@ -25,7 +24,6 @@ export const queryArticle = (
 ) => request('/api/article', 'GET', {
     title: title,
     categoryId: category,
-    format: format,
     comment: comment,
     status: status,
     pageNum: pageNum,
@@ -36,18 +34,17 @@ export const queryArticleInfo = (id: number) => request('/api/article/' + id, 'G
 // 构建文章表单
 export const createFormData = (
     title: string,
-    category: number,
+    categoryId: number | null,
     url: string | null,
     tags: string[],
-    format: number,
     content: string,
-    weight: number,
+    weight: number | null,
     enableComment: boolean,
     status: number,
 ): FormData => {
     const formData = new FormData();
     formData.append("title", title + '')
-    formData.append("categoryId", category + '')
+    formData.append("categoryId", categoryId + '')
     if (url) {
         formData.append("url", url + '')
     }
@@ -56,7 +53,6 @@ export const createFormData = (
             formData.append("tags", tags[i]);
         }
     }
-    formData.append("format", format + '')
     formData.append("content", content + '')
     formData.append("weight", weight + '')
     formData.append("enableComment", enableComment + '')
@@ -66,20 +62,18 @@ export const createFormData = (
 // 新增文章
 export const addArticle = (
     title: string,
-    category: number,
+    categoryId: number | null,
     url: string | null,
     tags: string[],
-    format: number,
     content: string,
-    weight: number,
+    weight: number | null,
     enableComment: boolean,
     status: number,
 ) => requestBody('/api/article', 'POST', null, createFormData(
     title,
-    category,
+    categoryId,
     url,
     tags,
-    format,
     content,
     weight,
     enableComment,
@@ -89,20 +83,18 @@ export const addArticle = (
 export const updateArticle = (
     id: number,
     title: string,
-    category: number,
+    categoryId: number | null,
     url: string | null,
     tags: string[],
-    format: number,
     content: string,
-    weight: number,
+    weight: number | null,
     enableComment: boolean,
     status: number,
 ) => requestBody('/api/article/' + id, 'PUT', null, createFormData(
     title,
-    category,
+    categoryId,
     url,
     tags,
-    format,
     content,
     weight,
     enableComment,
@@ -224,11 +216,9 @@ export const queryUpload = (
     pageSize: pageSize,
 }, null)
 // 上传文件
-export const addUpload = (...files: any[]) => {
+export const addUpload = (file: any) => {
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-    }
+    formData.append("file", file);
     return requestBody('/api/upload', 'POST', null, formData)
 }
 // 删除文件

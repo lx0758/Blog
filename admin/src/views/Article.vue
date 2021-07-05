@@ -7,7 +7,6 @@
             v-model="filter.title"
             clearable/>
       <blog-select v-model:value="filter.category" v-bind:type="1"></blog-select>
-      <blog-select v-model:value="filter.format" v-bind:type="2"></blog-select>
       <blog-select v-model:value="filter.comment" v-bind:type="3"></blog-select>
       <blog-select v-model:value="filter.status" v-bind:type="4"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
@@ -30,15 +29,6 @@
         </template>
       </el-table-column>
       <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
-      <el-table-column prop="format" label="格式" width="100">
-        <template #default="scope">
-          <el-tag
-              :type="scope.row.format === 1 ? 'success' : 'danger'"
-              disable-transitions
-              size="medium">{{ scope.row.format === 1 ? 'Html' : 'Markdown'}}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column prop="url" label="url" width="100">
         <template #default="scope">
           {{ scope.row.url ? scope.row.url : '-'}}
@@ -114,7 +104,6 @@ export default defineComponent({
       filter: {
         title: null,
         category: null,
-        format: null,
         comment: null,
         status: null,
       },
@@ -139,7 +128,6 @@ export default defineComponent({
     onFilterClear() {
       this.filter.title = null
       this.filter.category = null
-      this.filter.format = null
       this.filter.comment = null
       this.filter.status = null
       this.onRefresh()
@@ -155,7 +143,7 @@ export default defineComponent({
     onAddArticle() {
       this.$router.push({
         path: 'editor',
-        name: '编写文章',
+        name: '文章编辑',
       })
     },
     onEditArticle(row: any) {
@@ -184,7 +172,6 @@ export default defineComponent({
       queryArticle(
           this.filter.title,
           this.filter.category,
-          this.filter.format,
           this.filter.comment,
           this.filter.status,
           this.data.pageNum,

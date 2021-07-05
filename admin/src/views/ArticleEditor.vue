@@ -1,33 +1,41 @@
 <template>
 
-  <el-form label-width="80px">
+  <el-form label-width="80px" ref="article">
     <el-row gutter="middle">
-      <el-col :span="12">
-        <el-form-item label="文章标题">
+      <el-col :span="8">
+        <el-form-item label="文章标题" prop="title">
           <el-input
               v-model="title"
               placeholder="请输入文章标题"/>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="文章分类">
+      <el-col :span="8">
+        <el-form-item label="文章分类" prop="categoryId">
           <blog-select
               v-model:value="categoryId"
               v-bind:type="1"
               style="width: 100%"/>
         </el-form-item>
       </el-col>
+      <el-col :span="8">
+        <el-form-item label="文章权重" prop="weight">
+          <el-input
+              v-model="weight"
+              placeholder="请输入文章权重"
+              type="number"/>
+        </el-form-item>
+      </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12">
-        <el-form-item label="文章链接">
+      <el-col :span="8">
+        <el-form-item label="文章链接" prop="url">
           <el-input
               v-model="url"
               placeholder="请输入文章链接"/>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="文章标签">
+      <el-col :span="16">
+        <el-form-item label="文章标签" prop="tags">
           <el-select
               v-model="tags"
               clearable
@@ -43,24 +51,28 @@
       </el-col>
     </el-row>
 
-    <el-container :style="'margin-bottom: 20px; height: ' + mainContentHeight + 'px'">
-      <v-md-editor v-model="content"/>
+    <el-container prop="content" :style="'margin-bottom: 20px; height: ' + mainContentHeight + 'px'">
+      <v-md-editor
+          v-model="content"
+          :disabled-menus="[]"
+          @save="onEditorSave"
+          @upload-image="onEditorUploadImage"/>
     </el-container>
 
     <el-row>
       <el-col :span="12">
         <el-container>
-          <el-form-item label="文章状态" style="width: 120px;">
-            <el-switch
-                v-model="status"
-                :active-value="1"
-                :inactive-value="0"/>
-          </el-form-item>
-          <el-form-item label="评论状态" style="width: 120px;">
+          <el-form-item label="评论状态" prop="enableComment" style="width: 120px;">
             <el-switch
                 v-model="enableComment"
                 :active-value="true"
                 :inactive-value="false"/>
+          </el-form-item>
+          <el-form-item label="文章状态" prop="status" style="width: 120px;">
+            <el-switch
+                v-model="status"
+                :active-value="1"
+                :inactive-value="0"/>
           </el-form-item>
         </el-container>
       </el-col>
@@ -79,7 +91,7 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import {queryArticleInfo, addArticle, updateArticle} from "@/api";
+import {queryArticleInfo, addArticle, updateArticle, addUpload} from "@/api";
 import BlogSelect from "@/components/BlogSelect.vue";
 
 export default defineComponent({
@@ -98,12 +110,13 @@ export default defineComponent({
             this.categoryId = data.categoryId
             this.url = data.url
             this.tags = data.tags
-            this.format = data.format
             this.content = data.content
+            this.weight = data.weight
             this.enableComment = data.enableComment
             this.status = data.status
           })
     }
+
     window.onresize = () => {
       this.onRefreshMainContentHeight()
     }
@@ -111,6 +124,19 @@ export default defineComponent({
   },
   unmounted() {
     window.onresize = null;
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$confirm('系统可能不会保存您所做的更改。', '离开此页面？', {
+      confirmButtonText: '离开',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          next(false)
+        })
   },
   data() {
     const mainContentBottom = 300
@@ -120,11 +146,10 @@ export default defineComponent({
 
       id: 0,
       title: '',
-      categoryId: 0,
+      categoryId: null,
       url: null,
       tags: [],
 
-      format: 0,
       content: '',
 
       weight: 0,
@@ -137,17 +162,31 @@ export default defineComponent({
       this.mainContentHeight = window.innerHeight - this.mainContentBottom
     },
 
+    onEditorSave(text: string, html: string) {
+      this.onSaveArticle()
+    },
+    onEditorUploadImage(event: any, insertImage: (any), files: any[]) {
+      addUpload(files[0])
+          .then(data => {
+            data = data.data
+            insertImage({
+              url: data.url,
+              desc: data.displayName,
+            });
+          })
+    },
+
     onBack() {
       this.$router.back()
     },
     onSaveArticle() {
+      if (!this.onCheckArticle()) return
       if (this.id == 0) {
         addArticle(
             this.title,
             this.categoryId,
             this.url,
             this.tags,
-            this.format,
             this.content,
             this.weight,
             this.enableComment,
@@ -155,7 +194,6 @@ export default defineComponent({
         )
             .then(() => {
               this.$message.success("保存成功");
-              this.onBack()
             })
       } else {
         updateArticle(
@@ -164,7 +202,6 @@ export default defineComponent({
             this.categoryId,
             this.url,
             this.tags,
-            this.format,
             this.content,
             this.weight,
             this.enableComment,
@@ -172,18 +209,17 @@ export default defineComponent({
         )
             .then(() => {
               this.$message.success("更新成功");
-              this.onBack()
             })
       }
     },
     onPublishArticle() {
+      if (!this.onCheckArticle()) return
       if (this.id == 0) {
         addArticle(
             this.title,
             this.categoryId,
             this.url,
             this.tags,
-            this.format,
             this.content,
             this.weight,
             this.enableComment,
@@ -191,7 +227,6 @@ export default defineComponent({
         )
             .then(() => {
               this.$message.success("发布成功");
-              this.onBack()
             })
       } else {
         updateArticle(
@@ -200,7 +235,6 @@ export default defineComponent({
             this.categoryId,
             this.url,
             this.tags,
-            this.format,
             this.content,
             this.weight,
             this.enableComment,
@@ -208,9 +242,23 @@ export default defineComponent({
         )
             .then(() => {
               this.$message.success("更新成功");
-              this.onBack()
             })
       }
+    },
+    onCheckArticle(): boolean {
+      if (!this.title || this.title === '') {
+        this.$message.error("标题不能为空")
+        return false
+      }
+      if (!this.categoryId || this.categoryId === 0) {
+        this.$message.error("分类不能为空")
+        return false
+      }
+      if (!this.content || this.content === '') {
+        this.$message.error("内容不能为空")
+        return false
+      }
+      return true
     },
   }
 });
