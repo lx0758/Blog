@@ -27,6 +27,7 @@ interface ArticleService {
     fun getByAdmin(id: Int): Article?
 
     fun addByAdmin(
+        userId: Int,
         title: String,
         categoryId: Int,
         content: String,
@@ -35,7 +36,7 @@ interface ArticleService {
         enableComment: Boolean,
         status: Int,
         tags: Array<String>?
-    )
+    ): Article
 
     fun updateByAdmin(
         id: Int,

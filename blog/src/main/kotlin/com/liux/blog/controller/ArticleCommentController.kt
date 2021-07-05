@@ -34,7 +34,7 @@ class ArticleCommentController {
     }
 
     @PostMapping
-    fun insert(
+    fun add(
         request: HttpServletRequest,
         @RequestParam("verifyCode") verifyCode: String,
         @PathVariable("id") articleId: Int,

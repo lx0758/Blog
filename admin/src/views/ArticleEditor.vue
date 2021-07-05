@@ -152,7 +152,7 @@ export default defineComponent({
 
       content: '',
 
-      weight: 0,
+      weight: null,
       enableComment: true,
       status: 0,
     }
@@ -192,8 +192,10 @@ export default defineComponent({
             this.enableComment,
             0,
         )
-            .then(() => {
+            .then((data) => {
+              data = data.data
               this.$message.success("保存成功");
+              this.id = data.id
             })
       } else {
         updateArticle(
@@ -225,8 +227,10 @@ export default defineComponent({
             this.enableComment,
             1,
         )
-            .then(() => {
+            .then((data) => {
+              data = data.data
               this.$message.success("发布成功");
+              this.id = data.id
             })
       } else {
         updateArticle(
