@@ -9,13 +9,13 @@ import java.util.*
 data class Article(
     // ID
     var id: Int? = null,
-    // 分类ID
-    var categoryId: Int? = null,
     // 标题
     var title: String? = null,
     // 内容
     var content: String? = null,
     // 分类ID
+    var categoryId: Int? = null,
+    // 作者ID
     var authorId: Int? = null,
     // 自定义url
     var url: String? = null,

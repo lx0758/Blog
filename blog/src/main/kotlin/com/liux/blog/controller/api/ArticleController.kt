@@ -47,7 +47,7 @@ class ArticleController {
     }
 
     @PostMapping
-    fun insert(
+    fun add(
         @CurrentUserId userId: Int,
         @RequestParam("title") title: String,
         @RequestParam("categoryId") categoryId: Int,
@@ -57,9 +57,10 @@ class ArticleController {
         @RequestParam("enableComment", required = false) enableComment: Boolean,
         @RequestParam("status") status: Int,
         @RequestParam("tags", required = false) tags: Array<String>?,
-    ): Resp<*> {
+    ): Resp<ArticleVO> {
         checkParams(title, categoryId, content, url, weight, status)
-        articleService.addByAdmin(
+        val article = articleService.addByAdmin(
+            userId,
             title,
             categoryId,
             content,
@@ -69,7 +70,8 @@ class ArticleController {
             status,
             tags,
         )
-        return Resp.succeed()
+        val articleVO = ArticleVO.of(article)
+        return Resp.succeed(articleVO)
     }
 
     @PutMapping("{id}")

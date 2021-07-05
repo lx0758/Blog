@@ -107,6 +107,7 @@ class ArticleServiceImpl: ArticleService {
 
     @Transactional(rollbackFor = [Exception::class])
     override fun addByAdmin(
+        userId: Int,
         title: String,
         categoryId: Int,
         content: String,
@@ -115,13 +116,15 @@ class ArticleServiceImpl: ArticleService {
         enableComment: Boolean,
         status: Int,
         tags: Array<String>?
-    ) {
+    ): Article {
         val article = Article(
             title = title,
-            categoryId = categoryId,
             content = content,
+            categoryId = categoryId,
+            authorId = userId,
             url = url,
             weight = weight,
+            views = 0,
             enableComment = enableComment,
             status = status,
             createTime = Date(),
@@ -132,6 +135,8 @@ class ArticleServiceImpl: ArticleService {
         linkArticleAndTags(article.id!!, tags)
 
         applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+
+        return article
     }
 
     @Transactional(rollbackFor = [Exception::class])
@@ -149,8 +154,8 @@ class ArticleServiceImpl: ArticleService {
         val updateRow = articleMapper.updateByPrimaryKeySelective(Article(
             id = id,
             title = title,
-            categoryId = categoryId,
             content = content,
+            categoryId = categoryId,
             url = url,
             weight = weight,
             enableComment = enableComment,

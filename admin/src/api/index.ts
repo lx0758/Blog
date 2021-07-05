@@ -54,7 +54,9 @@ export const createFormData = (
         }
     }
     formData.append("content", content + '')
-    formData.append("weight", weight + '')
+    if (weight) {
+        formData.append("weight", weight + '')
+    }
     formData.append("enableComment", enableComment + '')
     formData.append("status", status + '')
     return formData
