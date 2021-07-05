@@ -33,12 +33,11 @@ class UploadController {
     @PostMapping
     fun add(
         @CurrentUserId userId: Int,
-        @RequestParam("files") files: Array<MultipartFile>,
-    ): Resp<*> {
-        for (file in files) {
-            uploadService.addByAdmin(userId, file)
-        }
-        return Resp.succeed()
+        @RequestParam("file") file: MultipartFile,
+    ): Resp<UploadVO> {
+        val upload = uploadService.addByAdmin(userId, file)
+        val uploadVO = UploadVO.of(upload)
+        return Resp.succeed(uploadVO)
     }
 
     @DeleteMapping("{id}")

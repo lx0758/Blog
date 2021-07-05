@@ -25,7 +25,7 @@ class UploadVO(
                 upload.path!!,
                 UploadConfig.UPLOAD_URL_PREFIX + upload.path!!,
                 upload.authorId!!,
-                upload.author!!.nickname!!,
+                upload.author?.nickname ?: "",
                 upload.createTime!!,
             )
         }
