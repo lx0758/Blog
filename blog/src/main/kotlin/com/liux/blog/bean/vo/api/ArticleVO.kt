@@ -1,6 +1,7 @@
 package com.liux.blog.bean.vo.api
 
 import com.liux.blog.bean.po.Article
+import java.util.*
 
 data class ArticleVO(
     var id: Int,
@@ -12,6 +13,8 @@ data class ArticleVO(
     var weight: Int,
     var enableComment: Boolean,
     var status: Int,
+    var createTime: Date,
+    var updateTime: Date,
 ) {
     companion object {
         fun of(article: Article): ArticleVO {
@@ -25,6 +28,8 @@ data class ArticleVO(
                 article.weight ?: 0,
                 article.enableComment ?: false,
                 article.status!!,
+                article.createTime!!,
+                article.updateTime ?: article.createTime!!,
             )
         }
     }

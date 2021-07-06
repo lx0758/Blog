@@ -220,6 +220,11 @@
         from t_article
         where status = 1
     </select>
+    <select id="getViews" resultType="INTEGER">
+        select
+                sum(views)
+        from t_article
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--@mbg.generated-->
         delete

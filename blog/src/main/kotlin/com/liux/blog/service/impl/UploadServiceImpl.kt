@@ -62,6 +62,10 @@ class UploadServiceImpl: UploadService {
         return deleteRow
     }
 
+    override fun getCountByDashboard(): Int {
+        return uploadMapper.getCount()
+    }
+
     private fun generatorPath(originalName: String): String {
         val suffix = originalName.split(".").last()
         val dir = SimpleDateFormat("yyyy/MM/").format(Date())

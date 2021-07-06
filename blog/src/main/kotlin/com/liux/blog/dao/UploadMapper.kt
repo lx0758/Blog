@@ -9,6 +9,7 @@ interface UploadMapper {
     fun insert(record: Upload?): Int
     fun insertSelective(record: Upload?): Int
     fun getByPrimaryKey(id: Int?): Upload?
+    fun getCount(): Int
     fun selectByAdmin(upload: Upload): List<Upload>
     fun updateByPrimaryKeySelective(upload: Upload?): Int
     fun updateByPrimaryKey(upload: Upload?): Int

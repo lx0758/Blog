@@ -49,6 +49,10 @@ class CommentServiceImpl: CommentService {
         return commentMapper.getByPrimaryKey(id)
     }
 
+    override fun getCountByDashboard(): Int {
+        return commentMapper.getCount()
+    }
+
     override fun addByBlog(
         articleId: Int,
         parentId: Int?,

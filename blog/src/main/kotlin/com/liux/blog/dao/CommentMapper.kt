@@ -10,7 +10,7 @@ interface CommentMapper {
     fun insert(record: Comment): Int
     fun insertSelective(record: Comment): Int
     fun getByPrimaryKey(id: Int): Comment?
-    fun getCount(): Long
+    fun getCount(): Int
     fun selectByArticleId(articleId: Int): List<Comment>
     fun selectByLatest(size: Int): List<Comment>
     fun selectByAdmin(comment: Comment): List<Comment>

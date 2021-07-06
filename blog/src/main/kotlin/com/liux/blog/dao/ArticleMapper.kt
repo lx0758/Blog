@@ -17,6 +17,7 @@ interface ArticleMapper {
     fun getByNext(articleId: Int): Article?
     fun getByAdmin(@Param("id") id: Int?): Article?
     fun getCount(): Int
+    fun getViews(): Int
     fun selectByPage(): List<Article>
     fun selectByArchive(): List<Article>
     fun selectByCategory(categoryId: Int): List<Article>

@@ -8,4 +8,5 @@ interface UploadService {
     fun listByAdmin(name: String?, type: String?, pageNum: Int, pageSize: Int): Page<Upload>
     fun addByAdmin(userId: Int, file: MultipartFile): Upload
     fun deleteByAdmin(id: Int): Int
+    fun getCountByDashboard(): Int
 }

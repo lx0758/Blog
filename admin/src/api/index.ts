@@ -13,6 +13,8 @@ export const login = (
 // 注销
 export const logout = () => request('/api/session', 'DELETE');
 
+export const queryDashboard = () => request('/api/dashboard', 'GET', null, null)
+
 // 查询文章
 export const queryArticle = (
     title: string | null,

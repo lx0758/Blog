@@ -10,10 +10,10 @@ data class ArticleItemVO(
     var url: String,
     var weight: Int,
     var views: Int,
-    var createTime: Date,
-    var updateTime: Date,
     var enableComment: Boolean,
     var status: Int,
+    var createTime: Date,
+    var updateTime: Date,
 ) {
     companion object {
         fun of(article: Article): ArticleItemVO {
@@ -24,10 +24,10 @@ data class ArticleItemVO(
                 article.url ?: "",
                 article.weight ?: 0,
                 article.views ?: 0,
-                article.createTime!!,
-                article.updateTime ?: article.createTime!!,
                 article.enableComment!!,
                 article.status!!,
+                article.createTime!!,
+                article.updateTime ?: article.createTime!!,
             )
         }
     }

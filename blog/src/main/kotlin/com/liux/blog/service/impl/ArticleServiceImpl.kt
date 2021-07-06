@@ -105,6 +105,14 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.getByAdmin(id)
     }
 
+    override fun getCountByDashboard(): Int {
+        return articleMapper.getCount()
+    }
+
+    override fun getViewsByDashboard(): Int {
+        return articleMapper.getViews()
+    }
+
     @Transactional(rollbackFor = [Exception::class])
     override fun addByAdmin(
         userId: Int,
