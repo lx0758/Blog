@@ -75,54 +75,41 @@
   </el-container>
 
   <el-dialog title="审核评论" v-model="verify" :close-on-click-modal="false">
-    <el-form ref="verify" :model="verifyData" label-width="120px">
-      <el-form-item label="文章标题">
-        <span>{{verifyData.articleTitle}}</span>
-      </el-form-item>
-      <el-form-item label="用户信息">
-        <span>{{verifyData.nickname + ' / ' + verifyData.email + ' / ' + verifyData.url}}</span>
-      </el-form-item>
-      <el-form-item label="设备信息">
-        <span>{{verifyData.ip + ' / ' + verifyData.browser + ' / ' + verifyData.system}}</span>
-      </el-form-item>
-      <el-form-item label="评论时间">
-        <span>{{verifyData.time}}</span>
-      </el-form-item>
-      <el-form-item label="评论内容" style="word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
-        <span>{{verifyData.content}}</span>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onVerifyComment">通过</el-button>
-        <el-button @click="verify = false">取消</el-button>
-      </el-form-item>
-    </el-form>
+    <el-descriptions direction="horizontal" :column="3" border>
+      <el-descriptions-item label="文章" :span="2">{{verifyData.articleTitle}}</el-descriptions-item>
+      <el-descriptions-item label="时间" :span="1">{{verifyData.time}}</el-descriptions-item>
+      <el-descriptions-item label="昵称" :span="1">{{verifyData.nickname}}</el-descriptions-item>
+      <el-descriptions-item label="邮箱" :span="1">{{verifyData.email}}</el-descriptions-item>
+      <el-descriptions-item label="链接" :span="1">{{verifyData.url}}</el-descriptions-item>
+      <el-descriptions-item label="IP" :span="1">{{verifyData.ip}}</el-descriptions-item>
+      <el-descriptions-item label="浏览器" :span="1">{{verifyData.browser}}</el-descriptions-item>
+      <el-descriptions-item label="系统" :span="1">{{verifyData.system}}</el-descriptions-item>
+    </el-descriptions>
+    <div style="margin: 20px 0 20px 0; word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
+      <span>{{verifyData.content}}</span>
+    </div>
+    <el-button type="primary" @click="onVerifyComment">通过</el-button>
+    <el-button @click="verify = false">取消</el-button>
   </el-dialog>
 
   <el-dialog title="回复评论" v-model="replay" :close-on-click-modal="false">
-    <el-form ref="replay" :model="replayData" label-width="120px">
-      <el-form-item label="文章标题" prop="title">
-        <span>{{replayData.articleTitle}}</span>
-      </el-form-item>
-      <el-form-item label="用户信息">
-        <span>{{replayData.nickname + ' / ' + replayData.email + ' / ' + replayData.url}}</span>
-      </el-form-item>
-      <el-form-item label="设备信息">
-        <span>{{replayData.ip + ' / ' + replayData.browser + ' / ' + replayData.system}}</span>
-      </el-form-item>
-      <el-form-item label="评论时间">
-        <span>{{replayData.time}}</span>
-      </el-form-item>
-      <el-form-item label="评论内容" style="word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
-        <span>{{replayData.content}}</span>
-      </el-form-item>
-      <el-form-item label="答复内容" prop="replayContent">
-        <el-input type="textarea" rows="6" v-model="replayData.replayContent" :placeholder="'@' + replayData.nickname"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onReplyComment">回复</el-button>
-        <el-button @click="replay = false">取消</el-button>
-      </el-form-item>
-    </el-form>
+    <el-descriptions direction="horizontal" :column="3" border>
+      <el-descriptions-item label="文章" :span="2">{{replayData.articleTitle}}</el-descriptions-item>
+      <el-descriptions-item label="时间" :span="1">{{replayData.time}}</el-descriptions-item>
+      <el-descriptions-item label="昵称" :span="1">{{replayData.nickname}}</el-descriptions-item>
+      <el-descriptions-item label="邮箱" :span="1">{{replayData.email}}</el-descriptions-item>
+      <el-descriptions-item label="链接" :span="1">{{replayData.url}}</el-descriptions-item>
+      <el-descriptions-item label="IP" :span="1">{{replayData.ip}}</el-descriptions-item>
+      <el-descriptions-item label="浏览器" :span="1">{{replayData.browser}}</el-descriptions-item>
+      <el-descriptions-item label="系统" :span="1">{{replayData.system}}</el-descriptions-item>
+    </el-descriptions>
+    <div style="margin: 20px 0 20px 0; word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
+      <span>{{replayData.content}}</span>
+    </div>
+    <el-input type="textarea" rows="6" v-model="replayData.replayContent" :placeholder="'@' + replayData.nickname"></el-input>
+    <div style="height: 20px"/>
+    <el-button type="primary" @click="onReplyComment">回复</el-button>
+    <el-button @click="replay = false">取消</el-button>
   </el-dialog>
 
 </template>
@@ -222,6 +209,10 @@ export default defineComponent({
     },
     onReplyComment() {
       const replayData = this.replayData as any
+      if (!replayData.replayContent || replayData.replayContent === '') {
+        this.$message.warning("回复内容不能为空");
+        return
+      }
       addCommentByReplay(
           replayData.articleId,
           replayData.parentId,

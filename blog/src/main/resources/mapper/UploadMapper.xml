@@ -21,6 +21,11 @@
     from t_upload
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="getCount" resultType="INTEGER">
+    select
+        count(id)
+    from t_upload
+  </select>
   <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Upload" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

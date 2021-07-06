@@ -19,6 +19,7 @@ interface CommentService {
     ): Page<Comment>
 
     fun getCommentById(id: Int): Comment?
+    fun getCountByDashboard(): Int
 
     fun addByBlog(
         articleId: Int,

@@ -25,6 +25,8 @@ interface ArticleService {
     fun getByPrev(articleId: Int): Article?
     fun getByNext(articleId: Int): Article?
     fun getByAdmin(id: Int): Article?
+    fun getCountByDashboard(): Int
+    fun getViewsByDashboard(): Int
 
     fun addByAdmin(
         userId: Int,
