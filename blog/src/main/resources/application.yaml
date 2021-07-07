@@ -26,6 +26,10 @@ spring:
 
 server:
   max-http-header-size: 1MB
+  error:
+    include-message: always
+    include-exception: true
+    include-binding-errors: always
 
 mybatis:
   type-handlers-package: com.liux.blog.dao.typehandler
