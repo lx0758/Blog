@@ -1,7 +1,10 @@
 package com.liux.blog.markdown
 
 import com.liux.blog.bean.vo.CatalogueVO
-import org.commonmark.node.*
+import org.commonmark.node.Document
+import org.commonmark.node.Heading
+import org.commonmark.node.HtmlBlock
+import org.commonmark.node.Node
 import org.commonmark.parser.PostProcessor
 
 class NexTPostProcessor : PostProcessor {

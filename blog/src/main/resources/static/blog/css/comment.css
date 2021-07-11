@@ -122,6 +122,10 @@
     font-size: 14px
 }
 
+.v[data-class=v] .vrow .vcol.vcol-10 {
+    width: 10%
+}
+
 .v[data-class=v] .vrow .vcol.vcol-20 {
     width: 20%
 }
@@ -148,6 +152,14 @@
 
 .v[data-class=v] .vrow .vcol.vcol-80 {
     width: 80%
+}
+
+.v[data-class=v] .vrow .vcol.vcol-90 {
+    width: 90%
+}
+
+.v[data-class=v] .vrow .vcol.vcol-100 {
+    width: 100%
 }
 
 .v[data-class=v] .vrow .vcol.vctrl {
@@ -192,6 +204,29 @@
     max-height: 145px;
     overflow: auto;
     padding-bottom: 10px;
+    -webkit-box-shadow: 0 0 1px #f0f0f0;
+    box-shadow: 0 0 1px #f0f0f0
+}
+
+.v[data-class=v] .vwrap .vcode {
+    display: none;
+    width: 100px;
+    padding: 5px;
+    margin-right: 10px;
+    border-bottom: 1px dashed #dedede
+}
+
+.v[data-class=v] .vwrap .vcode:focus {
+    border-bottom-color: #eb5055
+}
+
+.v[data-class=v] .vwrap .vcode-img {
+    display: none;
+    width: 80px;
+    height: 30px;
+    margin-right: 10px;
+    background-color: black;
+    overflow: auto;
     -webkit-box-shadow: 0 0 1px #f0f0f0;
     box-shadow: 0 0 1px #f0f0f0
 }

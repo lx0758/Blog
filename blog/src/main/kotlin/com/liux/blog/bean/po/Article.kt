@@ -8,22 +8,24 @@ import java.util.*
 @NoArgsConstructor
 data class Article(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 标题
     var title: String? = null,
     // 内容
     var content: String? = null,
-    // 内容格式 0_markdown 1_html
-    var format: Int? = null,
+    // 分类ID
+    var categoryId: Int? = null,
+    // 作者ID
+    var authorId: Int? = null,
     // 自定义url
     var url: String? = null,
     // 权重
     var weight: Int? = null,
     // 阅读量
     var views: Int? = null,
-    // 允许评论 0_禁止评论 1_允许评论
-    var enableComment: Int? = null,
-    // 状态 -1_已删除 0_草稿 1_发布
+    // 允许评论
+    var enableComment: Boolean? = null,
+    // 状态
     var status: Int? = null,
     // 创建时间
     var createTime: Date? = null,

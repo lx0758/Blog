@@ -7,7 +7,8 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="author_id" jdbcType="VARCHAR" property="authorId"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
@@ -15,21 +16,14 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
-        <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
-                     column="author_id"/>
-        <collection property="tags" javaType="java.util.List" ofType="com.liux.blog.bean.po.Tag"
-                    select="com.liux.blog.dao.TagMapper.selectByArticle" column="id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
+        <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
+        <collection property="tags" javaType="java.util.List" ofType="com.liux.blog.bean.po.Tag" select="com.liux.blog.dao.TagMapper.selectByArticle" column="id"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, title, content, format, url, weight, views, enable_comment,
+        id, title, content, url, weight, views, enable_comment,
         status, create_time, update_time, category_id, author_id
-    </sql>
-    <sql id="Comment_Column_List">
-        <!--@mbg.generated-->
-        id, title
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -37,7 +31,7 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
@@ -45,15 +39,19 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
     </resultMap>
+    <sql id="Item_Column_List">
+        <!--@mbg.generated-->
+        id, title, content, url, weight, views, enable_comment,
+        status, create_time, update_time, category_id
+    </sql>
     <resultMap id="AdminItemResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
         <!--@Table t_article-->
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
@@ -61,17 +59,11 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <association property="category" select="com.liux.blog.dao.CategoryMapper.selectByPrimaryKey"
-                     column="category_id"/>
+        <association property="category" select="com.liux.blog.dao.CategoryMapper.getByMapper" column="category_id"/>
     </resultMap>
-    <sql id="Item_Column_List">
-        <!--@mbg.generated-->
-        id, title, content, format, url, weight, views, enable_comment,
-        status, create_time, update_time, category_id
-    </sql>
     <sql id="Admin_Item_Column_List">
         <!--@mbg.generated-->
-        id, title, format, url, weight, views, enable_comment,
+        id, title, url, weight, views, enable_comment,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Article">
@@ -92,12 +84,11 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="format" jdbcType="TINYINT" property="format"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
     </resultMap>
     <sql id="Search_Column_List">
         <!--@mbg.generated-->
-        id, title, content, format, url
+        id, title, content, url
     </sql>
     <resultMap id="SitemapResultMap" type="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
@@ -111,33 +102,27 @@
         <!--@mbg.generated-->
         id, url, create_time, update_time
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByBlog" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and id=#{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByIdOrUrl" resultMap="BaseResultMap">
+    <select id="getByIdOrUrl" resultMap="BaseResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Base_Column_List"/>
         from t_article
         where status = 1 and (id = #{id,jdbcType=INTEGER} OR url = #{url,jdbcType=VARCHAR})
     </select>
-    <select id="selectByComment" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
-        select
-        <include refid="Simple_Column_List"/>
-        from t_article
-        where id=#{id,jdbcType=INTEGER}
-    </select>
-    <select id="selectByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
+    <select id="getByPrev" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Simple_Column_List"/>
@@ -146,7 +131,7 @@
         order by id desc
         limit 1
     </select>
-    <select id="selectByNext" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
+    <select id="getByNext" parameterType="java.lang.Integer" resultMap="SimpleResultMap">
         <!--@mbg.generated-->
         select
         <include refid="Simple_Column_List"/>
@@ -154,6 +139,18 @@
         where status = 1 and id &gt; #{articleId,jdbcType=INTEGER}
         order by id
         limit 1
+    </select>
+    <select id="getByMapper" parameterType="java.lang.Integer" resultMap="ItemResultMap">
+        select
+        <include refid="Item_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="getByAdmin" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_article
+        where id=#{id,jdbcType=INTEGER}
     </select>
     <select id="selectByPage" resultMap="ItemResultMap">
         select
@@ -198,17 +195,35 @@
         where status = 1
         order by id desc
     </select>
-    <select id="selectByAdmin" resultMap="AdminItemResultMap">
+    <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Article" resultMap="AdminItemResultMap">
         select
         <include refid="Admin_Item_Column_List"/>
         from t_article
-        order by weight desc, id desc
+        where 1 = 1
+        <if test="categoryId != null">
+            and category_id = #{categoryId,jdbcType=INTEGER}
+        </if>
+        <if test="title != null and title != ''">
+            and title like CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%')
+        </if>
+        <if test="enableComment != null">
+            and enable_comment = #{enableComment,jdbcType=INTEGER}
+        </if>
+        <if test="status != null">
+            and status = #{status,jdbcType=INTEGER}
+        </if>
+        order by id desc
     </select>
-    <select id="selectCount" resultType="INTEGER">
+    <select id="getCount" resultType="INTEGER">
         select
                 count(id)
         from t_article
         where status = 1
+    </select>
+    <select id="getViews" resultType="INTEGER">
+        select
+                sum(views)
+        from t_article
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--@mbg.generated-->
@@ -219,13 +234,13 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Article"
             useGeneratedKeys="true">
         <!--@mbg.generated-->
-        insert into t_article (category_id, title,
-                               content, format, author_id,
+        insert into t_article (title, content,
+                               category_id, author_id,
                                url, weight, views,
                                enable_comment, status,
                                create_time, update_time)
-        values (#{category.id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
-                #{content,jdbcType=LONGVARCHAR}, #{format,jdbcType=TINYINT}, #{author.id,jdbcType=INTEGER},
+        values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR},
+                #{categoryId,jdbcType=INTEGER}, #{authorId,jdbcType=INTEGER},
                 #{url,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{views,jdbcType=INTEGER},
                 #{enableComment,jdbcType=TINYINT}, #{status,jdbcType=TINYINT},
                 #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
@@ -235,19 +250,16 @@
         <!--@mbg.generated-->
         insert into t_article
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="category != null">
-                category_id,
-            </if>
             <if test="title != null">
                 title,
             </if>
             <if test="content != null">
                 content,
             </if>
-            <if test="format != null">
-                format,
+            <if test="categoryId != null">
+                category_id,
             </if>
-            <if test="author != null">
+            <if test="authorId != null">
                 author_id,
             </if>
             <if test="url != null">
@@ -273,20 +285,17 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="category != null">
-                #{category.id,jdbcType=INTEGER},
-            </if>
             <if test="title != null">
                 #{title,jdbcType=VARCHAR},
             </if>
             <if test="content != null">
                 #{content,jdbcType=LONGVARCHAR},
             </if>
-            <if test="format != null">
-                #{format,jdbcType=TINYINT},
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
             </if>
-            <if test="author != null">
-                #{author.id,jdbcType=INTEGER},
+            <if test="authorId != null">
+                #{authorId,jdbcType=INTEGER},
             </if>
             <if test="url != null">
                 #{url,jdbcType=VARCHAR},
@@ -315,20 +324,17 @@
         <!--@mbg.generated-->
         update t_article
         <set>
-            <if test="category != null">
-                category_id = #{category.id,jdbcType=INTEGER},
-            </if>
             <if test="title != null">
                 title = #{title,jdbcType=VARCHAR},
             </if>
             <if test="content != null">
                 content = #{content,jdbcType=LONGVARCHAR},
             </if>
-            <if test="format != null">
-                format = #{format,jdbcType=TINYINT},
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=INTEGER},
             </if>
-            <if test="author != null">
-                author_id = #{author.id,jdbcType=INTEGER},
+            <if test="authorId != null">
+                author_id = #{authorId,jdbcType=INTEGER},
             </if>
             <if test="url != null">
                 url = #{url,jdbcType=VARCHAR},
@@ -357,11 +363,10 @@
     <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Article">
         <!--@mbg.generated-->
         update t_article
-        set category_id    = #{category.id,jdbcType=INTEGER},
-            title          = #{title,jdbcType=VARCHAR},
+        set title          = #{title,jdbcType=VARCHAR},
             content        = #{content,jdbcType=LONGVARCHAR},
-            format         = #{format,jdbcType=TINYINT},
-            author_id      = #{author.id,jdbcType=INTEGER},
+            category_id    = #{categoryId,jdbcType=INTEGER},
+            author_id      = #{authorId,jdbcType=INTEGER},
             url            = #{url,jdbcType=VARCHAR},
             weight          = #{weight,jdbcType=INTEGER},
             views          = #{views,jdbcType=INTEGER},
@@ -370,5 +375,11 @@
             create_time    = #{createTime,jdbcType=TIMESTAMP},
             update_time    = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByMoveCategory">
+        <!--@mbg.generated-->
+        update t_article
+        set category_id    = #{newCategoryId,jdbcType=INTEGER}
+        where category_id = #{oldCategoryId,jdbcType=INTEGER}
     </update>
 </mapper>

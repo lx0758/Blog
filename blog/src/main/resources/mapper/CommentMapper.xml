@@ -17,7 +17,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
     <association property="childs" javaType="java.util.List" select="selectChildById" column="id" />
   </resultMap>
   <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Comment">
@@ -36,7 +36,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.selectByComment"  column="article_id"/>
+    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
@@ -57,28 +57,53 @@
     from t_comment
     where status = 1 and parent_id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_comment
     where status = 1 and id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectCount" resultType="java.lang.Integer">
+  <select id="getCount" resultType="java.lang.Integer">
     select count(id)
     from t_comment
     where status = 1
   </select>
-  <select id="selectByAdmin" resultMap="ItemResultMap">
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Comment" resultMap="ItemResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_comment
+    where 1 = 1
+    <if test="articleId != null">
+      and article_id = #{articleId}
+    </if>
+    <if test="author != null and author != ''">
+      and author like CONCAT('%', #{author}, '%')
+    </if>
+    <if test="email != null and email != ''">
+      and email like CONCAT('%', #{email}, '%')
+    </if>
+    <if test="ip != null and ip != ''">
+      and ip like CONCAT('%', #{ip}, '%')
+    </if>
+    <if test="content != null and content != ''">
+      and content like CONCAT('%', #{content}, '%')
+    </if>
+    <if test="status != null">
+      and status = #{status}
+    </if>
+    order by id desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->
     delete from t_comment
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByCleanChild" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from t_comment
+    where parent_id = #{parentId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Comment" useGeneratedKeys="true">
     <!--@mbg.generated-->

@@ -2,6 +2,7 @@ package com.liux.blog.config
 
 import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.service.ThemeService
+import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.event.EventListener
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Component
 
 @Component
 @EnableAsync
-class BaseInfoEventConfig {
+class EventConfig {
+
+    private val logger = LogFactory.getLog(javaClass)
 
     @Autowired
     private lateinit var themeService: ThemeService
@@ -24,7 +27,8 @@ class BaseInfoEventConfig {
 
     @Async
     @EventListener
-    fun update(event: BaseInfoUpdateEvent) {
+    fun updateBaseInfo(event: BaseInfoUpdateEvent) {
+        logger.info("updateBaseInfo by:" + event.source)
         themeService.updateBase()
     }
 }

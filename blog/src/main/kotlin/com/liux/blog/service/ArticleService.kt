@@ -11,10 +11,47 @@ interface ArticleService {
     fun listByTag(tagId: Int, pageNum: Int): Page<Article>
     fun listBySearch(): List<Article>
     fun listBySitemap(): List<Article>
-    fun listByAdmin(pageNum: Int, pageSize: Int): Page<Article>
+    fun listByAdmin(
+        title: String?,
+        category: Int?,
+        enableComment: Boolean?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Article>
 
-    fun getArticleById(id: Int): Article?
-    fun getArticleByUrl(url: String): Article?
-    fun getArticleByPrev(articleId: Int): Article?
-    fun getArticleByNext(articleId: Int): Article?
+    fun getByBlog(id: Int): Article?
+    fun getByUrl(url: String): Article?
+    fun getByPrev(articleId: Int): Article?
+    fun getByNext(articleId: Int): Article?
+    fun getByAdmin(id: Int): Article?
+    fun getCountByDashboard(): Int
+    fun getViewsByDashboard(): Int
+
+    fun addByAdmin(
+        userId: Int,
+        title: String,
+        categoryId: Int,
+        content: String,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>?
+    ): Article
+
+    fun updateByAdmin(
+        id: Int,
+        title: String,
+        categoryId: Int,
+        content: String,
+        url: String?,
+        weight: Int?,
+        enableComment: Boolean,
+        status: Int,
+        tags: Array<String>?
+    ): Int
+    fun updateStatusByAdmin(id: Int, status: Int): Int
+
+    fun deleteByAdmin(id: Int): Int
 }

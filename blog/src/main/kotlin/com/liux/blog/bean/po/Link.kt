@@ -7,14 +7,14 @@ import java.util.*
 @NoArgsConstructor
 data class Link(
     // ID
-    var id: Int,
+    var id: Int? = null,
     // 标题
     var title: String? = null,
     // 地址
     var url: String? = null,
     // 权重
     var weight: Int? = null,
-    // 状态 -1_已删除 0_未启用 1_已启用
+    // 状态
     var status: Int? = null,
     // 创建时间
     var createTime: Date? = null,

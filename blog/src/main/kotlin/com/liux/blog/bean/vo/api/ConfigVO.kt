@@ -1,6 +1,6 @@
 package com.liux.blog.bean.vo.api
 
-import com.liux.blog.bean.po.*
+import com.liux.blog.bean.po.Config
 import java.util.*
 
 data class ConfigVO(
@@ -13,7 +13,7 @@ data class ConfigVO(
     companion object {
         fun of(config: Config): ConfigVO {
             return ConfigVO(
-                config.key,
+                config.key!!,
                 config.value ?: "",
                 config.description ?: "",
                 config.createTime!!,

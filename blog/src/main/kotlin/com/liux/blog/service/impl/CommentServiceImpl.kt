@@ -3,11 +3,13 @@ package com.liux.blog.service.impl
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.po.Comment
-import com.liux.blog.bean.po.STATE_NOT_ACTIVATED
+import com.liux.blog.bean.po.CommentStatusEnum
 import com.liux.blog.dao.CommentMapper
 import com.liux.blog.service.CommentService
+import com.liux.blog.service.EmailService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -15,12 +17,8 @@ class CommentServiceImpl: CommentService {
 
     @Autowired
     private lateinit var commentMapper: CommentMapper
-
-    override fun listByAdmin(pageNum: Int, pageSize: Int): Page<Comment> {
-        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
-        commentMapper.selectByAdmin()
-        return page
-    }
+    @Autowired
+    private lateinit var emailService: EmailService
 
     override fun listByArticle(articleId: Int, pageNum: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, 10)
@@ -28,24 +26,50 @@ class CommentServiceImpl: CommentService {
         return page
     }
 
+    override fun listByAdmin(
+        articleId: Int?,
+        author: String?,
+        email: String?,
+        ip: String?,
+        content: String?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int
+    ): Page<Comment> {
+        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
+        commentMapper.selectByAdmin(Comment(
+            articleId = articleId,
+            author = author,
+            email = email,
+            ip = ip,
+            content = content,
+            status = status,
+        ))
+        return page
+    }
+
     override fun getCommentById(id: Int): Comment? {
-        return commentMapper.selectByPrimaryKey(id)
+        return commentMapper.getByPrimaryKey(id)
+    }
+
+    override fun getCountByDashboard(): Int {
+        return commentMapper.getCount()
     }
 
     override fun addByBlog(
         articleId: Int,
         parentId: Int?,
-        nickname: String?,
-        email: String?,
+        nickname: String,
+        email: String,
         url: String?,
         content: String,
-        ip: String?,
-        ua: String?
+        ip: String,
+        ua: String,
     ) {
+        val finalParentId = findTopParentId(parentId)
         val comment = Comment(
-            id = 0,
             articleId = articleId,
-            parentId = parentId,
+            parentId = finalParentId,
             author = nickname,
             authorId = null,
             email = email,
@@ -53,10 +77,77 @@ class CommentServiceImpl: CommentService {
             content = content,
             ip = ip,
             ua = ua,
-            status = STATE_NOT_ACTIVATED,
+            status = CommentStatusEnum.PENDING.value,
             createTime = Date(),
             updateTime = null,
         )
         commentMapper.insert(comment)
+
+        emailService.sendCommentAddEmail(articleId, nickname, content)
+    }
+
+    override fun addByAdmin(
+        userId: Int,
+        nickname: String,
+        email: String,
+        articleId: Int,
+        parentId: Int,
+        content: String,
+        ip: String,
+        ua: String,
+        emailNotify: Boolean,
+    ) {
+        val finalParentId = findTopParentId(parentId)
+        val comment = Comment(
+            articleId = articleId,
+            parentId = finalParentId,
+            author = nickname,
+            authorId = null,
+            email = email,
+            url = null,
+            content = content,
+            ip = ip,
+            ua = ua,
+            status = CommentStatusEnum.AUDITED.value,
+            createTime = Date(),
+            updateTime = null,
+        )
+        commentMapper.insert(comment)
+
+        if (emailNotify) {
+            emailService.sendCommentReplayEmail(articleId, parentId, content)
+        }
+    }
+
+    override fun updateByAdmin(id: Int, status: Int): Int {
+        val comment = Comment(
+            id = id,
+            status = status,
+            updateTime = Date(),
+        )
+        return commentMapper.updateByPrimaryKeySelective(comment)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun deleteByAdmin(id: Int): Int {
+        val deleteRow = commentMapper.deleteByPrimaryKey(id)
+        if (deleteRow > 0) {
+            commentMapper.deleteByCleanChild(id)
+        }
+        return deleteRow
+    }
+
+    /**
+     * 找到最顶层的评论ID
+     */
+    private fun findTopParentId(parentId: Int?): Int? {
+        if (parentId == null) return null
+        var finalParentId = parentId
+        while (true) {
+            val localComment = commentMapper.getByPrimaryKey(finalParentId!!) ?: break
+            val localParentId = localComment.parentId ?: break
+            finalParentId = localParentId
+        }
+        return finalParentId
     }
 }

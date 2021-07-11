@@ -9,45 +9,60 @@
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
+    <result column="views" jdbcType="INTEGER" property="views" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="author" select="com.liux.blog.dao.UserMapper.selectByAuthor"
-                 column="author_id"/>
+    <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
   </resultMap>
   <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
     <!--@Table t_url-->
+    <result column="id" jdbcType="VARCHAR" property="id" />
     <result column="key" jdbcType="VARCHAR" property="key" />
     <result column="url" jdbcType="VARCHAR" property="url" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `key`, url, description, author_id, status, create_time, update_time
+    id, `key`, url, description, author_id, views, status, create_time, update_time
   </sql>
   <sql id="Simple_Column_List">
     <!--@mbg.generated-->
-    `key`, url
+    id, `key`, url, views
   </sql>
-  <select id="selectByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
+  <select id="getByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Simple_Column_List" />
     from t_url
     where status = 1 and `key` = #{key,jdbcType=VARCHAR}
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_url
     where status = 1 and id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByAdmin" resultMap="BaseResultMap">
+  <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Url" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from t_url
+    where 1 = 1
+    <if test="key != null and key != ''">
+      and `key` like CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="url != null and url != ''">
+      and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="description != null and description != ''">
+      and description like CONCAT('%', #{description,jdbcType=LONGVARCHAR}, '%')
+    </if>
+    <if test="status != null">
+      and `status` = #{status}
+    </if>
+    order by id desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--@mbg.generated-->
@@ -57,10 +72,10 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into t_url (`key`, url, description,
-      author_id, status, create_time,
+      author_id, views, status, create_time,
       update_time)
     values (#{key,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-      #{authorId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{authorId,jdbcType=INTEGER}, #{views,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
@@ -78,6 +93,9 @@
       </if>
       <if test="authorId != null">
         author_id,
+      </if>
+      <if test="views != null">
+        views,
       </if>
       <if test="status != null">
         status,
@@ -101,6 +119,9 @@
       </if>
       <if test="authorId != null">
         #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="views != null">
+        #{views,jdbcType=INTEGER},
       </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
@@ -129,6 +150,9 @@
       <if test="authorId != null">
         author_id = #{authorId,jdbcType=INTEGER},
       </if>
+      <if test="views != null">
+        views = #{views,jdbcType=INTEGER},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
@@ -148,6 +172,7 @@
       url = #{url,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       author_id = #{authorId,jdbcType=INTEGER},
+      views = #{views,jdbcType=INTEGER},
       status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

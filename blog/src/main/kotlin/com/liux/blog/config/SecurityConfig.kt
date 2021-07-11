@@ -6,6 +6,8 @@ import com.liux.blog.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -14,6 +16,7 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
 import javax.servlet.http.HttpServletRequest
@@ -54,7 +57,9 @@ class SecurityConfig: WebSecurityConfigurerAdapter() {
         http
             .addFilterAt(ApiLoginFilter(authenticationManager(), userService), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterAt(ApiLogoutFilter(), LogoutFilter::class.java)
-            .exceptionHandling().authenticationEntryPoint(Http401UnauthorizedEntryPoint())
+            .exceptionHandling()
+            .authenticationEntryPoint(Http401UnauthorizedEntryPoint())
+            .accessDeniedHandler(Http403UnauthorizedEntryPoint())
     }
 
     class Http401UnauthorizedEntryPoint : AuthenticationEntryPoint {
@@ -63,7 +68,17 @@ class SecurityConfig: WebSecurityConfigurerAdapter() {
             response: HttpServletResponse,
             exception: AuthenticationException?
         ) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "未登录")
+        }
+    }
+
+    class Http403UnauthorizedEntryPoint : AccessDeniedHandler {
+        override fun handle(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            accessDeniedException: AccessDeniedException?
+        ) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "无访问权限")
         }
     }
 }

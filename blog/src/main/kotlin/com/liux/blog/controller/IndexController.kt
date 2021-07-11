@@ -1,16 +1,17 @@
 package com.liux.blog.controller
 
-import com.liux.blog.exception.HttpNotFoundException
 import com.liux.blog.bean.vo.*
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CategoryService
 import com.liux.blog.service.TagService
 import com.liux.blog.service.ThemeService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.client.HttpClientErrorException
 
 @Controller
 class IndexController {
@@ -58,20 +59,20 @@ class IndexController {
 
     @GetMapping("/category/")
     fun category(model: Model): String {
-        val categorys = categoryService.list().map { CategoryVO.of(it) }
+        val categorys = categoryService.listByCategory().map { CategoryVO.of(it) }
         model.addAttribute("categorys", categorys)
         return themeService.render(model, "categorys")
     }
 
-    @GetMapping("/category/{category}")
-    fun category(model: Model, @PathVariable("category") category: String): String {
-        return category(model, category, 1)
+    @GetMapping("/category/{categoryName}")
+    fun category(model: Model, @PathVariable("categoryName") categoryName: String): String {
+        return category(model, categoryName, 1)
     }
 
-    @GetMapping("/category/{category}/{pageNum}")
-    fun category(model: Model, @PathVariable("category") category: String, @PathVariable("pageNum") pageNum: Int): String {
-        val category = categoryService.getByName(category) ?: throw HttpNotFoundException()
-        val articlePage = articleService.listByCategory(category.id, pageNum)
+    @GetMapping("/category/{categoryName}/{pageNum}")
+    fun category(model: Model, @PathVariable("categoryName") categoryName: String, @PathVariable("pageNum") pageNum: Int): String {
+        val category = categoryService.getByByName(categoryName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val articlePage = articleService.listByCategory(category.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
@@ -88,15 +89,15 @@ class IndexController {
         return themeService.render(model, "tags")
     }
 
-    @GetMapping("/tag/{tag}")
-    fun tag(model: Model, @PathVariable("tag") tag: String): String {
-        return tag(model, tag, 1)
+    @GetMapping("/tag/{tagName}")
+    fun tag(model: Model, @PathVariable("tagName") tagName: String): String {
+        return tag(model, tagName, 1)
     }
 
-    @GetMapping("/tag/{tag}/{pageNum}")
-    fun tag(model: Model, @PathVariable("tag") tag: String, @PathVariable("pageNum") pageNum: Int): String {
-        val tag = tagService.getByName(tag) ?: throw HttpNotFoundException()
-        val articlePage = articleService.listByTag(tag.id, pageNum)
+    @GetMapping("/tag/{tagName}/{pageNum}")
+    fun tag(model: Model, @PathVariable("tagName") tagName: String, @PathVariable("pageNum") pageNum: Int): String {
+        val tag = tagService.getByName(tagName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val articlePage = articleService.listByTag(tag.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
 
@@ -108,11 +109,11 @@ class IndexController {
 
     @GetMapping("/article/{article}")
     fun article(model: Model, @PathVariable("article") articlePath: String): String {
-        val article = articleService.getArticleByUrl(articlePath) ?: throw HttpNotFoundException()
+        val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val catalogues = ArrayList<CatalogueVO>()
         val articleVO = ArticleVO.of(article, catalogues)
-        val prev = articleService.getArticleByPrev(article.id)
-        val next = articleService.getArticleByNext(article.id)
+        val prev = articleService.getByPrev(article.id!!)
+        val next = articleService.getByNext(article.id!!)
         val prevVO = if (prev != null) ArticleArchiveVO.of(prev) else null
         val nextVO = if (next != null) ArticleArchiveVO.of(next) else null
 

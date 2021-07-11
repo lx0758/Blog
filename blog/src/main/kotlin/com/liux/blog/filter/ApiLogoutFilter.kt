@@ -3,6 +3,7 @@ package com.liux.blog.filter
 import com.liux.blog.bean.Resp
 import com.liux.blog.toJSONString
 import org.springframework.core.log.LogMessage
+import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
@@ -18,7 +19,7 @@ class ApiLogoutFilter : GenericFilterBean() {
 
     private val contextLogoutHandler = SecurityContextLogoutHandler()
     private val logoutSuccessHandler = LogoutSuccessHandler { _, response, _ ->
-        response.setHeader("content-type", "application/json;charset=UTF-8")
+        response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE)
         response.writer.print(
             Resp.succeed().toJSONString()
         )

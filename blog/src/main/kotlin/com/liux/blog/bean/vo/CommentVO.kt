@@ -18,7 +18,7 @@ data class CommentVO(
     companion object {
         fun of(comment: Comment): CommentVO {
             return CommentVO(
-                comment.id,
+                comment.id!!,
                 "/blog/images/avatar.gif",
                 comment.author ?: "匿名用户",
                 comment.browser(),

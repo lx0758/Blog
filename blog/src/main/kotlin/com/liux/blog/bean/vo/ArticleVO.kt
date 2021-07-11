@@ -1,10 +1,8 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.COMMENT_ENABLE
-import com.liux.blog.parseContent
+import com.liux.blog.renderMarkdown
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class ArticleVO(
     var id: Int,
@@ -16,22 +14,22 @@ data class ArticleVO(
     var categoryName: String,
     var authorNickname: String,
     var views: Int,
-    var allowComment: Boolean,
+    var enableComment: Boolean,
     var tags: List<String>,
 ) {
     companion object {
         fun of(article: Article, catalogues: ArrayList<CatalogueVO>): ArticleVO {
             return ArticleVO(
-                article.id,
+                article.id!!,
                 article.url ?: article.id.toString(),
                 article.title ?: "",
-                article.parseContent(catalogues),
+                article.renderMarkdown(catalogues),
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
                 article.category!!.name!!,
                 article.author!!.nickname!!,
                 article.views!!,
-                article.enableComment == COMMENT_ENABLE,
+                article.enableComment!!,
                 article.tags?.map { it.name!! } ?: emptyList(),
             )
         }

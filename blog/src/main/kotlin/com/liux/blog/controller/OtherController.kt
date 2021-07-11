@@ -1,6 +1,6 @@
 package com.liux.blog.controller
 
-import com.liux.blog.parseContent
+import com.liux.blog.renderMarkdown
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.ThemeService
 import com.liux.blog.toDateString
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
-import kotlin.collections.HashMap
 
 @RestController
 class OtherController {
@@ -25,7 +24,7 @@ class OtherController {
         return articles.map { article ->
             HashMap<String, String>().apply {
                 put("title", article.title!!)
-                put("content",  article.parseContent())
+                put("content",  article.renderMarkdown())
                 put("url", "/article/" + (article.url ?: article.id.toString()))
             }
         }

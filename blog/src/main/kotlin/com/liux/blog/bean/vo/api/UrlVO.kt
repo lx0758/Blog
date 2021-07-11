@@ -9,6 +9,7 @@ data class UrlVO(
     var url: String,
     var description: String,
     var authorId: Int,
+    var views: Int,
     var authorName: String,
     var createTime: Date,
     var updateTime: Date,
@@ -17,11 +18,12 @@ data class UrlVO(
     companion object {
         fun of(url: Url): UrlVO {
             return UrlVO(
-                url.id,
+                url.id!!,
                 url.key!!,
-                url.description!!,
                 url.url!!,
+                url.description!!,
                 url.authorId!!,
+                url.views!!,
                 url.author!!.nickname!!,
                 url.createTime!!,
                 url.updateTime ?: url.createTime!!,
