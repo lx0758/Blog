@@ -16,7 +16,10 @@ class UrlServiceImpl : UrlService {
     private lateinit var urlMapper: UrlMapper
 
     override fun getByKey(key: String): Url? {
-        return urlMapper.getByKey(key)
+        return urlMapper.getByKey(key)?.apply {
+            views = views?.plus(1)
+            urlMapper.updateByPrimaryKeySelective(Url(id, views = views))
+        }
     }
 
     override fun listByAdmin(
@@ -43,6 +46,7 @@ class UrlServiceImpl : UrlService {
             url = url,
             description = description,
             authorId = userId,
+            views = 0,
             status = status,
             createTime = Date(),
             updateTime = null,

@@ -16,6 +16,8 @@ class Url(
     var description: String? = null,
     // 作者ID
     var authorId: Int? = null,
+    // 访问次数
+    var views: Int? = null,
     // 创建时间
     var createTime: Date? = null,
     // 更新时间
