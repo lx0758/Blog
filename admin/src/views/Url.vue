@@ -40,6 +40,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
+      <el-table-column prop="views" label="访问量" width="70"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
       <el-table-column prop="status" label="状态" width="70">
