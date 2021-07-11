@@ -108,7 +108,8 @@
     </div>
     <el-input type="textarea" rows="6" v-model="replayData.replayContent" :placeholder="'@' + replayData.nickname"></el-input>
     <div style="height: 20px"/>
-    <el-button type="primary" @click="onReplyComment">回复</el-button>
+    <el-button type="primary" @click="onReplyComment(true)">回复并邮件通知</el-button>
+    <el-button type="primary" @click="onReplyComment(false)">仅回复不通知</el-button>
     <el-button @click="replay = false">取消</el-button>
   </el-dialog>
 
@@ -204,10 +205,11 @@ export default defineComponent({
         system: row.system,
         time: dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss"),
         content: row.content,
+        replayContent: '',
       }
       this.replay = true
     },
-    onReplyComment() {
+    onReplyComment(emailNotify: boolean) {
       const replayData = this.replayData as any
       if (!replayData.replayContent || replayData.replayContent === '') {
         this.$message.warning("回复内容不能为空");
@@ -217,6 +219,7 @@ export default defineComponent({
           replayData.articleId,
           replayData.parentId,
           '@' + replayData.nickname + '\n' + replayData.replayContent,
+          emailNotify
       )
           .then(() => {
             this.$message.success("回复成功");

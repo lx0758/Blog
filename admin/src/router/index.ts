@@ -60,6 +60,11 @@ const routes: Array<RouteRecordRaw> = [
         name: '网站设置',
         component: () => import("@/views/Setting.vue"),
       },
+      {
+        path: '/smtp',
+        name: '邮件设置',
+        component: () => import("@/views/features/SMTP.vue"),
+      },
     ]
   },
   {

@@ -31,6 +31,10 @@ class UserServiceImpl: UserService {
         return UserDetailsImpl(user)
     }
 
+    override fun getByOwner(): User {
+        return userMapper.getByOwner()
+    }
+
     override fun getById(id: Int): User? {
         return userMapper.getByPrimaryKey(id)
     }

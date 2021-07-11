@@ -24,15 +24,25 @@ interface CommentService {
     fun addByBlog(
         articleId: Int,
         parentId: Int?,
-        nickname: String?,
-        email: String?,
+        nickname: String,
+        email: String,
         url: String?,
         content: String,
-        ip: String?,
-        ua: String?
+        ip: String,
+        ua: String,
     )
 
-    fun addByAdmin(userId: Int, nickname: String, email: String, articleId: Int, parentId: Int, content: String, ip: String, ua: String)
+    fun addByAdmin(
+        userId: Int,
+        nickname: String,
+        email: String,
+        articleId: Int,
+        parentId: Int,
+        content: String,
+        ip: String,
+        ua: String,
+        emailNotify: Boolean,
+    )
     fun updateByAdmin(id: Int, status: Int): Int
     fun deleteByAdmin(id: Int): Int
 }
