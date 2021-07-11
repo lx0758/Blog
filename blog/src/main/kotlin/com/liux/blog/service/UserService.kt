@@ -4,6 +4,7 @@ import com.liux.blog.bean.po.User
 import org.springframework.security.core.userdetails.UserDetailsService
 
 interface UserService: UserDetailsService {
+    fun getByOwner(): User
     fun getById(id: Int): User?
     fun listByAdmin(username: String?, nickname: String?, status: Int?): List<User>
     fun updateByLogin(id: Int)

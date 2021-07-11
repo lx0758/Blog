@@ -132,10 +132,12 @@ export const addCommentByReplay = (
     articleId: string,
     parentId: string,
     content: string,
+    emailNotify: boolean,
 ) => request('/api/comment', 'POST', null, {
     articleId: articleId,
     parentId: parentId,
     content: content,
+    emailNotify: emailNotify,
 })
 // 更新评论(审核通过)
 export const updateCommentToVerify = (
@@ -351,6 +353,36 @@ export const updateConfig = (
 })
 // 删除配置
 export const deleteConfig = (key: string) => request('/api/config/' + key, 'DELETE', null, null)
+
+// 功能-查询SMTP
+export const querySMTP = () => request('/api/features/smtp', 'GET', null, null)
+// 功能-更新SMTP
+export const updateSMTP = (
+    enable: boolean,
+    hostname: string | null,
+    port: number | null,
+    ssl: boolean | null,
+    username: string | null,
+    password: string | null,
+    fromName: string | null,
+    fromEmail: string | null,
+) => request('/api/features/smtp', 'PUT', null, {
+    enable: enable,
+    hostname: hostname,
+    port: port,
+    ssl: ssl,
+    username: username,
+    password: password,
+    fromName: fromName,
+    fromEmail: fromEmail,
+})
+// 功能-查询SMTP
+export const testSMTP = (
+    email: string,
+) => request('/api/features/smtp/test', 'POST', null, {
+    email: email,
+})
+
 
 // 查询个人资料
 export const queryProfile = () => request('/api/user/profile', 'GET', null, null)

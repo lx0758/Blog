@@ -51,6 +51,7 @@ class CommentController {
         @RequestParam("articleId") articleId: Int,
         @RequestParam("parentId") parentId: Int,
         @RequestParam("content") content: String,
+        @RequestParam("emailNotify") emailNotify: Boolean,
     ): Resp<*> {
         articleService.getByAdmin(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
         commentService.getCommentById(parentId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "父评论不存在")
@@ -60,7 +61,7 @@ class CommentController {
         val user = userService.getById(userId)!!
         val ip = request.getIp()
         val ua = request.getUserAgent()
-        commentService.addByAdmin(userId, user.nickname!!, user.email!!, articleId, parentId, content, ip, ua)
+        commentService.addByAdmin(userId, user.nickname!!, user.email!!, articleId, parentId, content, ip, ua, emailNotify)
         return Resp.succeed()
     }
 

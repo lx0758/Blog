@@ -47,10 +47,20 @@
             <span>短链</span>
           </el-menu-item>
         </el-submenu>
-        <el-menu-item index="setting">
-          <i class="el-icon-s-tools"></i>
-          <span>设置</span>
-        </el-menu-item>
+        <el-submenu index="setting">
+          <template #title>
+            <i class="el-icon-menu"></i>
+            <span>设置</span>
+          </template>
+          <el-menu-item index="setting">
+            <i class="el-icon-s-tools"></i>
+            <span>通用</span>
+          </el-menu-item>
+          <el-menu-item index="smtp">
+            <i class="el-icon-s-opportunity"></i>
+            <span>邮件</span>
+          </el-menu-item>
+        </el-submenu>
       </el-menu>
     </el-aside>
 

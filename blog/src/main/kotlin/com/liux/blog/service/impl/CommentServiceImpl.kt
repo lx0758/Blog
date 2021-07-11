@@ -6,6 +6,7 @@ import com.liux.blog.bean.po.Comment
 import com.liux.blog.bean.po.CommentStatusEnum
 import com.liux.blog.dao.CommentMapper
 import com.liux.blog.service.CommentService
+import com.liux.blog.service.EmailService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +17,8 @@ class CommentServiceImpl: CommentService {
 
     @Autowired
     private lateinit var commentMapper: CommentMapper
+    @Autowired
+    private lateinit var emailService: EmailService
 
     override fun listByArticle(articleId: Int, pageNum: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, 10)
@@ -56,12 +59,12 @@ class CommentServiceImpl: CommentService {
     override fun addByBlog(
         articleId: Int,
         parentId: Int?,
-        nickname: String?,
-        email: String?,
+        nickname: String,
+        email: String,
         url: String?,
         content: String,
-        ip: String?,
-        ua: String?
+        ip: String,
+        ua: String,
     ) {
         val finalParentId = findTopParentId(parentId)
         val comment = Comment(
@@ -79,6 +82,8 @@ class CommentServiceImpl: CommentService {
             updateTime = null,
         )
         commentMapper.insert(comment)
+
+        emailService.sendCommentAddEmail(articleId, nickname, content)
     }
 
     override fun addByAdmin(
@@ -89,7 +94,8 @@ class CommentServiceImpl: CommentService {
         parentId: Int,
         content: String,
         ip: String,
-        ua: String
+        ua: String,
+        emailNotify: Boolean,
     ) {
         val finalParentId = findTopParentId(parentId)
         val comment = Comment(
@@ -107,6 +113,10 @@ class CommentServiceImpl: CommentService {
             updateTime = null,
         )
         commentMapper.insert(comment)
+
+        if (emailNotify) {
+            emailService.sendCommentReplayEmail(articleId, parentId, content)
+        }
     }
 
     override fun updateByAdmin(id: Int, status: Int): Int {
