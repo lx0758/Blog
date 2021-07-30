@@ -49,7 +49,7 @@ class FeaturesServiceImpl: FeaturesService {
             updateTime = Date()
         )
         features.set(value)
-        var result = featuresMapper.updateByPrimaryKeySelective(features)
+        var result = featuresMapper.updateByPrimaryKeyNullable(features)
         if (result <= 0) {
             features.createTime = Date()
             features.updateTime = null

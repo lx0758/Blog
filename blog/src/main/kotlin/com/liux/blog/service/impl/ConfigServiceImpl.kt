@@ -40,7 +40,7 @@ class ConfigServiceImpl: ConfigService {
         return page
     }
 
-    override fun addByAdmin(key: String, value: String, description: String) {
+    override fun addByAdmin(key: String, value: String?, description: String) {
         configMapper.insertSelective(Config(
             key = key,
             value = value,
@@ -51,8 +51,8 @@ class ConfigServiceImpl: ConfigService {
         applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CONFIG)
     }
 
-    override fun updateByAdmin(key: String, value: String, description: String): Int {
-        val updateRow = configMapper.updateByPrimaryKeySelective(Config(
+    override fun updateByAdmin(key: String, value: String?, description: String): Int {
+        val updateRow = configMapper.updateByPrimaryKeyNullable(Config(
             key = key,
             value = value,
             description = description,

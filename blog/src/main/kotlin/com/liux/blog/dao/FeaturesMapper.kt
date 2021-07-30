@@ -10,5 +10,6 @@ interface FeaturesMapper {
     fun insertSelective(record: Features): Int
     fun getByPrimaryKey(key: String): Features?
     fun updateByPrimaryKeySelective(record: Features): Int
+    fun updateByPrimaryKeyNullable(record: Features): Int
     fun updateByPrimaryKey(record: Features): Int
 }

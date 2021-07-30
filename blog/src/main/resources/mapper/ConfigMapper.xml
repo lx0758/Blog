@@ -110,6 +110,25 @@
     </set>
     where `key` = #{key,jdbcType=VARCHAR}
   </update>
+  <update id="updateByPrimaryKeyNullable" parameterType="com.liux.blog.bean.po.Config">
+    <!--@mbg.generated-->
+    update t_config
+    <set>
+      <if test="value != null or value == null">
+        `value` = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where `key` = #{key,jdbcType=VARCHAR}
+  </update>
   <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Config">
     <!--@mbg.generated-->
     update t_config

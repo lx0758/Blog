@@ -91,7 +91,7 @@ class UserServiceImpl: UserService {
             accounts = accounts,
             updateTime = Date(),
         )
-        val updateRow = userMapper.updateByPrimaryKeySelective(user)
+        val updateRow = userMapper.updateByPrimaryKeyNullable(user)
         if (updateRow > 0) {
             applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.USER)
         }

@@ -159,7 +159,7 @@ class ArticleServiceImpl: ArticleService {
         status: Int,
         tags: Array<String>?
     ): Int {
-        val updateRow = articleMapper.updateByPrimaryKeySelective(Article(
+        val updateRow = articleMapper.updateByPrimaryKeyNullable(Article(
             id = id,
             title = title,
             content = content,

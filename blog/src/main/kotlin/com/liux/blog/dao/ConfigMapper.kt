@@ -12,5 +12,6 @@ interface ConfigMapper {
     fun selectByTheme(): List<Config>
     fun selectByAdmin(config: Config): List<Config>
     fun updateByPrimaryKeySelective(record: Config): Int
+    fun updateByPrimaryKeyNullable(record: Config): Int
     fun updateByPrimaryKey(record: Config): Int
 }

@@ -26,6 +26,7 @@ interface ArticleMapper {
     fun selectBySitemap(): List<Article>
     fun selectByAdmin(article: Article): List<Article>
     fun updateByPrimaryKeySelective(record: Article): Int
+    fun updateByPrimaryKeyNullable(record: Article): Int
     fun updateByPrimaryKey(record: Article): Int
     fun updateByMoveCategory(@Param("oldCategoryId") oldCategoryId: Int, @Param("newCategoryId") newCategoryId: Int)
 }

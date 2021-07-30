@@ -9,10 +9,10 @@ interface UserMapper {
     fun insert(record: User): Int
     fun insertSelective(record: User): Int
     fun getByPrimaryKey(id: Int): User?
-    fun getByAuthor(id: Int): User?
     fun getByOwner(): User
     fun getByUsername(username: String): User?
     fun selectByAdmin(user: User): List<User>
     fun updateByPrimaryKeySelective(record: User): Int
+    fun updateByPrimaryKeyNullable(record: User): Int
     fun updateByPrimaryKey(record: User): Int
 }

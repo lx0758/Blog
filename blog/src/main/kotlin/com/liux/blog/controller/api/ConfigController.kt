@@ -32,7 +32,7 @@ class ConfigController {
     @PostMapping
     fun add(
         @RequestParam("key") key: String,
-        @RequestParam("value") value: String,
+        @RequestParam("value", required = false) value: String?,
         @RequestParam("description") description: String,
     ): Resp<*> {
         checkParams(key, value, description)
@@ -43,7 +43,7 @@ class ConfigController {
     @PutMapping("{key}")
     fun update(
         @PathVariable("key") key: String,
-        @RequestParam("value") value: String,
+        @RequestParam("value", required = false) value: String?,
         @RequestParam("description") description: String,
     ): Resp<*> {
         checkParams(key, value, description)
@@ -65,15 +65,9 @@ class ConfigController {
         return Resp.succeed()
     }
 
-    private fun checkParams(key: String, value: String, description: String) {
+    private fun checkParams(key: String, value: String?, description: String?) {
         if (key.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "键不能为空")
-        }
-        if (value.isEmpty()) {
-            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "值不能为空")
-        }
-        if (description.isEmpty()) {
-            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "描述不能为空")
         }
     }
 }
