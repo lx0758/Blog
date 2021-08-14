@@ -1,5 +1,6 @@
 function Comment(options) {
     let element = options['element'] || null;
+    let contentHint = options['contentHint'] || "赶紧来吐槽一下吧~!";
     let verifyCodeUrl = options['apiVerifyCodeUrl'] || null;
     let api = new CommentApi(options['apiUrl'], options['apiSubjectId']);
 
@@ -36,7 +37,7 @@ function Comment(options) {
             <input name="nick" placeholder="昵称" class="vnick vinput" type="text"><input name="mail" placeholder="邮箱" class="vmail vinput" type="email"><input name="link" placeholder="网址(http://)" class="vlink vinput" type="text">
         </div>
         <div class="vedit">
-            <textarea id="veditor" class="veditor vinput" placeholder="赶紧来吐槽一下吧~!"></textarea>
+            <textarea id="veditor" class="veditor vinput" placeholder="${contentHint}"></textarea>
             <div class="vrow">
                 <div class="vcol vcol-60 status-bar"></div>
                 <div class="vcol vcol-40 vctrl text-right">
@@ -192,7 +193,7 @@ function Comment(options) {
                 utils.attr(_cancel, 'style', 'display:none');
                 _wrap.parentNode.removeChild(_wrap)
                 _panel.appendChild(_wrap)
-                utils.attr(_content, 'placeholder', '赶紧来吐槽一下吧~!')
+                utils.attr(_content, 'placeholder', contentHint)
                 _content.focus()
             },
             showInfo(info) {

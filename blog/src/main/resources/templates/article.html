@@ -151,6 +151,7 @@
                 window.onload = function () {
                     new Comment({
                         element: '.blog-comment',
+                        contentHint: '赶紧来吐槽一下吧~! (如果你期望收到答复通知, 可以在邮箱条目中写上正确的邮箱地址.)',
                         apiUrl: '/article/' + [[${article.id}]] + '/comment',
                         apiSubjectId: [[${article.id}]],
                         apiVerifyCodeUrl: '/vcode',
