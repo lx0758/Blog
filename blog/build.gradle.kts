@@ -61,4 +61,41 @@ noArg {
     annotation("com.liux.blog.bean.NoArgsConstructor")
 }
 
+abstract class BuildAdminTask : AbstractExecTask<BuildAdminTask>(BuildAdminTask::class.java) {
+    init {
+        workingDir = File("../admin")
+        commandLine = listOf("node", "./node_modules/@vue/cli-service/bin/vue-cli-service.js", "build")
+    }
+}
+tasks.register<BuildAdminTask>("buildAdmin").configure {
+    group = "build"
+}
 
+tasks.register<Copy>("buildAdminToBlog").configure {
+    group = "build"
+    dependsOn("buildAdmin")
+
+    from("../admin/dist")
+    into("./src/main/resources/static/admin/")
+
+    doLast {
+        File("../admin/dist/").deleteRecursively()
+    }
+}
+
+tasks.getByName("bootJar") {
+    mustRunAfter("buildAdminToBlog")
+}
+
+tasks.create(name = "buildBlog") {
+    group = "build"
+    dependsOn("buildAdminToBlog", "bootJar")
+
+    doLast {
+        File("./src/main/resources/static/admin/css").deleteRecursively()
+        File("./src/main/resources/static/admin/js").deleteRecursively()
+        File("./src/main/resources/static/admin/fonts").deleteRecursively()
+        File("./src/main/resources/static/admin/favicon.ico").delete()
+        File("./src/main/resources/static/admin/index.html").delete()
+    }
+}

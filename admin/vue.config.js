@@ -1,6 +1,5 @@
 module.exports = {
     publicPath: '/admin/',
-    outputDir: '../blog/src/main/resources/static/admin/',
     devServer: {
         port: 8081,
         proxy: {
