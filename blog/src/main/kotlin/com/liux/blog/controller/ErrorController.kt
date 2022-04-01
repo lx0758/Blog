@@ -29,10 +29,6 @@ class ErrorController(
     @Autowired
     private lateinit var themeService: ThemeService
 
-    override fun getErrorPath(): String {
-        return errorProperties.path
-    }
-
     /**
      * 处理网页请求的错误
      */

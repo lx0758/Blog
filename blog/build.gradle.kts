@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.4.3"
+    id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.spring") version "1.4.30"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.4.30"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.10"
 }
 
 group = "com.liux.blog"
@@ -16,6 +16,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -25,18 +26,18 @@ dependencies {
 
     implementation("org.springframework.session:spring-session-data-redis")
 
-    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.3.0")
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.4")
+    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
     implementation("com.github.xiaoymin:knife4j-spring-ui:3.0.3")
-    implementation("io.springfox:springfox-swagger2:2.9.2")
+    implementation("io.springfox:springfox-swagger2:3.0.0")
     implementation("com.github.ua-parser:uap-java:1.5.2")
     implementation("com.github.penggle:kaptcha:2.3.2")
 
-    implementation("org.commonmark:commonmark:0.17.1")
-    implementation("org.commonmark:commonmark-ext-autolink:0.17.1")
-    implementation("org.commonmark:commonmark-ext-gfm-tables:0.17.1")
-    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
+    implementation("org.commonmark:commonmark:0.18.2")
+    implementation("org.commonmark:commonmark-ext-autolink:0.18.2")
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.18.2")
+    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.18.2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("mysql:mysql-connector-java")

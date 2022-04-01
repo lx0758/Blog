@@ -23,6 +23,8 @@ spring:
     mode: HTML
   jackson:
     time-zone: UTC
+  main:
+    allow-circular-references: true
 
 server:
   max-http-header-size: 1MB
