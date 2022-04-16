@@ -43,6 +43,11 @@ logging:
   level:
     com.liux.blog: info
 
-springfox:
-  documentation:
+springdoc:
+  # packages-to-scan: com.liux.blog.controller
+  # paths-to-match: /article/**,/api/**
+  api-docs:
+    enabled: false
+  swagger-ui:
+    path: /swagger-ui.html
     enabled: false
