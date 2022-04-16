@@ -48,7 +48,7 @@
     select
     <include refid="Base_Column_List" />
     from t_comment
-    where status = 1 and parent_id is NULL and article_id = #{articleId,jdbcType=INTEGER}
+    where status = 1 and parent_id is NULL and article_id = #{articleId,jdbcType=INTEGER} order by create_time desc
   </select>
   <select id="selectChildById" parameterType="java.lang.Integer" resultMap="ItemResultMap">
     <!--@mbg.generated-->
