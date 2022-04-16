@@ -10,7 +10,7 @@
 - SpringBoot & Kotlin  
   后台使用 `SpringBoot` 实现，依赖方面主要还包含 `Mybatis`、`Thymeleaf` 以及 `CommonMark`。  
   开发语言使用的是 `Kotlin`，两个字：真香！
-- NexT & Valine
+- NexT & Valine  
   前台使用的是原本为 `Hexo` 设计的漂亮且优秀的 `NexT` 模板。  
   由于 `NexT` 本身不包含自己的评论板块，所以评论功能借鉴了优秀的 `Valine` （抄袭了样式，模仿了交互逻辑）。
 - Vue.js  
@@ -22,4 +22,4 @@
 - 数据库结构暂未公开，等待管理后台功能大致完成之后会开放。
 
 # License
-[The MIT License Copyright (c) 2020-2021 6x](/LICENSE.txt)
+[The MIT License Copyright (c) 2020-2022 6x](/LICENSE.txt)
