@@ -17,8 +17,9 @@ class UrlServiceImpl : UrlService {
 
     override fun getByKey(key: String): Url? {
         return urlMapper.getByKey(key)?.apply {
-            views = views?.plus(1)
-            urlMapper.updateByPrimaryKeySelective(Url(id, views = views))
+            views = views?.plus(1) ?: 1
+            totalViews = totalViews?.plus(1) ?: 1
+            urlMapper.updateByPrimaryKeySelective(Url(id, views = views, totalViews = totalViews))
         }
     }
 
@@ -47,6 +48,7 @@ class UrlServiceImpl : UrlService {
             description = description,
             authorId = userId,
             views = 0,
+            totalViews = 0,
             status = status,
             createTime = Date(),
             updateTime = null,
@@ -54,11 +56,17 @@ class UrlServiceImpl : UrlService {
     }
 
     override fun updateByAdmin(id: Int, key: String, url: String, description: String, status: Int): Int {
+        val oldUrl = urlMapper.getByPrimaryKey(id)
+        var views : Int? = null
+        if (oldUrl?.key != key || oldUrl.url != url) {
+            views = 0
+        }
         val updateRow = urlMapper.updateByPrimaryKeySelective(Url(
             id = id,
             key = key,
             url = url,
             description = description,
+            views = views,
             status = status,
             updateTime = Date(),
         ))

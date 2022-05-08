@@ -18,6 +18,8 @@ class Url(
     var authorId: Int? = null,
     // 访问次数
     var views: Int? = null,
+    // 访问次数
+    var totalViews: Int? = null,
     // 创建时间
     var createTime: Date? = null,
     // 更新时间

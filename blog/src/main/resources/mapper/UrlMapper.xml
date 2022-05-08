@@ -10,6 +10,7 @@
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
     <result column="views" jdbcType="INTEGER" property="views" />
+    <result column="totalViews" jdbcType="INTEGER" property="totalViews" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -24,11 +25,11 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `key`, url, description, author_id, views, status, create_time, update_time
+    id, `key`, url, description, author_id, views, totalViews, status, create_time, update_time
   </sql>
   <sql id="Simple_Column_List">
     <!--@mbg.generated-->
-    id, `key`, url, views
+    id, `key`, url, views, totalViews
   </sql>
   <select id="getByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
     <!--@mbg.generated-->
@@ -72,10 +73,10 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into t_url (`key`, url, description,
-      author_id, views, status, create_time,
+      author_id, views, totalViews, status, create_time,
       update_time)
     values (#{key,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-      #{authorId,jdbcType=INTEGER}, #{views,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{authorId,jdbcType=INTEGER}, #{views,jdbcType=INTEGER}, #{totalViews,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
@@ -96,6 +97,9 @@
       </if>
       <if test="views != null">
         views,
+      </if>
+      <if test="totalViews != null">
+        totalViews,
       </if>
       <if test="status != null">
         status,
@@ -122,6 +126,9 @@
       </if>
       <if test="views != null">
         #{views,jdbcType=INTEGER},
+      </if>
+      <if test="totalViews != null">
+        #{totalViews,jdbcType=INTEGER},
       </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
@@ -153,6 +160,9 @@
       <if test="views != null">
         views = #{views,jdbcType=INTEGER},
       </if>
+      <if test="totalViews != null">
+        totalViews = #{totalViews,jdbcType=INTEGER},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
@@ -173,6 +183,7 @@
       description = #{description,jdbcType=VARCHAR},
       author_id = #{authorId,jdbcType=INTEGER},
       views = #{views,jdbcType=INTEGER},
+      totalViews = #{totalViews,jdbcType=INTEGER},
       status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
