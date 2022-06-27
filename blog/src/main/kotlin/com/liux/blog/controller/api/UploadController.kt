@@ -40,6 +40,19 @@ class UploadController {
         return Resp.succeed(uploadVO)
     }
 
+    @PutMapping("{id}")
+    fun update(
+        @CurrentUserId userId: Int,
+        @PathVariable("id") id: Int,
+        @RequestParam("file") file: MultipartFile,
+    ): Resp<*> {
+        val uploadRow = uploadService.updateByAdmin(userId, id, file)
+        if (uploadRow < 1) {
+            throw HttpClientErrorException(HttpStatus.NOT_FOUND, "更新失败")
+        }
+        return Resp.succeed()
+    }
+
     @DeleteMapping("{id}")
     fun delete(
         @PathVariable("id") id: Int,

@@ -38,8 +38,10 @@
       </el-table-column>
       <el-table-column prop="authorName" label="作者" width="80"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="上传时间" width ="160"></el-table-column>
-      <el-table-column label="操作" width="80">
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width ="160"></el-table-column>
+      <el-table-column label="操作" width="160">
         <template #default="scope">
+          <el-button plain size="mini" @click="onUpdateUpload(scope.row)">更新</el-button>
           <el-button plain type="danger" size="mini" @click="onDeleteUpload(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -86,7 +88,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import dayjs from "dayjs";
-import {addUpload, deleteUpload, queryUpload,} from "@/api";
+import {addUpload, updateUpload, deleteUpload, queryUpload,} from "@/api";
 
 export default defineComponent({
   name: 'Upload',
@@ -120,6 +122,7 @@ export default defineComponent({
         list: [],
       },
 
+      updateId: 0,
       dialog: false,
       dialogData: {},
     }
@@ -180,6 +183,12 @@ export default defineComponent({
       this.onRefresh();
     },
     onAddUpload() {
+      this.updateId = 0
+      this.dialogData = {}
+      this.dialog = true
+    },
+    onUpdateUpload(row: any) {
+      this.updateId = row.id
       this.dialogData = {}
       this.dialog = true
     },
@@ -218,12 +227,21 @@ export default defineComponent({
         this.$message('文件不能为空');
         return;
       }
-      addUpload(dialogData.raw)
-          .then(() => {
-            this.$message.success("上传成功");
-            this.dialog = false
-            this.onRefresh()
-          })
+      if (this.updateId != 0) {
+        updateUpload(this.updateId, dialogData.raw)
+            .then(() => {
+              this.$message.success("上传成功");
+              this.dialog = false
+              this.onRefresh()
+            })
+      } else {
+        addUpload(dialogData.raw)
+            .then(() => {
+              this.$message.success("上传成功");
+              this.dialog = false
+              this.onRefresh()
+            })
+      }
     },
   }
 });

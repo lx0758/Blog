@@ -23,10 +23,12 @@ class UploadServiceImpl: UploadService {
 
     override fun listByAdmin(name: String?, type: String?, pageNum: Int, pageSize: Int): Page<Upload> {
         val page = PageHelper.startPage<Upload>(pageNum, pageSize)
-        uploadMapper.selectByAdmin(Upload(
-            displayName = name,
-            type = type,
-        ))
+        uploadMapper.selectByAdmin(
+            Upload(
+                displayName = name,
+                type = type,
+            )
+        )
         return page
     }
 
@@ -53,6 +55,22 @@ class UploadServiceImpl: UploadService {
         return upload
     }
 
+    override fun updateByAdmin(userId: Int, id: Int, file: MultipartFile): Int {
+        val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
+
+        if (file.contentType != upload.type) return 0
+
+        val localFile = File(UploadConfig.UPLOAD_DIR, upload.path!!)
+
+        val fileOutputStream = FileOutputStream(localFile)
+        FileCopyUtils.copy(file.inputStream, fileOutputStream)
+
+        upload.length = file.size
+        upload.authorId = userId
+        upload.updateTime = Date()
+        return uploadMapper.updateByPrimaryKeySelective(upload)
+    }
+
     override fun deleteByAdmin(id: Int): Int {
         val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
         val deleteRow = uploadMapper.deleteByPrimaryKey(id)
@@ -66,13 +84,27 @@ class UploadServiceImpl: UploadService {
         return uploadMapper.getCount()
     }
 
-    private fun generatorPath(originalName: String): String {
-        val suffix = originalName.split(".").last()
-        val dir = SimpleDateFormat("yyyy/MM/").format(Date())
-        var name = UUID.randomUUID().toString().replace("-", "")
-        if (suffix.isNotEmpty()) {
-            name += (".$suffix")
+    fun generatorPath(originalName: String): String {
+        val dir = SimpleDateFormat("yyyy/MM/").format(Date()) + generateShortUuid() + "/"
+        return "$dir$originalName"
+    }
+
+
+    var chars = arrayOf(
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    )
+
+    private fun generateShortUuid(): String {
+        val stringBuilder = StringBuilder()
+        val uuid = UUID.randomUUID().toString().replace("-", "")
+
+        for (index in uuid.indices step 4) {        //分为8组
+            val sub = uuid.substring(index, index + 4);  //每组4位
+            val int = Integer.parseInt(sub, 16);
+            stringBuilder.append(chars[int % 0x3E])
         }
-        return "$dir$name"
+        return stringBuilder.toString()
     }
 }

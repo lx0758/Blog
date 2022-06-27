@@ -227,6 +227,12 @@ export const addUpload = (file: any) => {
     formData.append("file", file);
     return requestBody('/api/upload', 'POST', null, formData)
 }
+// 上传文件
+export const updateUpload = (id: number, file: any) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return requestBody('/api/upload/' + id, 'PUT', null, formData)
+}
 // 删除文件
 export const deleteUpload = (id: number) => request('/api/upload/' + id, 'DELETE', null, null)
 

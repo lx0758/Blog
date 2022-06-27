@@ -19,6 +19,8 @@ data class Upload(
     var authorId: Int? = null,
     // 创建时间
     var createTime: Date? = null,
+    // 更新时间
+    var updateTime: Date? = null,
 
     /* 作者 */
     var author: User? = null,
