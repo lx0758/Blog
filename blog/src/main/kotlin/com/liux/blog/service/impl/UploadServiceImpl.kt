@@ -75,7 +75,13 @@ class UploadServiceImpl: UploadService {
         val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
         val deleteRow = uploadMapper.deleteByPrimaryKey(id)
         if (deleteRow > 0) {
-            File(UploadConfig.UPLOAD_DIR, upload.path!!).delete()
+            var target = File(UploadConfig.UPLOAD_DIR, upload.path!!)
+            while (target.delete()) {
+                val parent = target.parentFile
+                if (parent == UploadConfig.UPLOAD_DIR) break
+                if (!parent.listFiles().isNullOrEmpty()) break
+                target = parent
+            }
         }
         return deleteRow
     }
