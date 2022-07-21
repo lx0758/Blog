@@ -25,6 +25,8 @@ data class Comment(
     var content: String? = null,
     // IP地址
     var ip: String? = null,
+    // 位置
+    var location: String? = null,
     // 浏览器标识
     var ua: String? = null,
     // 状态

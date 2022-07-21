@@ -13,6 +13,7 @@
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
     <result column="ua" jdbcType="VARCHAR" property="ua" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -40,7 +41,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, article_id, parent_id, author, author_id, email, url, content, ip, ua, status,
+    id, article_id, parent_id, author, author_id, email, url, content, ip, location, ua, status,
     create_time, update_time
   </sql>
   <select id="selectByArticleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -109,11 +110,11 @@
     <!--@mbg.generated-->
     insert into t_comment (article_id, parent_id, author,
       author_id, email, url,
-      content, ip, ua, status,
+      content, ip, location, ua, status,
       create_time, update_time)
     values (#{articleId,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{author,jdbcType=VARCHAR},
       #{authorId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
-      #{content,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{ua,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
+      #{content,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{ua,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Comment" useGeneratedKeys="true">
@@ -143,6 +144,9 @@
       </if>
       <if test="ip != null">
         ip,
+      </if>
+      <if test="location != null">
+        location,
       </if>
       <if test="ua != null">
         ua,
@@ -181,6 +185,9 @@
       </if>
       <if test="ip != null">
         #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
       </if>
       <if test="ua != null">
         #{ua,jdbcType=VARCHAR},
@@ -224,6 +231,9 @@
       <if test="ip != null">
         ip = #{ip,jdbcType=VARCHAR},
       </if>
+      <if test="location != null">
+        location = #{ip,jdbcType=VARCHAR},
+      </if>
       <if test="ua != null">
         ua = #{ua,jdbcType=VARCHAR},
       </if>
@@ -250,6 +260,7 @@
       url = #{url,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       ip = #{ip,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
       ua = #{ua,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},

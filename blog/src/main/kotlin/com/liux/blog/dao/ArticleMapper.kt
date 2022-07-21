@@ -24,6 +24,7 @@ interface ArticleMapper {
     fun selectByTag(tagId: Int): List<Article>
     fun selectBySearch(): List<Article>
     fun selectBySitemap(): List<Article>
+    fun selectByExport(): List<Article>
     fun selectByAdmin(article: Article): List<Article>
     fun updateByPrimaryKeySelective(record: Article): Int
     fun updateByPrimaryKeyNullable(record: Article): Int

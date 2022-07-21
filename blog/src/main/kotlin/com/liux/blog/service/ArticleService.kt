@@ -11,6 +11,8 @@ interface ArticleService {
     fun listByTag(tagId: Int, pageNum: Int): Page<Article>
     fun listBySearch(): List<Article>
     fun listBySitemap(): List<Article>
+
+    fun listByExport(): List<Article>
     fun listByAdmin(
         title: String?,
         category: Int?,

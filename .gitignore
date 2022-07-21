@@ -12,4 +12,5 @@ gradlew*
 
 ### Project ###
 /application.yaml
+/blog/application.yaml
 /upload

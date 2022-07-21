@@ -41,9 +41,15 @@
           <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">{{ scope.row.articleTitle }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
-      <el-table-column prop="ip" label="IP" width="140"></el-table-column>
+      <el-table-column prop="nickname" label="昵称" width="80"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
+      <el-table-column prop="ip,location" label="IP&位置" width="140">
+        <template #default="scope">
+          {{scope.row.ip}}
+          <br>
+          {{scope.row.location}}
+        </template>
+      </el-table-column>
       <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
       <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
@@ -99,7 +105,7 @@
       <el-descriptions-item label="昵称" :span="1">{{replayData.nickname}}</el-descriptions-item>
       <el-descriptions-item label="邮箱" :span="1">{{replayData.email}}</el-descriptions-item>
       <el-descriptions-item label="链接" :span="1">{{replayData.url}}</el-descriptions-item>
-      <el-descriptions-item label="IP" :span="1">{{replayData.ip}}</el-descriptions-item>
+      <el-descriptions-item label="IP" :span="1">{{replayData.ip + "/" + replayData.location}}</el-descriptions-item>
       <el-descriptions-item label="浏览器" :span="1">{{replayData.browser}}</el-descriptions-item>
       <el-descriptions-item label="系统" :span="1">{{replayData.system}}</el-descriptions-item>
     </el-descriptions>
@@ -201,6 +207,7 @@ export default defineComponent({
         email: row.email,
         url: row.url,
         ip: row.ip,
+        location: row.location,
         browser: row.browser,
         system: row.system,
         time: dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss"),
@@ -235,6 +242,7 @@ export default defineComponent({
         email: row.email,
         url: row.url,
         ip: row.ip,
+        location: row.location,
         browser: row.browser,
         system: row.system,
         time: dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss"),

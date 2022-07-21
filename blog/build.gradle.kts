@@ -26,12 +26,14 @@ dependencies {
 
     implementation("org.springframework.session:spring-session-data-redis")
 
+    implementation("mysql:mysql-connector-java")
     implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
     implementation("com.github.ua-parser:uap-java:1.5.2")
     implementation("com.github.penggle:kaptcha:2.3.2")
+    implementation("org.lionsoul:ip2region:2.6.5")
 
     implementation("org.commonmark:commonmark:0.18.2")
     implementation("org.commonmark:commonmark-ext-autolink:0.18.2")
@@ -39,7 +41,6 @@ dependencies {
     implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.18.2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("mysql:mysql-connector-java")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

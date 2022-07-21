@@ -195,6 +195,13 @@
         where status = 1
         order by id desc
     </select>
+    <select id="selectByExport" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_article
+        where status = 1
+        order by id desc
+    </select>
     <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Article" resultMap="AdminItemResultMap">
         select
         <include refid="Admin_Item_Column_List"/>

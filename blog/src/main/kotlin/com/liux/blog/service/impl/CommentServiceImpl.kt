@@ -7,6 +7,7 @@ import com.liux.blog.bean.po.CommentStatusEnum
 import com.liux.blog.dao.CommentMapper
 import com.liux.blog.service.CommentService
 import com.liux.blog.service.EmailService
+import com.liux.blog.service.LocationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +20,8 @@ class CommentServiceImpl: CommentService {
     private lateinit var commentMapper: CommentMapper
     @Autowired
     private lateinit var emailService: EmailService
+    @Autowired
+    private lateinit var locationService: LocationService
 
     override fun listByArticle(articleId: Int, pageNum: Int): Page<Comment> {
         val page = PageHelper.startPage<Comment>(pageNum, 10)
@@ -76,6 +79,7 @@ class CommentServiceImpl: CommentService {
             url = url,
             content = content,
             ip = ip,
+            location = locationService.getLocationFromIp(ip),
             ua = ua,
             status = CommentStatusEnum.PENDING.value,
             createTime = Date(),
@@ -107,6 +111,7 @@ class CommentServiceImpl: CommentService {
             url = null,
             content = content,
             ip = ip,
+            location = locationService.getLocationFromIp(ip),
             ua = ua,
             status = CommentStatusEnum.AUDITED.value,
             createTime = Date(),

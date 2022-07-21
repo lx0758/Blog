@@ -58,6 +58,10 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.selectBySitemap()
     }
 
+    override fun listByExport(): List<Article> {
+        return articleMapper.selectByExport()
+    }
+
     override fun listByAdmin(
         title: String?,
         category: Int?,
