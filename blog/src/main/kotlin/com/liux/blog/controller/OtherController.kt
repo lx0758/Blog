@@ -2,9 +2,12 @@ package com.liux.blog.controller
 
 import com.liux.blog.renderMarkdown
 import com.liux.blog.service.ArticleService
+import com.liux.blog.service.CaptchaService
 import com.liux.blog.service.ThemeService
 import com.liux.blog.toDateString
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
@@ -14,23 +17,29 @@ class OtherController {
 
     @Autowired
     private lateinit var articleService: ArticleService
-
     @Autowired
     private lateinit var themeService: ThemeService
+    @Autowired
+    private lateinit var captchaService: CaptchaService
 
-    @GetMapping("/search.json")
+    @GetMapping("/captcha", produces = [MediaType.IMAGE_JPEG_VALUE])
+    fun captcha(request: HttpServletRequest, type: Int): ByteArray {
+        return captchaService.generate(request.session, type)
+    }
+
+    @GetMapping("/search.json", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun search(): List<Map<String, String>> {
         val articles = articleService.listBySearch()
         return articles.map { article ->
             HashMap<String, String>().apply {
                 put("title", article.title!!)
-                put("content",  article.renderMarkdown())
+                put("content", article.renderMarkdown())
                 put("url", "/article/" + (article.url ?: article.id.toString()))
             }
         }
     }
 
-    @GetMapping("/robots.txt", produces = ["plain/txt;charset=UTF-8"])
+    @GetMapping("/robots.txt", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun robots(): String {
         val domain = themeService.getCacheBase().siteDomain
         return """
@@ -40,7 +49,7 @@ class OtherController {
             """.trimIndent()
     }
 
-    @GetMapping("/sitemap.xml", produces = ["application/xml;charset=UTF-8"])
+    @GetMapping("/sitemap.xml", produces = [MediaType.APPLICATION_XML_VALUE])
     fun sitemap(): String {
         val domain = themeService.getCacheBase().siteDomain
         val articles = articleService.listBySitemap()
@@ -62,9 +71,9 @@ class OtherController {
             }
         }.toString()
         return """
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-$urlset
-</urlset>
-""".trimIndent()
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            $urlset
+            </urlset>
+            """.trimIndent()
     }
 }

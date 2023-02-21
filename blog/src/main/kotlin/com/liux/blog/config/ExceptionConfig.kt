@@ -1,10 +1,10 @@
 package com.liux.blog.config
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
-import javax.servlet.http.HttpServletResponse
 
 @ControllerAdvice
 class ExceptionConfig {
@@ -22,7 +22,7 @@ class ExceptionConfig {
 
     @ExceptionHandler(value = [HttpClientErrorException::class])
     fun handler(response: HttpServletResponse, exception: HttpClientErrorException) {
-        response.sendError(exception.rawStatusCode, exception.statusText)
+        response.sendError(exception.statusCode.value(), exception.statusText)
     }
 
     @ExceptionHandler(value = [Exception::class])

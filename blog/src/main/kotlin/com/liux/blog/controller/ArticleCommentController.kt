@@ -2,16 +2,16 @@ package com.liux.blog.controller
 
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.vo.CommentPageVO
-import com.liux.blog.checkVerifyCode
 import com.liux.blog.getIp
 import com.liux.blog.getUserAgent
 import com.liux.blog.service.ArticleService
+import com.liux.blog.service.CaptchaService
 import com.liux.blog.service.CommentService
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/article/{id}/comment")
@@ -21,6 +21,8 @@ class ArticleCommentController {
     private lateinit var articleService: ArticleService
     @Autowired
     private lateinit var commentService: CommentService
+    @Autowired
+    private lateinit var captchaService: CaptchaService
 
     @GetMapping
     fun query(
@@ -36,7 +38,7 @@ class ArticleCommentController {
     @PostMapping
     fun add(
         request: HttpServletRequest,
-        @RequestParam("verifyCode") verifyCode: String,
+        @RequestParam("captcha") captcha: String,
         @PathVariable("id") articleId: Int,
         @RequestParam("subjectId", required = false) subjectId: Int?,
         @RequestParam("parentId", required = false) parentId: Int?,
@@ -45,10 +47,10 @@ class ArticleCommentController {
         @RequestParam("link", required = false) link: String?,
         @RequestParam("content") content: String,
     ): Resp<*> {
-        if (verifyCode.isEmpty()) {
+        if (captcha.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "验证码不能为空")
         }
-        if (!request.checkVerifyCode(verifyCode)) {
+        if (!captchaService.verify( request.session, captcha, CaptchaService.TYPE_COMMENT)) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "验证码错误")
         }
         if (nickname.isEmpty()) {

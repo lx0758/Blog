@@ -1,6 +1,5 @@
 package com.liux.blog.controller.api
 
-import com.liux.blog.annotation.CurrentUserId
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.vo.api.PaginationListVO
 import com.liux.blog.bean.vo.api.TagVO

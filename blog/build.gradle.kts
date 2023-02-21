@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.6.7"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.21"
+    id("org.springframework.boot") version "3.0.2"
+    id("io.spring.dependency-management") version "1.1.0"
+    kotlin("jvm") version "1.7.22"
+    kotlin("plugin.spring") version "1.7.22"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.7.22"
 }
 
 group = "com.liux.blog"
@@ -18,29 +18,25 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-mail")
-
-    implementation("org.springframework.session:spring-session-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     implementation("mysql:mysql-connector-java")
-    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1")
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
-    implementation("com.github.ua-parser:uap-java:1.5.2")
-    implementation("com.github.penggle:kaptcha:2.3.2")
-    implementation("org.lionsoul:ip2region:2.6.5")
+    implementation("org.lionsoul:ip2region:2.7.0")
+    implementation("com.github.ua-parser:uap-java:1.5.4")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
+    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6")
+    implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.0.0")
 
-    implementation("org.commonmark:commonmark:0.18.2")
-    implementation("org.commonmark:commonmark-ext-autolink:0.18.2")
-    implementation("org.commonmark:commonmark-ext-gfm-tables:0.18.2")
-    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.18.2")
+    implementation("org.commonmark:commonmark:0.21.0")
+    implementation("org.commonmark:commonmark-ext-autolink:0.21.0")
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.21.0")
+    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.21.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

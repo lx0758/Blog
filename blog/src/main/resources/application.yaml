@@ -12,8 +12,6 @@ spring:
       max-lifetime: 90000
       connection-timeout: 30000
       connection-test-query: SELECT 1
-  session:
-    store-type: NONE
   servlet:
     multipart:
       max-file-size: 10240MB
@@ -27,7 +25,7 @@ spring:
     allow-circular-references: true
 
 server:
-  max-http-header-size: 1MB
+  max-http-request-header-size: 1MB
   error:
     include-message: always
     include-exception: true
@@ -44,10 +42,10 @@ logging:
     com.liux.blog: info
 
 springdoc:
-  # packages-to-scan: com.liux.blog.controller
-  # paths-to-match: /article/**,/api/**
   api-docs:
     enabled: false
   swagger-ui:
-    path: /swagger-ui.html
     enabled: false
+
+knife4j:
+  enable: true

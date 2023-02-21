@@ -273,7 +273,7 @@
     <main class="main">
         <div class="main-inner">
             <!--/*@thymesVar id="template" type="java.lang.String"*/-->
-            <div class="content-wrap" th:insert="${template}">
+            <div class="content-wrap" th:insert="~{${template}}">
 
                 <script>
                     window.addEventListener('tabs:register', () => {

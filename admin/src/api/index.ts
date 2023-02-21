@@ -4,11 +4,11 @@ import {request, requestBody} from "./http";
 export const login = (
     username: string,
     password: string,
-    verifyCode: string,
+    captcha: string,
 ) => request('/api/session', 'POST', null, {
     username: username,
     password: password,
-    verifyCode: verifyCode,
+    captcha: captcha,
 });
 // 注销
 export const logout = () => request('/api/session', 'DELETE');

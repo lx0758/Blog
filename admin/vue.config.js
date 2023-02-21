@@ -9,12 +9,6 @@ module.exports = {
                 secure: false,
                 changeOrigin: true,
             },
-            '^/vcode': {
-                target: 'http://localhost:8080',
-                ws: true,
-                secure: false,
-                changeOrigin: true,
-            },
         },
     },
 }

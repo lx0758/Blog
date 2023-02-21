@@ -5,14 +5,13 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.po.Comment
 import com.liux.blog.bean.vo.CatalogueVO
-import com.liux.blog.config.KaptchaConfig
 import com.liux.blog.markdown.MarkdownHelper
+import jakarta.servlet.http.HttpServletRequest
 import ua_parser.Parser
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 fun Any.toJSONString(): String {
     return jacksonObjectMapper().writeValueAsString(this)
@@ -53,18 +52,6 @@ fun HttpServletRequest.getIp(): String {
 }
 fun HttpServletRequest.getUserAgent(): String {
     return getHeader("User-Agent")
-}
-fun HttpServletRequest.checkVerifyCode(verifyCode: String, validPeriodMinute: Int = 0): Boolean {
-    val sessionVerifyCode = session.getAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_KEY) ?: return false
-    if (sessionVerifyCode != verifyCode) return false
-    if (validPeriodMinute > 0) {
-        val sessionVerifyCodeDate = session.getAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_DATE) ?: return false
-        if (sessionVerifyCodeDate !is Date) return false
-        if (!sessionVerifyCodeDate.toLocalDateTime().plusMinutes(validPeriodMinute.toLong()).isAfter(LocalDateTime.now())) return false
-    }
-    session.removeAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_KEY)
-    session.removeAttribute(KaptchaConfig.KAPTCHA_SESSION_CONFIG_DATE)
-    return true
 }
 
 fun Article.renderMarkdown(catalogues: ArrayList<CatalogueVO>? = null): String {

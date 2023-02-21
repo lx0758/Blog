@@ -10,12 +10,12 @@
       </el-form-item>
       <el-row type="flex" justify="space-between">
         <el-col :span="15">
-          <el-form-item prop="verifyCode">
-            <el-input v-model="account.verifyCode" auto-complete="off" placeholder="请输入验证码"></el-input>
+          <el-form-item prop="captcha">
+            <el-input v-model="account.captcha" auto-complete="off" placeholder="请输入验证码"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <img @click="onRefreshVerifyCode()" style="width: 100%; height: 40px" :src="verifyCodeUrl"/>
+          <img @click="onRefreshCaptcha()" style="width: 100%; height: 40px" :src="captchaUrl"/>
         </el-col>
       </el-row>
       <el-form-item>
@@ -37,7 +37,7 @@ export default defineComponent({
       account: {
         username: '',
         password: '',
-        verifyCode: '',
+        captcha: '',
       },
       rules: {
         username: [
@@ -48,38 +48,38 @@ export default defineComponent({
           {required: true, message: '密码不能为空', trigger: 'blur'},
           {min: 1, max: 16, message: '密码长度不合法', trigger: 'blur'}
         ],
-        verifyCode: [
+        captcha: [
           {required: true, message: '验证码不能为空', trigger: 'blur'},
           {min: 1, max: 8, message: '验证码长度不合法', trigger: 'blur'}
         ],
       },
-      verifyCodeUrl: '/vcode',
+      captchaUrl: '',
     }
   },
   mounted() {
     document.addEventListener('keydown', this.onKeyDown);
-    this.onRefreshVerifyCode()
+    this.onRefreshCaptcha()
   },
   unmounted() {
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
-    onRefreshVerifyCode() {
-      this.verifyCodeUrl = '/vcode?t=' + Math.random()
+    onRefreshCaptcha() {
+      this.captchaUrl = '/api/captcha?t=' + Math.random()
     },
     onLogin() {
       let from: any = this.$refs['account'];
       from.validate((valid: boolean) => {
         if (!valid) return
-        login(this.account.username, this.account.password, this.account.verifyCode)
+        login(this.account.username, this.account.password, this.account.captcha)
             .then(data => {
               localStorage.setItem("isLogin", String(true));
               this.$message.success("登录成功")
               this.$router.replace('/')
             })
             .catch(() => {
-              this.account.verifyCode = ''
-              this.onRefreshVerifyCode()
+              this.account.captcha = ''
+              this.onRefreshCaptcha()
             })
       })
     },

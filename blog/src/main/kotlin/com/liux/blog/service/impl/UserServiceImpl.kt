@@ -28,7 +28,7 @@ class UserServiceImpl: UserService {
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userMapper.getByUsername(username) ?: throw UsernameNotFoundException("Account does not exist")
-        return UserDetailsImpl(user)
+        return UserDetailsImpl(user, emptyList())
     }
 
     override fun getByOwner(): User {

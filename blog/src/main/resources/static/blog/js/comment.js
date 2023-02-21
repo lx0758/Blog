@@ -1,14 +1,14 @@
 function Comment(options) {
     let element = options['element'] || null;
     let contentHint = options['contentHint'] || "赶紧来吐槽一下吧~!";
-    let verifyCodeUrl = options['apiVerifyCodeUrl'] || null;
+    let captchaUrl = options['apiCaptchaUrl'] || null;
     let api = new CommentApi(options['apiUrl'], options['apiSubjectId']);
 
     let init = function () {
         initPanel();
         bindEvent();
 
-        Comment.panel.refreshVerifyCode()
+        Comment.panel.refreshCaptcha()
         Comment.page.refresh()
     }
 
@@ -203,10 +203,10 @@ function Comment(options) {
                     _status.innerHTML = null
                 },5000);
             },
-            refreshVerifyCode() {
-                if (verifyCodeUrl) {
+            refreshCaptcha() {
+                if (captchaUrl) {
                     _code.value = null
-                    utils.attr(_code_img, 'src', verifyCodeUrl);
+                    utils.attr(_code_img, 'src', captchaUrl);
                 }
             },
         }
@@ -214,11 +214,11 @@ function Comment(options) {
             Comment.panel.replyCancel()
         });
         utils.on('click', _code_img, (e) => {
-            Comment.panel.refreshVerifyCode()
+            Comment.panel.refreshCaptcha()
         });
         utils.on('click', _submit, (e) => {
             let code = null
-            if (verifyCodeUrl) {
+            if (captchaUrl) {
                 code = _code.value
             }
             let parentId = utils.attr(_wrap, 'parent-id', undefined)
@@ -228,7 +228,7 @@ function Comment(options) {
             let link = _link.value
             let content = _content.value
 
-            if (verifyCodeUrl && (!code || code.length === 0)) {
+            if (captchaUrl && (!code || code.length === 0)) {
                 Comment.panel.showInfo('验证码不能为空')
                 return
             }
@@ -249,15 +249,15 @@ function Comment(options) {
                 Comment.panel.showInfo('评论成功!')
                 Comment.panel.clearContent()
                 Comment.panel.replyCancel()
-                Comment.panel.refreshVerifyCode()
+                Comment.panel.refreshCaptcha()
                 Comment.emoji.hide()
                 Comment.page.refresh()
             }).catch(function (error) {
                 Comment.panel.showInfo(error)
-                Comment.panel.refreshVerifyCode()
+                Comment.panel.refreshCaptcha()
             })
         });
-        if (verifyCodeUrl) {
+        if (captchaUrl) {
             utils.attr(_code, 'style', 'display:inline');
             utils.attr(_code_img, 'style', 'display:inline');
         }
@@ -450,13 +450,13 @@ function CommentApi(apiUrl, apiSubjectId) {
         });
     }
 
-    let commit = function (verifyCode, parentId, nickname, email, link, content) {
+    let commit = function (captcha, parentId, nickname, email, link, content) {
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: url,
                 type: 'POST',
                 data: {
-                    verifyCode: verifyCode,
+                    captcha: captcha,
                     subjectId: subjectId,
                     parentId: parentId,
                     nickname: nickname,

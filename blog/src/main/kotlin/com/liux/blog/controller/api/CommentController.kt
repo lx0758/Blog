@@ -11,11 +11,11 @@ import com.liux.blog.getUserAgent
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CommentService
 import com.liux.blog.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/api/comment")

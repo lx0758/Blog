@@ -1,6 +1,8 @@
 package com.liux.blog.bean.vo
 
-import com.liux.blog.bean.po.*
+import com.liux.blog.bean.po.Config
+import com.liux.blog.bean.po.Link
+import com.liux.blog.bean.po.User
 
 data class BlogVO(
     var siteDomain: String,
