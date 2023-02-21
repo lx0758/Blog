@@ -22,4 +22,4 @@
 - 数据库结构暂未公开，等待管理后台功能大致完成之后会开放。
 
 # License
-[The MIT License Copyright (c) 2020-2022 6x](/LICENSE.txt)
+[The MIT License Copyright (c) 2020-2023 6x](/LICENSE.txt)
