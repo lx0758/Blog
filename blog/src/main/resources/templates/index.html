@@ -322,7 +322,7 @@
                     <div class="post-toc-wrap sidebar-panel">
                         <div class="post-toc motion-element" th:if="${catalogues != null and !catalogues.isEmpty()}">
                             <ol class="nav">
-                                <th:block th:include="catalogue::tree(${catalogues}, 1)"></th:block>
+                                <th:block th:insert="~{catalogue::tree(${catalogues}, 1)}"></th:block>
                             </ol>
                         </div>
                     </div>

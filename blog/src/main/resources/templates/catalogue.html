@@ -11,7 +11,7 @@
             <span class="nav-text" th:text="${child.title}"></span>
         </a>
         <ol class="nav-child" th:if="${child.childs != null}">
-            <th:block th:include="catalogue::tree(${child.childs}, (level + 1))"></th:block>
+            <th:block th:insert="~{catalogue::tree(${child.childs}, (level + 1))}"></th:block>
         </ol>
     </li>
 </div>
