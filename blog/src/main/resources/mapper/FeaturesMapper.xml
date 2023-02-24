@@ -12,23 +12,23 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    `key`, `value`, description, create_time, update_time
+    "key", "value", description, create_time, update_time
   </sql>
   <select id="getByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
     from t_features
-    where `key` = #{key,jdbcType=VARCHAR}
+    where "key" = #{key,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     <!--@mbg.generated-->
     delete from t_features
-    where `key` = #{key,jdbcType=VARCHAR}
+    where "key" = #{key,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.liux.blog.bean.po.Features">
     <!--@mbg.generated-->
-    insert into t_features (`key`, `value`, description, 
+    insert into t_features ("key", "value", description,
       create_time, update_time)
     values (#{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
@@ -38,10 +38,10 @@
     insert into t_features
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="key != null">
-        `key`,
+        "key",
       </if>
       <if test="value != null">
-        `value`,
+        "value",
       </if>
       <if test="description != null">
         description,
@@ -76,7 +76,7 @@
     update t_features
     <set>
       <if test="value != null">
-        `value` = #{value,jdbcType=VARCHAR},
+        "value" = #{value,jdbcType=VARCHAR},
       </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
@@ -88,14 +88,14 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where `key` = #{key,jdbcType=VARCHAR}
+    where "key" = #{key,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKeyNullable" parameterType="com.liux.blog.bean.po.Features">
     <!--@mbg.generated-->
     update t_features
     <set>
       <if test="value != null or value == null">
-        `value` = #{value,jdbcType=VARCHAR},
+        "value" = #{value,jdbcType=VARCHAR},
       </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
@@ -107,15 +107,15 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where `key` = #{key,jdbcType=VARCHAR}
+    where "key" = #{key,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Features">
     <!--@mbg.generated-->
     update t_features
-    set `value` = #{value,jdbcType=VARCHAR},
+    set "value" = #{value,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where `key` = #{key,jdbcType=VARCHAR}
+    where "key" = #{key,jdbcType=VARCHAR}
   </update>
 </mapper>

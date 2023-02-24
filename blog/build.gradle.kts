@@ -22,8 +22,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
-    implementation("mysql:mysql-connector-java")
     implementation("org.lionsoul:ip2region:2.7.0")
+    implementation("org.postgresql:postgresql:42.5.4")
     implementation("com.github.ua-parser:uap-java:1.5.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")

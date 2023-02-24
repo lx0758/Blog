@@ -20,7 +20,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, `name`, create_time, update_time
+        id, "name", create_time, update_time
     </sql>
     <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <!--@mbg.generated-->
@@ -51,7 +51,7 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Tag"
             useGeneratedKeys="true">
         <!--@mbg.generated-->
-        insert into t_tag (`name`, create_time)
+        insert into t_tag ("name", create_time)
         values (#{name,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Tag"
@@ -60,7 +60,7 @@
         insert into t_tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">
-                `name`,
+                "name",
             </if>
             <if test="createTime != null">
                 create_time,
@@ -86,7 +86,7 @@
         update t_tag
         <set>
             <if test="name != null">
-                `name` = #{name,jdbcType=VARCHAR},
+                "name" = #{name,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -100,14 +100,14 @@
     <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Tag">
         <!--@mbg.generated-->
         update t_tag
-        set `name`      = #{name,jdbcType=VARCHAR},
+        set "name"      = #{name,jdbcType=VARCHAR},
             create_time = #{createTime,jdbcType=TIMESTAMP},
             update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByArticle" resultMap="BaseResultMap">
         select t_tag.id,
-               t_tag.`name`,
+               t_tag."name",
                t_tag.create_time,
                t_tag.update_time
         from t_article_tag
@@ -115,13 +115,19 @@
         where t_article_tag.article_id = #{articleId}
     </select>
     <select id="selectByCount" resultMap="CountResultMap">
-        select t_tag.id, t_tag.`name`, t_tag.create_time, t_tag.update_time, COUNT(`tag_id`) as article_count
-        FROM t_article_tag
-                     LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
-        GROUP BY tag_id, name ORDER BY name
+        SELECT
+            t_tag.id,
+            t_tag."name",
+            t_tag.create_time,
+            t_tag.update_time,
+            tags.article_count
+        FROM
+            (SELECT tag_id, COUNT(article_id) AS article_count FROM t_article_tag GROUP BY tag_id) as tags
+                LEFT JOIN t_tag ON tags.tag_id = t_tag.id
+        ORDER BY t_tag."name"
     </select>
     <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Tag" resultMap="CountResultMap">
-        select t_tag.id, t_tag.`name`, t_tag.create_time, t_tag.update_time, COUNT(`tag_id`) as article_count
+        select t_tag.id, t_tag."name", t_tag.create_time, t_tag.update_time, COUNT("tag_id") as article_count
         FROM t_article_tag
                      LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
             WHERE 1 = 1

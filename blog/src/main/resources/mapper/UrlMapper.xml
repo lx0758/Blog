@@ -10,7 +10,7 @@
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
     <result column="views" jdbcType="INTEGER" property="views" />
-    <result column="totalViews" jdbcType="INTEGER" property="totalViews" />
+    <result column="total_views" jdbcType="INTEGER" property="totalViews" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -25,18 +25,18 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `key`, url, description, author_id, views, totalViews, status, create_time, update_time
+    id, "key", url, description, author_id, views, total_views, status, create_time, update_time
   </sql>
   <sql id="Simple_Column_List">
     <!--@mbg.generated-->
-    id, `key`, url, views, totalViews
+    id, "key", url, views, total_views
   </sql>
   <select id="getByKey" parameterType="java.lang.String" resultMap="SimpleResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Simple_Column_List" />
     from t_url
-    where status = 1 and `key` = #{key,jdbcType=VARCHAR}
+    where status = 1 and "key" = #{key,jdbcType=VARCHAR}
   </select>
   <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -52,7 +52,7 @@
     from t_url
     where 1 = 1
     <if test="key != null and key != ''">
-      and `key` like CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%')
+      and "key" like CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%')
     </if>
     <if test="url != null and url != ''">
       and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
@@ -61,7 +61,7 @@
       and description like CONCAT('%', #{description,jdbcType=LONGVARCHAR}, '%')
     </if>
     <if test="status != null">
-      and `status` = #{status}
+      and "status" = #{status}
     </if>
     order by id desc
   </select>
@@ -72,8 +72,8 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Url" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into t_url (`key`, url, description,
-      author_id, views, totalViews, status, create_time,
+    insert into t_url ("key", url, description,
+      author_id, views, total_views, status, create_time,
       update_time)
     values (#{key,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
       #{authorId,jdbcType=INTEGER}, #{views,jdbcType=INTEGER}, #{totalViews,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
@@ -84,7 +84,7 @@
     insert into t_url
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="key != null">
-        `key`,
+        "key",
       </if>
       <if test="url != null">
         url,
@@ -99,7 +99,7 @@
         views,
       </if>
       <if test="totalViews != null">
-        totalViews,
+        total_views,
       </if>
       <if test="status != null">
         status,
@@ -146,7 +146,7 @@
     update t_url
     <set>
       <if test="key != null">
-        `key` = #{key,jdbcType=VARCHAR},
+        "key" = #{key,jdbcType=VARCHAR},
       </if>
       <if test="url != null">
         url = #{url,jdbcType=VARCHAR},
@@ -161,7 +161,7 @@
         views = #{views,jdbcType=INTEGER},
       </if>
       <if test="totalViews != null">
-        totalViews = #{totalViews,jdbcType=INTEGER},
+        total_views = #{totalViews,jdbcType=INTEGER},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
@@ -178,12 +178,12 @@
   <update id="updateByPrimaryKey" parameterType="com.liux.blog.bean.po.Url">
     <!--@mbg.generated-->
     update t_url
-    set `key` = #{key,jdbcType=VARCHAR},
+    set "key" = #{key,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       author_id = #{authorId,jdbcType=INTEGER},
       views = #{views,jdbcType=INTEGER},
-      totalViews = #{totalViews,jdbcType=INTEGER},
+      total_views = #{totalViews,jdbcType=INTEGER},
       status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

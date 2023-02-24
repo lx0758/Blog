@@ -29,7 +29,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, username, `password`, avatar, nickname, description, email, accounts, last_login_time, status,
+        id, username, "password", avatar, nickname, description, email, accounts, last_login_time, status,
         create_time, update_time
     </sql>
     <select id="getByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -85,7 +85,7 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.User"
             useGeneratedKeys="true">
         <!--@mbg.generated-->
-        insert into t_user (username, `password`, avatar, nickname,
+        insert into t_user (username, "password", avatar, nickname,
                             description, email, accounts, last_login_time,
                             status, create_time,
                             update_time)
@@ -103,7 +103,7 @@
                 username,
             </if>
             <if test="password != null">
-                `password`,
+                "password",
             </if>
             <if test="avatar != null">
                 avatar,
@@ -177,7 +177,7 @@
                 username = #{username,jdbcType=VARCHAR},
             </if>
             <if test="password != null">
-                `password` = #{password,jdbcType=VARCHAR},
+                "password" = #{password,jdbcType=VARCHAR},
             </if>
             <if test="avatar != null">
                 avatar = #{avatar,jdbcType=VARCHAR},
@@ -217,7 +217,7 @@
                 username = #{username,jdbcType=VARCHAR},
             </if>
             <if test="password != null">
-                `password` = #{password,jdbcType=VARCHAR},
+                "password" = #{password,jdbcType=VARCHAR},
             </if>
             <if test="avatar != null or avatar == null">
                 avatar = #{avatar,jdbcType=VARCHAR},
@@ -253,7 +253,7 @@
         <!--@mbg.generated-->
         update t_user
         set username        = #{username,jdbcType=VARCHAR},
-            `password`      = #{password,jdbcType=VARCHAR},
+            "password"      = #{password,jdbcType=VARCHAR},
             avatar          = #{avatar,jdbcType=VARCHAR},
             nickname        = #{nickname,jdbcType=VARCHAR},
             description     = #{description,jdbcType=VARCHAR},
