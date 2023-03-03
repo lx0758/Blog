@@ -12,7 +12,7 @@
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
-        <result column="enable_comment" jdbcType="TINYINT" property="enableComment"/>
+        <result column="comment_status" jdbcType="TINYINT" property="commentStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -22,7 +22,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, title, content, url, weight, views, enable_comment,
+        id, title, content, url, weight, views, comment_status,
         status, create_time, update_time, category_id, author_id
     </sql>
     <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Article">
@@ -35,7 +35,7 @@
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
-        <result column="enable_comment" jdbcType="TINYINT" property="enableComment"/>
+        <result column="comment_status" jdbcType="TINYINT" property="commentStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -43,7 +43,7 @@
     </resultMap>
     <sql id="Item_Column_List">
         <!--@mbg.generated-->
-        id, title, content, url, weight, views, enable_comment,
+        id, title, content, url, weight, views, comment_status,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="AdminItemResultMap" type="com.liux.blog.bean.po.Article">
@@ -55,7 +55,7 @@
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="weight" jdbcType="INTEGER" property="weight"/>
         <result column="views" jdbcType="INTEGER" property="views"/>
-        <result column="enable_comment" jdbcType="TINYINT" property="enableComment"/>
+        <result column="comment_status" jdbcType="TINYINT" property="commentStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -63,7 +63,7 @@
     </resultMap>
     <sql id="Admin_Item_Column_List">
         <!--@mbg.generated-->
-        id, title, url, weight, views, enable_comment,
+        id, title, url, weight, views, comment_status,
         status, create_time, update_time, category_id
     </sql>
     <resultMap id="SimpleResultMap" type="com.liux.blog.bean.po.Article">
@@ -213,8 +213,8 @@
         <if test="title != null and title != ''">
             and title like CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%')
         </if>
-        <if test="enableComment != null">
-            and enable_comment = #{enableComment,jdbcType=INTEGER}
+        <if test="commentStatus != null">
+            and comment_status = #{commentStatus,jdbcType=INTEGER}
         </if>
         <if test="status != null">
             and status = #{status,jdbcType=INTEGER}
@@ -244,12 +244,12 @@
         insert into t_article (title, content,
                                category_id, author_id,
                                url, weight, views,
-                               enable_comment, status,
+                               comment_status, status,
                                create_time, update_time)
         values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR},
                 #{categoryId,jdbcType=INTEGER}, #{authorId,jdbcType=INTEGER},
                 #{url,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{views,jdbcType=INTEGER},
-                #{enableComment,jdbcType=TINYINT}, #{status,jdbcType=TINYINT},
+                #{commentStatus,jdbcType=TINYINT}, #{status,jdbcType=TINYINT},
                 #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liux.blog.bean.po.Article"
@@ -278,8 +278,8 @@
             <if test="views != null">
                 views,
             </if>
-            <if test="enableComment != null">
-                enable_comment,
+            <if test="commentStatus != null">
+                comment_status,
             </if>
             <if test="status != null">
                 status,
@@ -313,8 +313,8 @@
             <if test="views != null">
                 #{views,jdbcType=INTEGER},
             </if>
-            <if test="enableComment != null">
-                #{enableComment,jdbcType=TINYINT},
+            <if test="commentStatus != null">
+                #{commentStatus,jdbcType=TINYINT},
             </if>
             <if test="status != null">
                 #{status,jdbcType=TINYINT},
@@ -352,8 +352,8 @@
             <if test="views != null">
                 views = #{views,jdbcType=INTEGER},
             </if>
-            <if test="enableComment != null">
-                enable_comment = #{enableComment,jdbcType=TINYINT},
+            <if test="commentStatus != null">
+                comment_status = #{commentStatus,jdbcType=TINYINT},
             </if>
             <if test="status != null">
                 status = #{status,jdbcType=TINYINT},
@@ -392,8 +392,8 @@
             <if test="views != null">
                 views = #{views,jdbcType=INTEGER},
             </if>
-            <if test="enableComment != null">
-                enable_comment = #{enableComment,jdbcType=TINYINT},
+            <if test="commentStatus != null">
+                comment_status = #{commentStatus,jdbcType=TINYINT},
             </if>
             <if test="status != null">
                 status = #{status,jdbcType=TINYINT},
@@ -417,7 +417,7 @@
             url            = #{url,jdbcType=VARCHAR},
             weight          = #{weight,jdbcType=INTEGER},
             views          = #{views,jdbcType=INTEGER},
-            enable_comment = #{enableComment,jdbcType=TINYINT},
+            comment_status = #{commentStatus,jdbcType=TINYINT},
             status       = #{status,jdbcType=TINYINT},
             create_time    = #{createTime,jdbcType=TIMESTAMP},
             update_time    = #{updateTime,jdbcType=TIMESTAMP}

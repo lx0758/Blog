@@ -24,6 +24,15 @@ enum class UserStatusEnum(
     ;
 }
 
+enum class ArticleCommentStatusEnum(
+    override val value: Int,
+    val description: String,
+): Enum {
+    DISABLE(0, "不允许"),
+    ENABLE(1, "允许"),
+    ;
+}
+
 enum class ArticleStatusEnum(
     override val value: Int,
     val description: String,

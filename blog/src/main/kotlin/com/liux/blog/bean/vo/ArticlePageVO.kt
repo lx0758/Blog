@@ -17,7 +17,7 @@ data class ArticlePageVO(
         fun of(article: Article): ArticlePageVO {
             return ArticlePageVO(
                 article.url ?: article.id.toString(),
-                article.weight ?: 0 > 0,
+                (article.weight ?: 0) > 0,
                 article.title ?: "",
                 article.renderMarkdown(),
                 article.createTime!!,

@@ -23,8 +23,8 @@ data class Article(
     var weight: Int? = null,
     // 阅读量
     var views: Int? = null,
-    // 允许评论
-    var enableComment: Boolean? = null,
+    // 评论状态
+    var commentStatus: Int? = null,
     // 状态
     var status: Int? = null,
     // 创建时间

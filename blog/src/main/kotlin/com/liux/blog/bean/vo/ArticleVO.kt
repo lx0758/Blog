@@ -1,6 +1,7 @@
 package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import com.liux.blog.renderMarkdown
 import java.util.*
 
@@ -29,7 +30,7 @@ data class ArticleVO(
                 article.category!!.name!!,
                 article.author!!.nickname!!,
                 article.views!!,
-                article.enableComment!!,
+                article.commentStatus == ArticleCommentStatusEnum.ENABLE.value,
                 article.tags?.map { it.name!! } ?: emptyList(),
             )
         }

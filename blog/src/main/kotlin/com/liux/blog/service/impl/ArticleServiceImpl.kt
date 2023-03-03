@@ -4,6 +4,7 @@ import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.TagMapper
@@ -74,7 +75,12 @@ class ArticleServiceImpl: ArticleService {
             id = 0,
             categoryId = category,
             title = title,
-            enableComment = enableComment,
+            commentStatus = enableComment?.let {
+                if (it)
+                    ArticleCommentStatusEnum.ENABLE.value
+                else
+                    ArticleCommentStatusEnum.DISABLE.value
+            },
             status = status,
         ))
         return page
@@ -136,7 +142,7 @@ class ArticleServiceImpl: ArticleService {
             url = url,
             weight = weight,
             views = 0,
-            enableComment = enableComment,
+            commentStatus = if (enableComment) ArticleCommentStatusEnum.ENABLE.value else ArticleCommentStatusEnum.DISABLE.value,
             status = status,
             createTime = Date(),
             updateTime = null,
@@ -169,7 +175,7 @@ class ArticleServiceImpl: ArticleService {
             categoryId = categoryId,
             url = url,
             weight = weight,
-            enableComment = enableComment,
+            commentStatus = if (enableComment) ArticleCommentStatusEnum.ENABLE.value else ArticleCommentStatusEnum.DISABLE.value,
             status = status,
             updateTime = Date(),
         ))

@@ -1,6 +1,7 @@
 package com.liux.blog.bean.vo.api
 
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import java.util.*
 
 data class ArticleItemVO(
@@ -24,7 +25,7 @@ data class ArticleItemVO(
                 article.url ?: "",
                 article.weight ?: 0,
                 article.views ?: 0,
-                article.enableComment!!,
+                article.commentStatus == ArticleCommentStatusEnum.ENABLE.value,
                 article.status!!,
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
