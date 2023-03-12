@@ -6,6 +6,7 @@ import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.TagMapper
 import com.liux.blog.service.TagService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -29,7 +30,14 @@ class TagServiceImpl: TagService {
         return tagMapper.selectByCount()
     }
 
-    override fun listByAdmin(name: String?, pageNum: Int, pageSize: Int): Page<Tag> {
+    override fun listByAdmin(
+        name: String?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Tag> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.TAG, orderName, orderMethod)
         val page = PageHelper.startPage<Tag>(pageNum, pageSize)
         tagMapper.selectByAdmin(Tag(
             name = name,

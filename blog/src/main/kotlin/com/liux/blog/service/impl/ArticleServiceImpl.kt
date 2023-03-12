@@ -9,6 +9,7 @@ import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.TagMapper
 import com.liux.blog.service.ArticleService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -69,8 +70,11 @@ class ArticleServiceImpl: ArticleService {
         enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Article> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.ARTICLE, orderName, orderMethod)
         val page = PageHelper.startPage<Article>(pageNum, pageSize)
         articleMapper.selectByAdmin(Article(
             id = 0,

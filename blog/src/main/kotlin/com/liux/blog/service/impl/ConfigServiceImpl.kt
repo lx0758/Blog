@@ -6,6 +6,7 @@ import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Config
 import com.liux.blog.dao.ConfigMapper
 import com.liux.blog.service.ConfigService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -29,7 +30,16 @@ class ConfigServiceImpl: ConfigService {
         return configMap
     }
 
-    override fun listByAdmin(key: String?, value: String?, description: String?, pageNum: Int, pageSize: Int): Page<Config> {
+    override fun listByAdmin(
+        key: String?,
+        value: String?,
+        description: String?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Config> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.CONFIG, orderName, orderMethod)
         val page = PageHelper.startPage<Config>(pageNum, pageSize)
         configMapper.selectByAdmin(Config(
             key = key,

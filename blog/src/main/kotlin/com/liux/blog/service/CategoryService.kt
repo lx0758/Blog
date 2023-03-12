@@ -8,7 +8,13 @@ interface CategoryService {
     fun getById(id: Int): Category?
     fun getByByName(name: String): Category?
     fun listByCategory(): List<Category>
-    fun listByAdmin(name: String?, pageNum: Int, pageSize: Int): Page<Category>
+    fun listByAdmin(
+        name: String?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Category>
     fun addByAdmin(name: String)
     fun updateByAdmin(id: Int, name: String): Int
     fun deleteByAdmin(id: Int): Int

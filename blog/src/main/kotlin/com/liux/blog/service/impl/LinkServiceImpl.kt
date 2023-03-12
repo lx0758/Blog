@@ -6,6 +6,7 @@ import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Link
 import com.liux.blog.dao.LinkMapper
 import com.liux.blog.service.LinkService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -24,7 +25,16 @@ class LinkServiceImpl: LinkService {
         return linkMapper.selectByBlog()
     }
 
-    override fun listByAdmin(title: String?, url: String?, status: Int?, pageNum: Int, pageSize: Int): Page<Link> {
+    override fun listByAdmin(
+        title: String?,
+        url: String?,
+        status: Int?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Link> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.LINK, orderName, orderMethod)
         val page = PageHelper.startPage<Link>(pageNum, pageSize)
         linkMapper.selectByAdmin(Link(
             title = title,

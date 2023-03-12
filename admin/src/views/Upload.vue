@@ -22,23 +22,24 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="displayName" label="文件名" width="300" fixed>
+      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
+      <el-table-column prop="displayName" label="文件名" width="300" fixed sortable="custom">
         <template #default="scope">
           <el-link :href="scope.row.url" type="primary" target="_blank">{{ scope.row.displayName }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :formatter="onFormatFileSize" prop="length" label="大小" width="100"></el-table-column>
-      <el-table-column prop="type" label="类型" width="120"></el-table-column>
+      <el-table-column :formatter="onFormatFileSize" prop="length" label="大小" width="100" sortable="custom"></el-table-column>
+      <el-table-column prop="type" label="类型" width="120" sortable="custom"></el-table-column>
       <el-table-column prop="path" label="存储路径" min-width="250" :show-overflow-tooltip="true">
         <template  #default="scope">
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.path }}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="authorName" label="作者" width="80"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="上传时间" width ="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width ="160"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="上传时间" width ="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width ="160" sortable="custom"></el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
           <el-button plain size="mini" @click="onUpdateUpload(scope.row)">更新</el-button>
@@ -122,6 +123,11 @@ export default defineComponent({
         list: [],
       },
 
+      order: {
+        name: null,
+        method: null,
+      },
+
       updateId: 0,
       dialog: false,
       dialogData: {},
@@ -138,6 +144,11 @@ export default defineComponent({
     onFilterClear() {
       this.filter.displayName = null
       this.filter.type = null
+      this.onRefresh()
+    },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
       this.onRefresh()
     },
     onFormatFileSize(row: any, column: any) {
@@ -176,6 +187,7 @@ export default defineComponent({
     },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -211,6 +223,8 @@ export default defineComponent({
           this.filter.type,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

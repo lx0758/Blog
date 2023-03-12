@@ -38,9 +38,37 @@ class DashboardController {
             commentService.getCountByDashboard(),
             articleService.getViewsByDashboard(),
 
-            articleService.listByAdmin(null, null, null, null, 1, 10).map { ArticleVO.of(it) },
-            commentService.listByAdmin(null, null, null, null, null, null, 1, 10).map { CommentVO.of(it) },
-            uploadService.listByAdmin(null, null, 1, 10).map { UploadVO.of(it) },
+            articleService.listByAdmin(
+                null,
+                null,
+                null,
+                null,
+                null,
+                1,
+                10,
+                null,
+                null
+            ).map { ArticleVO.of(it) },
+            commentService.listByAdmin(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                1,
+                10,
+                null,
+                null
+            ).map { CommentVO.of(it) },
+            uploadService.listByAdmin(
+                null,
+                null,
+                1,
+                10,
+                null,
+                null
+            ).map { UploadVO.of(it) },
         )
         return Resp.succeed(dashboardVO)
     }

@@ -20,7 +20,9 @@ interface ArticleService {
         enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Article>
 
     fun getByBlog(id: Int): Article?

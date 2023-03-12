@@ -8,7 +8,7 @@ data class ConfigVO(
     val value: String,
     val description: String,
     val createTime: Date,
-    val updateTime: Date,
+    val updateTime: Date?,
 ) {
     companion object {
         fun of(config: Config): ConfigVO {
@@ -17,7 +17,7 @@ data class ConfigVO(
                 config.value ?: "",
                 config.description ?: "",
                 config.createTime!!,
-                config.updateTime ?: config.createTime!!,
+                config.updateTime,
             )
         }
     }

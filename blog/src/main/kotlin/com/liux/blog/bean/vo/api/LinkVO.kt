@@ -9,7 +9,7 @@ data class LinkVO(
     var url: String,
     var weight: Int,
     var createTime: Date,
-    var updateTime: Date,
+    var updateTime: Date?,
     var status: Int,
 ) {
     companion object {
@@ -20,7 +20,7 @@ data class LinkVO(
                 link.url!!,
                 link.weight!!,
                 link.createTime!!,
-                link.updateTime ?: link.createTime!!,
+                link.updateTime,
                 link.status!!,
             )
         }

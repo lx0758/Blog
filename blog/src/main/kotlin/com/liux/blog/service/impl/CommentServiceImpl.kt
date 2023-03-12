@@ -8,6 +8,7 @@ import com.liux.blog.dao.CommentMapper
 import com.liux.blog.service.CommentService
 import com.liux.blog.service.EmailService
 import com.liux.blog.service.LocationService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,8 +38,11 @@ class CommentServiceImpl: CommentService {
         content: String?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Comment> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.COMMENT, orderName, orderMethod)
         val page = PageHelper.startPage<Comment>(pageNum, pageSize)
         commentMapper.selectByAdmin(Comment(
             articleId = articleId,

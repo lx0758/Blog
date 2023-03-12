@@ -7,6 +7,7 @@ import com.liux.blog.bean.po.Category
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.CategoryMapper
 import com.liux.blog.service.CategoryService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -41,7 +42,14 @@ class CategoryServiceImpl: CategoryService {
         return categoryMapper.selectByCategory()
     }
 
-    override fun listByAdmin(name: String?, pageNum: Int, pageSize: Int): Page<Category> {
+    override fun listByAdmin(
+        name: String?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Category> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.CATEGORY, orderName, orderMethod)
         val page = PageHelper.startPage<Category>(pageNum, pageSize)
         categoryMapper.selectByAdmin(Category(
             name = name,

@@ -27,8 +27,10 @@ class UrlController {
         @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
+        @RequestParam("orderName", required = false) orderName: String?,
+        @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<UrlVO>> {
-        val urls = urlService.listByAdmin(key, url, description, status, pageNum, pageSize)
+        val urls = urlService.listByAdmin(key, url, description, status, pageNum, pageSize, orderName, orderMethod)
         val urlVOs = urls.map{ UrlVO.of(it) }
         return Resp.succeed(PaginationListVO.of(urlVOs, urls))
     }

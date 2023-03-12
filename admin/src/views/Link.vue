@@ -23,9 +23,10 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="title" label="标题" width="240" fixed>
+      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
+      <el-table-column prop="title" label="标题" width="240" fixed sortable="custom">
         <template #default="scope">
           <el-link :href="scope.row.url" type="primary" target="_blank">{{ scope.row.title }}</el-link>
         </template>
@@ -35,9 +36,9 @@
           <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="权重" width ="80"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column prop="weight" label="权重" width ="80" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
@@ -128,6 +129,11 @@ export default defineComponent({
         list: [],
       },
 
+      order: {
+        name: null,
+        method: null,
+      },
+
       dialog: false,
       dialogData: {},
       dialogRules: {
@@ -157,8 +163,14 @@ export default defineComponent({
       this.filter.status = null
       this.onRefresh()
     },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
+      this.onRefresh()
+    },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -199,6 +211,8 @@ export default defineComponent({
           this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

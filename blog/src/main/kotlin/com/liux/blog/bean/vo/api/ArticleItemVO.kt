@@ -14,7 +14,7 @@ data class ArticleItemVO(
     var enableComment: Boolean,
     var status: Int,
     var createTime: Date,
-    var updateTime: Date,
+    var updateTime: Date?,
 ) {
     companion object {
         fun of(article: Article): ArticleItemVO {
@@ -28,7 +28,7 @@ data class ArticleItemVO(
                 article.commentStatus == ArticleCommentStatusEnum.ENABLE.value,
                 article.status!!,
                 article.createTime!!,
-                article.updateTime ?: article.createTime!!,
+                article.updateTime,
             )
         }
     }

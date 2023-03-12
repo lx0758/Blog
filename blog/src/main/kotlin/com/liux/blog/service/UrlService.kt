@@ -12,7 +12,9 @@ interface UrlService {
         description: String?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Url>
     fun addByAdmin(userId: Int, key: String, url: String, description: String, status: Int)
     fun updateByAdmin(id: Int, key: String, url: String, description: String, status: Int): Int

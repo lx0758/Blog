@@ -26,12 +26,13 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="key" label="键" width="250" fixed></el-table-column>
+      <el-table-column prop="key" label="键" width="250" fixed sortable="custom"></el-table-column>
       <el-table-column prop="value" label="值" min-width="300"></el-table-column>
       <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
           <el-button plain size="mini" @click="onEditConfig(scope.row)">编辑</el-button>
@@ -107,6 +108,11 @@ export default defineComponent({
         list: [],
       },
 
+      order: {
+        name: null,
+        method: null,
+      },
+
       dialog: false,
       dialogData: {},
       dialogRules: {
@@ -136,8 +142,14 @@ export default defineComponent({
       this.filter.description = null
       this.onRefresh()
     },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
+      this.onRefresh()
+    },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -179,6 +191,8 @@ export default defineComponent({
           this.filter.description,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

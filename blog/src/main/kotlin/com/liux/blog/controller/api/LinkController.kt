@@ -25,8 +25,10 @@ class LinkController {
         @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
+        @RequestParam("orderName", required = false) orderName: String?,
+        @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<LinkVO>> {
-        val links = linkService.listByAdmin(title, url, status, pageNum, pageSize)
+        val links = linkService.listByAdmin(title, url, status, pageNum, pageSize, orderName, orderMethod)
         val linkVOs = links.map{ LinkVO.of(it) }
         return Resp.succeed(PaginationListVO.of(linkVOs, links))
     }

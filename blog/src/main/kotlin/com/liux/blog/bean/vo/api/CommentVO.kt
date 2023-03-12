@@ -17,7 +17,7 @@ data class CommentVO(
     val browser: String,
     val system: String,
     val createTime: Date,
-    val updateTime: Date,
+    val updateTime: Date?,
     val content: String,
     val status: Int,
 ) {
@@ -37,7 +37,7 @@ data class CommentVO(
                 client.browser,
                 client.system,
                 comment.createTime!!,
-                comment.updateTime ?: comment.createTime!!,
+                comment.updateTime,
                 comment.content!!,
                 comment.status!!,
             )

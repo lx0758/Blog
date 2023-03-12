@@ -24,8 +24,10 @@ class UploadController {
         @RequestParam("type", required = false) type: String?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
+        @RequestParam("orderName", required = false) orderName: String?,
+        @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<UploadVO>> {
-        val uploads = uploadService.listByAdmin(name, type, pageNum, pageSize)
+        val uploads = uploadService.listByAdmin(name, type, pageNum, pageSize, orderName, orderMethod)
         val uploadVOs = uploads.map { UploadVO.of(it) }
         return Resp.succeed(PaginationListVO.of(uploadVOs, uploads))
     }

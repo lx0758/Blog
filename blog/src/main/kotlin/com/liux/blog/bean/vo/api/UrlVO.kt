@@ -13,7 +13,7 @@ data class UrlVO(
     var totalViews: Int,
     var authorName: String,
     var createTime: Date,
-    var updateTime: Date,
+    var updateTime: Date?,
     var status: Int,
 ) {
     companion object {
@@ -28,7 +28,7 @@ data class UrlVO(
                 url.totalViews!!,
                 url.author!!.nickname!!,
                 url.createTime!!,
-                url.updateTime ?: url.createTime!!,
+                url.updateTime,
                 url.status!!,
             )
         }

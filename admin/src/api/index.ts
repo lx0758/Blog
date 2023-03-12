@@ -24,6 +24,8 @@ export const queryArticle = (
     status: number | null,
     pageNum: number,
     pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/article', 'GET', {
     title: title,
     categoryId: category,
@@ -32,6 +34,8 @@ export const queryArticle = (
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 查询文章
 export const queryArticleInfo = (id: number) => request('/api/article/' + id, 'GET', null, null)
@@ -119,6 +123,8 @@ export const queryComment = (
     status: number | null,
     pageNum: number,
     pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/comment', 'GET', {
     article: article,
     author: author,
@@ -128,6 +134,8 @@ export const queryComment = (
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 新增评论(回复)
 export const addCommentByReplay = (
@@ -155,13 +163,17 @@ export const queryCategory = (
     name: string | null,
     pageNum: number,
     pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/category', 'GET', {
     name: name,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 查询分类选项
-export const queryCategoryOptions = () => queryCategory(null, 1, 0x7fffffff).then((data) => {
+export const queryCategoryOptions = () => queryCategory(null, 1, 0x7fffffff, null, null).then((data) => {
     return data.data.list.map((item: any) => {
         return {
             value: item.id,
@@ -190,10 +202,14 @@ export const queryTag = (
     name: string | null,
     pageNum: number,
     pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/tag', 'GET', {
     name: name,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 新增标签
 export const addTag = (
@@ -217,11 +233,15 @@ export const queryUpload = (
     type: string | null,
     pageNum: number,
     pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/upload', 'GET', {
     name: displayName,
     type: type,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 上传文件
 export const addUpload = (file: any) => {
@@ -244,13 +264,17 @@ export const queryLink = (
     url: string | null,
     status: number | null,
     pageNum: number,
-    pageSize: number
+    pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/link', 'GET', {
     title: title,
     url: url,
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 新增友链
 export const addLink = (
@@ -287,7 +311,9 @@ export const queryUrl = (
     description: string | null,
     status: number | null,
     pageNum: number,
-    pageSize: number
+    pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/url', 'GET', {
     key: key,
     url: url,
@@ -295,6 +321,8 @@ export const queryUrl = (
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 新增短链
 export const addUrl = (
@@ -330,13 +358,17 @@ export const queryConfig = (
     value: string | null,
     description: string | null,
     pageNum: number,
-    pageSize: number
+    pageSize: number,
+    orderName: string | null,
+    orderMethod: string | null,
 ) => request('/api/config', 'GET', {
     key: key,
     value: value,
     description: description,
     pageNum: pageNum,
     pageSize: pageSize,
+    orderName: orderName,
+    orderMethod: orderMethod,
 }, null)
 // 新增配置
 export const addConfig = (

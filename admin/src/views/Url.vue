@@ -27,9 +27,10 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="key" label="主键" width="120" fixed>
+      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
+      <el-table-column prop="key" label="主键" width="120" fixed sortable="custom">
         <template #default="scope">
           <el-link :href="'/u/' + scope.row.key" type="primary" target="_blank">{{ scope.row.key }}</el-link>
         </template>
@@ -40,10 +41,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
-      <el-table-column prop="views" label="访问量" width="70"></el-table-column>
-      <el-table-column prop="totalViews" label="总访问量" width="90"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column prop="views" label="访问量" width="90" sortable="custom"></el-table-column>
+      <el-table-column prop="totalViews" label="总访问量" width="110" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width ="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
           <el-tag
@@ -135,6 +136,11 @@ export default defineComponent({
         list: [],
       },
 
+      order: {
+        name: null,
+        method: null,
+      },
+
       dialog: false,
       dialogData: {},
       dialogRules: {
@@ -168,8 +174,14 @@ export default defineComponent({
       this.filter.status = null
       this.onRefresh()
     },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
+      this.onRefresh()
+    },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -211,6 +223,8 @@ export default defineComponent({
           this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

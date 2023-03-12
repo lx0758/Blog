@@ -34,25 +34,30 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
       <el-table-column prop="articleName" label="文章标题" width="180" fixed>
         <template #default="scope">
           <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">{{ scope.row.articleTitle }}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="160"></el-table-column>
-      <el-table-column prop="ip,location" label="IP&位置" width="140">
+      <el-table-column prop="email" label="邮箱" width="120"></el-table-column>
+      <el-table-column prop="ip,location" label="IP" width="120">
         <template #default="scope">
-          {{scope.row.ip}}
-          <br>
-          {{scope.row.location}}
+          <el-tooltip
+              class="box-item"
+              effect="dark"
+              :content="scope.row.location"
+              placement="top">
+            <el-link :href="'https://www.ip138.com/iplookup.php?ip=' + scope.row.ip" type="primary" target="_blank">{{ scope.row.ip }}</el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="100"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="100"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
       <el-table-column prop="status" label="状态" width="80">
         <template #default="scope">
           <el-tag
@@ -165,6 +170,11 @@ export default defineComponent({
         list: [],
       },
 
+      order: {
+        name: null,
+        method: null,
+      },
+
       verify: false,
       verifyData: {},
 
@@ -189,8 +199,14 @@ export default defineComponent({
       this.filter.status = null
       this.onRefresh()
     },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
+      this.onRefresh()
+    },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD\nHH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -281,6 +297,8 @@ export default defineComponent({
           this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

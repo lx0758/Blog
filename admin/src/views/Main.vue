@@ -52,7 +52,7 @@
             <i class="el-icon-menu"></i>
             <span>设置</span>
           </template>
-          <el-menu-item index="setting">
+          <el-menu-item index="config">
             <i class="el-icon-s-tools"></i>
             <span>通用</span>
           </el-menu-item>

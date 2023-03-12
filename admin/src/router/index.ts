@@ -56,9 +56,9 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/Url.vue"),
       },
       {
-        path: '/setting',
+        path: '/config',
         name: '网站设置',
-        component: () => import("@/views/Setting.vue"),
+        component: () => import("@/views/Config.vue"),
       },
       {
         path: '/smtp',

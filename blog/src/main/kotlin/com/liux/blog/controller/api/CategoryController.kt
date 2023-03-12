@@ -21,8 +21,10 @@ class CategoryController {
         @RequestParam("name", required = false) name: String?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
+        @RequestParam("orderName", required = false) orderName: String?,
+        @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<CategoryVO>> {
-        val categorys = categoryService.listByAdmin(name, pageNum, pageSize)
+        val categorys = categoryService.listByAdmin(name, pageNum, pageSize, orderName, orderMethod)
         val categoryVOs = categorys.map { CategoryVO.of(it) }
         return Resp.succeed(PaginationListVO.of(categoryVOs, categorys))
     }

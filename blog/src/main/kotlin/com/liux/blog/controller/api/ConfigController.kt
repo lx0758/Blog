@@ -23,8 +23,10 @@ class ConfigController {
         @RequestParam("description", required = false) description: String?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
+        @RequestParam("orderName", required = false) orderName: String?,
+        @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<ConfigVO>> {
-        val configs = configService.listByAdmin(key, value, description, pageNum, pageSize)
+        val configs = configService.listByAdmin(key, value, description, pageNum, pageSize, orderName, orderMethod)
         val configVOs = configs.map { ConfigVO.of(it) }
         return Resp.succeed(PaginationListVO.of(configVOs, configs))
     }

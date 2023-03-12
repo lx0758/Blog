@@ -14,7 +14,7 @@ data class UserVO(
     val lastLoginTime: Date?,
     val status: Int,
     val createTime: Date,
-    val updateTime: Date,
+    val updateTime: Date?,
 ) {
     companion object {
         fun of(user: User): UserVO {
@@ -29,7 +29,7 @@ data class UserVO(
                 user.lastLoginTime,
                 user.status!!,
                 user.createTime!!,
-                user.updateTime ?: user.createTime!!,
+                user.updateTime,
             )
         }
     }

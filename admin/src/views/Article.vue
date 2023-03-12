@@ -25,23 +25,24 @@
         border
         stripe
         style="width: 100%;"
+        @sort-change="onSortChange"
         :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
       <el-table-column prop="title" label="标题" min-width="250" fixed>
         <template #default="scope">
           <el-link :href="'/article/' + scope.row.id" type="primary" target="_blank">{{ scope.row.title }}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
-      <el-table-column prop="url" label="url" width="100">
+      <el-table-column prop="url" label="url" width="100" sortable="custom">
         <template #default="scope">
           {{ scope.row.url ? scope.row.url : '-'}}
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="权重" width="60"></el-table-column>
-      <el-table-column prop="views" label="浏览数" width="70"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column prop="weight" label="权重" width="80" sortable="custom"></el-table-column>
+      <el-table-column prop="views" label="浏览数" width="90" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160" sortable="custom"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
       <el-table-column prop="enableComment" label="评论" width="70">
         <template #default="scope">
           <el-tag
@@ -120,6 +121,11 @@ export default defineComponent({
         total: 0,
         list: [],
       },
+
+      order: {
+        name: null,
+        method: null,
+      },
     }
   },
   methods: {
@@ -137,8 +143,14 @@ export default defineComponent({
       this.filter.status = null
       this.onRefresh()
     },
+    onSortChange(column: any) {
+      this.order.name = column.prop
+      this.order.method = column.order
+      this.onRefresh()
+    },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
@@ -182,6 +194,8 @@ export default defineComponent({
           this.filter.status,
           this.data.pageNum,
           this.data.pageSize,
+          this.order.name,
+          this.order.method,
       )
           .then(data => {
             this.data = data.data;

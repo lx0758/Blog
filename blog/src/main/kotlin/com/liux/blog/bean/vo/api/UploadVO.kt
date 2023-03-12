@@ -14,7 +14,7 @@ class UploadVO(
     var authorId: Int,
     var authorName: String,
     var createTime: Date,
-    var updateTime: Date,
+    var updateTime: Date?,
 ) {
     companion object {
         fun of(upload: Upload): UploadVO {
@@ -26,9 +26,9 @@ class UploadVO(
                 upload.path!!,
                 UploadConfig.UPLOAD_URL_PREFIX + upload.path!!,
                 upload.authorId!!,
-                upload.author?.nickname ?: "",
+                upload.author?.nickname ?: "-",
                 upload.createTime!!,
-                upload.updateTime ?: upload.createTime!!,
+                upload.updateTime,
             )
         }
     }

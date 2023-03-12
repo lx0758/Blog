@@ -15,7 +15,9 @@ interface CommentService {
         content: String?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Comment>
 
     fun getCommentById(id: Int): Comment?

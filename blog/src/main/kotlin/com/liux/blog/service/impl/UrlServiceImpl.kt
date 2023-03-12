@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.po.Url
 import com.liux.blog.dao.UrlMapper
 import com.liux.blog.service.UrlService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -29,8 +30,11 @@ class UrlServiceImpl : UrlService {
         description: String?,
         status: Int?,
         pageNum: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
     ): Page<Url> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.URL, orderName, orderMethod)
         val page = PageHelper.startPage<Url>(pageNum, pageSize)
         urlMapper.selectByAdmin(Url(
             key = key,

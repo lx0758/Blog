@@ -7,7 +7,7 @@ data class CategoryVO(
     var id: Int,
     var name: String,
     var createTime: Date,
-    var updateTime: Date,
+    var updateTime: Date?,
     var articleCount: Int,
 ) {
     companion object {
@@ -16,7 +16,7 @@ data class CategoryVO(
                 category.id!!,
                 category.name!!,
                 category.createTime!!,
-                category.updateTime ?: category.createTime!!,
+                category.updateTime,
                 category.articleCount ?: 0,
             )
         }

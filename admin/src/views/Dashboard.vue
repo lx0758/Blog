@@ -144,6 +144,7 @@ export default defineComponent({
   methods: {
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
+      if (date == null) return "-"
       return dayjs(date).format("MM-DD");
     },
   }

@@ -6,6 +6,7 @@ import com.liux.blog.bean.po.Upload
 import com.liux.blog.config.UploadConfig
 import com.liux.blog.dao.UploadMapper
 import com.liux.blog.service.UploadService
+import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.util.FileCopyUtils
@@ -21,7 +22,15 @@ class UploadServiceImpl: UploadService {
     @Autowired
     private lateinit var uploadMapper: UploadMapper
 
-    override fun listByAdmin(name: String?, type: String?, pageNum: Int, pageSize: Int): Page<Upload> {
+    override fun listByAdmin(
+        name: String?,
+        type: String?,
+        pageNum: Int,
+        pageSize: Int,
+        orderName: String?,
+        orderMethod: String?,
+    ): Page<Upload> {
+        PageHelperUtil.orderBy(PageHelperUtil.Type.UPLOAD, orderName, orderMethod)
         val page = PageHelper.startPage<Upload>(pageNum, pageSize)
         uploadMapper.selectByAdmin(
             Upload(
