@@ -16,6 +16,7 @@ interface ArticleService {
     fun listByAdmin(
         title: String?,
         category: Int?,
+        url: String?,
         enableComment: Boolean?,
         status: Int?,
         pageNum: Int,

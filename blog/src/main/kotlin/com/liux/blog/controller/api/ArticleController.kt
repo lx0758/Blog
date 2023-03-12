@@ -27,12 +27,13 @@ class ArticleController {
     fun query(
         @RequestParam("title", required = false) title: String?,
         @RequestParam("category", required = false) category: Int?,
+        @RequestParam("url", required = false) url: String?,
         @RequestParam("enableComment", required = false) enableComment: Boolean?,
         @RequestParam("status", required = false) status: Int?,
         @RequestParam("pageNum") pageNum: Int,
         @RequestParam("pageSize") pageSize: Int,
     ): Resp<PaginationListVO<ArticleItemVO>> {
-        val articlePage = articleService.listByAdmin(title, category, enableComment, status, pageNum, pageSize)
+        val articlePage = articleService.listByAdmin(title, category, url, enableComment, status, pageNum, pageSize)
         val articles = articlePage.map { ArticleItemVO.of(it) }
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }

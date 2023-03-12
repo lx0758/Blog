@@ -19,6 +19,7 @@ export const queryDashboard = () => request('/api/dashboard', 'GET', null, null)
 export const queryArticle = (
     title: string | null,
     category: number | null,
+    url: string | null,
     comment: number | null,
     status: number | null,
     pageNum: number,
@@ -26,6 +27,7 @@ export const queryArticle = (
 ) => request('/api/article', 'GET', {
     title: title,
     categoryId: category,
+    url: url,
     comment: comment,
     status: status,
     pageNum: pageNum,

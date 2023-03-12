@@ -7,6 +7,10 @@
             v-model="filter.title"
             clearable/>
       <blog-select v-model:value="filter.category" v-bind:type="1"></blog-select>
+      <el-input
+          placeholder="请输入URL"
+          v-model="filter.url"
+          clearable/>
       <blog-select v-model:value="filter.comment" v-bind:type="3"></blog-select>
       <blog-select v-model:value="filter.status" v-bind:type="4"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
@@ -104,6 +108,7 @@ export default defineComponent({
       filter: {
         title: null,
         category: null,
+        url: null,
         comment: null,
         status: null,
       },
@@ -172,6 +177,7 @@ export default defineComponent({
       queryArticle(
           this.filter.title,
           this.filter.category,
+          this.filter.url,
           this.filter.comment,
           this.filter.status,
           this.data.pageNum,

@@ -65,6 +65,7 @@ class ArticleServiceImpl: ArticleService {
     override fun listByAdmin(
         title: String?,
         category: Int?,
+        url: String?,
         enableComment: Boolean?,
         status: Int?,
         pageNum: Int,
@@ -75,6 +76,7 @@ class ArticleServiceImpl: ArticleService {
             id = 0,
             categoryId = category,
             title = title,
+            url = url,
             commentStatus = enableComment?.let {
                 if (it)
                     ArticleCommentStatusEnum.ENABLE.value

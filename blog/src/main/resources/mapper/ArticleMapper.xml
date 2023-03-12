@@ -213,6 +213,9 @@
         <if test="title != null and title != ''">
             and title like CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%')
         </if>
+        <if test="url != null and url != ''">
+            and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
+        </if>
         <if test="commentStatus != null">
             and comment_status = #{commentStatus,jdbcType=INTEGER}
         </if>
