@@ -40,7 +40,7 @@ class CaptchaServiceImpl : CaptchaService {
 
     override fun verify(session: HttpSession, captcha: String, type: Int, validPeriodMinute: Int): Boolean {
         val sessionCaptcha = session.getAttribute(SESSION_LAST_CAPTCHA) ?: return false
-        if (sessionCaptcha != captcha) return false
+        if (sessionCaptcha != captcha.uppercase()) return false
         if (validPeriodMinute > 0) {
             val sessionLastDatetime = session.getAttribute(SESSION_LAST_DATETIME) ?: return false
             if (sessionLastDatetime !is LocalDateTime) return false
