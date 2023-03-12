@@ -5,14 +5,16 @@
       <el-input
           placeholder="请输入文件名"
           v-model="filter.displayName"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入类型"
           v-model="filter.type"
+          size="small"
           clearable/>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onAddUpload">上传文件</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-button type="primary" @click="onAddUpload" size="small">上传文件</el-button>
     </el-space>
 
     <el-divider/>

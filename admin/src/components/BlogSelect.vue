@@ -1,5 +1,5 @@
 <template>
-  <el-select :model-value="value" @change="onSelected" :placeholder="name">
+  <el-select :model-value="value" @change="onSelected" :placeholder="name" :size="size">
     <el-option
         v-for="item in options"
         :key="item.value"
@@ -110,6 +110,7 @@ export default defineComponent({
   data() {
     return {
       name: '',
+      size: this.$attrs.size,
       options: {},
     }
   },

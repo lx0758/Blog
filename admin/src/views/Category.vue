@@ -5,10 +5,11 @@
       <el-input
           placeholder="请输入名称"
           v-model="filter.name"
+          size="small"
           clearable/>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onAddCategory">新增分类</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-button type="primary" @click="onAddCategory" size="small">新增分类</el-button>
     </el-space>
 
     <el-divider/>

@@ -5,17 +5,19 @@
       <el-input
             placeholder="请输入标题"
             v-model="filter.title"
+            size="small"
             clearable/>
-      <blog-select v-model:value="filter.category" v-bind:type="1"></blog-select>
+      <blog-select v-model:value="filter.category" v-bind:type="1" size="small"></blog-select>
       <el-input
           placeholder="请输入URL"
           v-model="filter.url"
+          size="small"
           clearable/>
-      <blog-select v-model:value="filter.comment" v-bind:type="3"></blog-select>
-      <blog-select v-model:value="filter.status" v-bind:type="4"></blog-select>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onAddArticle">新增文章</el-button>
+      <blog-select v-model:value="filter.comment" v-bind:type="3" size="small"></blog-select>
+      <blog-select v-model:value="filter.status" v-bind:type="4" size="small"></blog-select>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-button type="primary" @click="onAddArticle" size="small">新增文章</el-button>
     </el-space>
 
     <el-divider/>

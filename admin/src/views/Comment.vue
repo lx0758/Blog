@@ -5,26 +5,31 @@
       <el-input
           placeholder="请输入文章ID"
           v-model="filter.article"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入作者"
           v-model="filter.author"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入内容"
           v-model="filter.content"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入邮箱"
           v-model="filter.email"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入IP地址"
           v-model="filter.ip"
+          size="small"
           clearable/>
-      <blog-select v-model:value="filter.status" v-bind:type="5"></blog-select>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
+      <blog-select v-model:value="filter.status" v-bind:type="5" size="small"></blog-select>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
     </el-space>
 
     <el-divider/>

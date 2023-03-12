@@ -5,18 +5,21 @@
       <el-input
           placeholder="请输入键"
           v-model="filter.key"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入值"
           v-model="filter.value"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入描述"
           v-model="filter.description"
+          size="small"
           clearable/>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onAddConfig">新增配置</el-button>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-button type="primary" @click="onAddConfig" size="small">新增配置</el-button>
     </el-space>
 
     <el-divider/>

@@ -5,19 +5,22 @@
       <el-input
           placeholder="请输入键"
           v-model="filter.key"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入链接"
           v-model="filter.url"
+          size="small"
           clearable/>
       <el-input
           placeholder="请输入描述"
           v-model="filter.description"
+          size="small"
           clearable/>
-      <blog-select v-model:value="filter.status" v-bind:type="7"></blog-select>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear">清空</el-button>
-      <el-button type="primary" @click="onAddUrl">新增短链</el-button>
+      <blog-select v-model:value="filter.status" v-bind:type="7" size="small"></blog-select>
+      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
+      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-button type="primary" @click="onAddUrl" size="small">新增短链</el-button>
     </el-space>
 
     <el-divider/>
@@ -83,7 +86,7 @@
         <el-input v-model="dialogData.description" placeholder="请输入描述"></el-input>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <blog-select v-model:value="dialogData.status" v-bind:type="7"></blog-select>
+        <blog-select v-model:value="dialogData.status" v-bind:type="7" size="small"></blog-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onDialogSubmit">确定</el-button>
