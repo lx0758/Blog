@@ -36,13 +36,13 @@
         style="width: 100%;"
         :height="mainContentHeight">
       <el-table-column prop="id" label="ID" width="60" fixed></el-table-column>
-      <el-table-column prop="articleName" label="文章标题" min-width="200" :show-overflow-tooltip="true" fixed>
+      <el-table-column prop="articleName" label="文章标题" width="180" fixed>
         <template #default="scope">
           <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">{{ scope.row.articleTitle }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="昵称" width="80"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
+      <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="160"></el-table-column>
       <el-table-column prop="ip,location" label="IP&位置" width="140">
         <template #default="scope">
           {{scope.row.ip}}
@@ -51,8 +51,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="100"></el-table-column>
+      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="100"></el-table-column>
       <el-table-column prop="status" label="状态" width="80">
         <template #default="scope">
           <el-tag
@@ -191,7 +191,7 @@ export default defineComponent({
     },
     onFormatDate(row: any, column: any) {
       const date = row[column.property];
-      return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+      return dayjs(date).format("YYYY-MM-DD\nHH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
       this.data.pageNum = currentPage;

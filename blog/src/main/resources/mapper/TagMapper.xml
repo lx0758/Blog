@@ -127,14 +127,20 @@
         ORDER BY t_tag."name"
     </select>
     <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Tag" resultMap="CountResultMap">
-        select t_tag.id, t_tag."name", t_tag.create_time, t_tag.update_time, COUNT("tag_id") as article_count
-        FROM t_article_tag
-                     LEFT JOIN t_tag ON t_article_tag.tag_id = t_tag.id
-            WHERE 1 = 1
-            <if test="name != null and name != ''">
-                and name like CONCAT('%', #{name}, '%')
-            </if>
-        GROUP BY tag_id DESC
+        SELECT
+            t_tag.id,
+            t_tag."name",
+            t_tag.create_time,
+            t_tag.update_time,
+            tags.article_count
+        FROM
+            (SELECT tag_id, COUNT(article_id) AS article_count FROM t_article_tag GROUP BY tag_id) as tags
+                LEFT JOIN t_tag ON tags.tag_id = t_tag.id
+        WHERE 1 = 1
+        <if test="name != null and name != ''">
+            AND t_tag."name" like CONCAT('%', #{name}, '%')
+        </if>
+        ORDER BY t_tag.id
     </select>
     <select id="selectCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp
