@@ -191,8 +191,11 @@ export default defineComponent({
       return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
+      const changed = this.data.pageNum != currentPage
       this.data.pageNum = currentPage;
-      this.onRefresh();
+      if (changed) {
+        this.onRefresh();
+      }
     },
     onAddUpload() {
       this.updateId = 0

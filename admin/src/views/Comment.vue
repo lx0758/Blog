@@ -210,8 +210,11 @@ export default defineComponent({
       return dayjs(date).format("YYYY-MM-DD\nHH:mm:ss");
     },
     onCurrentPageChange(currentPage: number) {
+      const changed = this.data.pageNum != currentPage
       this.data.pageNum = currentPage;
-      this.onRefresh();
+      if (changed) {
+        this.onRefresh();
+      }
     },
     onShowReplyComment(row: any) {
       this.replayData = {
