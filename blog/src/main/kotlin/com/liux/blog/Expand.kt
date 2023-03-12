@@ -3,11 +3,13 @@ package com.liux.blog
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.Comment
 import com.liux.blog.bean.vo.CatalogueVO
-import com.liux.blog.markdown.MarkdownHelper
+import com.liux.blog.util.MarkdownHelper
 import jakarta.servlet.http.HttpServletRequest
-import ua_parser.Parser
+import org.commonmark.ext.next.FLAG_MORE_ANCHOR
+import org.commonmark.ext.next.FLAG_MORE_SUSPEND
+import org.commonmark.ext.next.FLAG_TOC
+import ua_parser.Client
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -54,18 +56,24 @@ fun HttpServletRequest.getUserAgent(): String {
     return getHeader("User-Agent")
 }
 
-fun Article.renderMarkdown(catalogues: ArrayList<CatalogueVO>? = null): String {
-    val localContent = content
-    if (localContent.isNullOrEmpty()) return ""
-    return MarkdownHelper.parse(localContent, catalogues)
+fun Article.render(catalogues: ArrayList<CatalogueVO>): String {
+    return MarkdownHelper.parse(content, FLAG_TOC or FLAG_MORE_ANCHOR, catalogues)
 }
 
-val PARSER = Parser()
-fun Comment.browser(): String {
-    val client = PARSER.parse(ua)
-    return if (client.userAgent != null) "${client.userAgent.family} ${client.userAgent.major}${if (client.userAgent.minor.isNullOrEmpty()) "" else '.' + client.userAgent.minor}${if (client.userAgent.patch.isNullOrEmpty()) "" else '.' + client.userAgent.patch}" else "Unknown"
+fun Article.renderOther(): String {
+    return MarkdownHelper.parse(content)
 }
-fun Comment.system(): String {
-    val client = PARSER.parse(ua)
-    return if (client.os != null) "${client.os.family} ${client.os.major}${if (client.os.minor.isNullOrEmpty()) "" else '.' + client.os.minor}${if (client.os.patch.isNullOrEmpty()) "" else '.' + client.os.patch}" else "Unknown"
+
+fun Article.renderPage(): String {
+    return MarkdownHelper.parse(content, FLAG_MORE_SUSPEND)
 }
+
+val Client.browser: String
+    get() {
+        return if (userAgent != null) "${userAgent.family} ${userAgent.major}${if (userAgent.minor.isNullOrEmpty()) "" else '.' + userAgent.minor}${if (userAgent.patch.isNullOrEmpty()) "" else '.' + userAgent.patch}" else "Unknown"
+    }
+
+val Client.system: String
+    get() {
+        return if (os != null) "${os.family} ${os.major}${if (os.minor.isNullOrEmpty()) "" else '.' + os.minor}${if (os.patch.isNullOrEmpty()) "" else '.' + os.patch}" else "Unknown"
+    }

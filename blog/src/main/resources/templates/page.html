@@ -64,21 +64,14 @@
 
         </header>
 
-        <th:block th:with="more=${article.content.contains('<!-- more -->')},moreIndex=${article.content.indexOf('<!-- more -->')}">
-            <th:block th:if="${more}">
-                <div class="post-body" itemprop="articleBody">
-                    <th:block th:utext="${article.content.substring(0, moreIndex)}"></th:block>
-                    <!--noindex-->
-                    <div class="post-button">
-                        <a class="btn" th:href="${'/article/' + article.url + '#more'}" rel="contents">阅读全文 »</a>
-                    </div>
-                    <!--/noindex-->
-                </div>
-            </th:block>
-            <th:block th:unless="${more}">
-                <div class="post-body" itemprop="articleBody" th:utext="${article.content}"></div>
-            </th:block>
-        </th:block>
+        <div class="post-body" itemprop="articleBody">
+            <th:block th:utext="${article.content}"></th:block>
+            <!--noindex-->
+            <div class="post-button" th:if="${article.content.endsWith('<!--more-->')}">
+                <a class="btn" th:href="${'/article/' + article.url + '#more'}" rel="contents">阅读全文 »</a>
+            </div>
+            <!--/noindex-->
+        </div>
 
         <footer class="post-footer">
             <div class="post-eof"></div>

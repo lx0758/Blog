@@ -31,7 +31,11 @@ dependencies {
     implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.0.0")
 
     implementation("org.commonmark:commonmark:0.21.0")
+    implementation("org.commonmark:commonmark-ext-ins:0.21.0")
     implementation("org.commonmark:commonmark-ext-autolink:0.21.0")
+    implementation("org.commonmark:commonmark-ext-heading-anchor:0.21.0")
+    implementation("org.commonmark:commonmark-ext-task-list-items:0.21.0")
+    implementation("org.commonmark:commonmark-ext-image-attributes:0.21.0")
     implementation("org.commonmark:commonmark-ext-gfm-tables:0.21.0")
     implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.21.0")
 

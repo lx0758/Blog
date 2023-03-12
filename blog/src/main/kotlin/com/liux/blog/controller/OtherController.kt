@@ -1,6 +1,6 @@
 package com.liux.blog.controller
 
-import com.liux.blog.renderMarkdown
+import com.liux.blog.renderOther
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CaptchaService
 import com.liux.blog.service.ThemeService
@@ -33,7 +33,7 @@ class OtherController {
         return articles.map { article ->
             HashMap<String, String>().apply {
                 put("title", article.title!!)
-                put("content", article.renderMarkdown())
+                put("content", article.renderOther())
                 put("url", "/article/" + (article.url ?: article.id.toString()))
             }
         }

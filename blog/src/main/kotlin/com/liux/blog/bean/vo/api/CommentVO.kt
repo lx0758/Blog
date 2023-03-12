@@ -22,7 +22,9 @@ data class CommentVO(
     val status: Int,
 ) {
     companion object {
+        val UA_PARSER = ua_parser.Parser()
         fun of(comment: Comment): CommentVO {
+            val client = UA_PARSER.parse(comment.ua)
             return CommentVO(
                 comment.id!!,
                 comment.article?.id ?: 0,
@@ -32,8 +34,8 @@ data class CommentVO(
                 comment.url ?: "",
                 comment.ip ?: "",
                 comment.location ?: "",
-                comment.browser(),
-                comment.system(),
+                client.browser,
+                client.system,
                 comment.createTime!!,
                 comment.updateTime ?: comment.createTime!!,
                 comment.content!!,

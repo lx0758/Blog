@@ -2,7 +2,7 @@ package com.liux.blog.bean.vo
 
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.po.ArticleCommentStatusEnum
-import com.liux.blog.renderMarkdown
+import com.liux.blog.render
 import java.util.*
 
 data class ArticleVO(
@@ -24,7 +24,7 @@ data class ArticleVO(
                 article.id!!,
                 article.url ?: article.id.toString(),
                 article.title ?: "",
-                article.renderMarkdown(catalogues),
+                article.render(catalogues),
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,
                 article.category!!.name!!,
