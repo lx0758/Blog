@@ -7,13 +7,13 @@
             v-model="filter.title"
             size="small"
             clearable/>
-      <blog-select v-model:value="filter.category" v-bind:type="1" size="small"></blog-select>
+      <blog-select v-model:value="filter.categoryId" v-bind:type="1" size="small"></blog-select>
       <el-input
           placeholder="请输入URL"
           v-model="filter.url"
           size="small"
           clearable/>
-      <blog-select v-model:value="filter.comment" v-bind:type="3" size="small"></blog-select>
+      <blog-select v-model:value="filter.enableComment" v-bind:type="3" size="small"></blog-select>
       <blog-select v-model:value="filter.status" v-bind:type="4" size="small"></blog-select>
       <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
       <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
@@ -110,9 +110,9 @@ export default defineComponent({
 
       filter: {
         title: null,
-        category: null,
+        categoryId: null,
         url: null,
-        comment: null,
+        enableComment: null,
         status: null,
       },
 
@@ -140,8 +140,9 @@ export default defineComponent({
     },
     onFilterClear() {
       this.filter.title = null
-      this.filter.category = null
-      this.filter.comment = null
+      this.filter.categoryId = null
+      this.filter.url = null
+      this.filter.enableComment = null
       this.filter.status = null
       this.onRefresh()
     },
@@ -193,9 +194,9 @@ export default defineComponent({
     onRefresh() {
       queryArticle(
           this.filter.title,
-          this.filter.category,
+          this.filter.categoryId,
           this.filter.url,
-          this.filter.comment,
+          this.filter.enableComment,
           this.filter.status,
           this.data.pageNum,
           this.data.pageSize,

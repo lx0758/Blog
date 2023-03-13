@@ -44,11 +44,11 @@ export default defineComponent({
         this.name = "允许评论"
         this.options = [
           {
-            value: 0,
+            value: false,
             label: '禁止',
           },
           {
-            value: 1,
+            value: true,
             label: '允许',
           },
         ]

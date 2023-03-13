@@ -18,9 +18,9 @@ export const queryDashboard = () => request('/api/dashboard', 'GET', null, null)
 // 查询文章
 export const queryArticle = (
     title: string | null,
-    category: number | null,
+    categoryId: number | null,
     url: string | null,
-    comment: number | null,
+    enableComment: boolean | null,
     status: number | null,
     pageNum: number,
     pageSize: number,
@@ -28,9 +28,9 @@ export const queryArticle = (
     orderMethod: string | null,
 ) => request('/api/article', 'GET', {
     title: title,
-    categoryId: category,
+    categoryId: categoryId,
     url: url,
-    comment: comment,
+    enableComment: enableComment,
     status: status,
     pageNum: pageNum,
     pageSize: pageSize,

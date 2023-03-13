@@ -15,9 +15,9 @@ interface ArticleService {
     fun listByExport(): List<Article>
     fun listByAdmin(
         title: String?,
-        category: Int?,
+        categoryId: Int?,
         url: String?,
-        enableComment: Boolean?,
+        commentStatus: Int?,
         status: Int?,
         pageNum: Int,
         pageSize: Int,
@@ -40,7 +40,7 @@ interface ArticleService {
         content: String,
         url: String?,
         weight: Int?,
-        enableComment: Boolean,
+        commentStatus: Int,
         status: Int,
         tags: Array<String>?
     ): Article
@@ -52,7 +52,7 @@ interface ArticleService {
         content: String,
         url: String?,
         weight: Int?,
-        enableComment: Boolean,
+        commentStatus: Int,
         status: Int,
         tags: Array<String>?
     ): Int

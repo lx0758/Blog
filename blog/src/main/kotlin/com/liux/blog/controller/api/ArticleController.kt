@@ -2,6 +2,7 @@ package com.liux.blog.controller.api
 
 import com.liux.blog.annotation.CurrentUserId
 import com.liux.blog.bean.Resp
+import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import com.liux.blog.bean.po.ArticleStatusEnum
 import com.liux.blog.bean.po.isValid
 import com.liux.blog.bean.vo.api.ArticleItemVO
@@ -26,7 +27,7 @@ class ArticleController {
     @GetMapping
     fun query(
         @RequestParam("title", required = false) title: String?,
-        @RequestParam("category", required = false) category: Int?,
+        @RequestParam("categoryId", required = false) categoryId: Int?,
         @RequestParam("url", required = false) url: String?,
         @RequestParam("enableComment", required = false) enableComment: Boolean?,
         @RequestParam("status", required = false) status: Int?,
@@ -35,7 +36,22 @@ class ArticleController {
         @RequestParam("orderName", required = false) orderName: String?,
         @RequestParam("orderMethod", required = false) orderMethod: String?,
     ): Resp<PaginationListVO<ArticleItemVO>> {
-        val articlePage = articleService.listByAdmin(title, category, url, enableComment, status, pageNum, pageSize, orderName, orderMethod)
+        val articlePage = articleService.listByAdmin(
+            title,
+            categoryId,
+            url,
+            enableComment?.let {
+                if (it)
+                    ArticleCommentStatusEnum.ENABLE.value
+                else
+                    ArticleCommentStatusEnum.DISABLE.value
+            },
+            status,
+            pageNum,
+            pageSize,
+            orderName,
+            orderMethod
+        )
         val articles = articlePage.map { ArticleItemVO.of(it) }
         return Resp.succeed(PaginationListVO.of(articles, articlePage))
     }
@@ -57,7 +73,7 @@ class ArticleController {
         @RequestParam("content") content: String,
         @RequestParam("url", required = false) url: String?,
         @RequestParam("weight", required = false) weight: Int?,
-        @RequestParam("enableComment", required = false) enableComment: Boolean,
+        @RequestParam("enableComment") enableComment: Boolean,
         @RequestParam("status") status: Int,
         @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<ArticleVO> {
@@ -69,7 +85,12 @@ class ArticleController {
             content,
             url,
             weight,
-            enableComment,
+            enableComment.let {
+                if (it)
+                    ArticleCommentStatusEnum.ENABLE.value
+                else
+                    ArticleCommentStatusEnum.DISABLE.value
+            },
             status,
             tags,
         )
@@ -85,7 +106,7 @@ class ArticleController {
         @RequestParam("content") content: String,
         @RequestParam("url", required = false) url: String?,
         @RequestParam("weight", required = false) weight: Int?,
-        @RequestParam("enableComment", required = false) enableComment: Boolean,
+        @RequestParam("enableComment") enableComment: Boolean,
         @RequestParam("status") status: Int,
         @RequestParam("tags", required = false) tags: Array<String>?,
     ): Resp<*> {
@@ -97,7 +118,12 @@ class ArticleController {
             content,
             url,
             weight,
-            enableComment,
+            enableComment.let {
+                if (it)
+                    ArticleCommentStatusEnum.ENABLE.value
+                else
+                    ArticleCommentStatusEnum.DISABLE.value
+            },
             status,
             tags,
         )

@@ -4,7 +4,6 @@ import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Article
-import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.TagMapper
@@ -65,9 +64,9 @@ class ArticleServiceImpl: ArticleService {
 
     override fun listByAdmin(
         title: String?,
-        category: Int?,
+        categoryId: Int?,
         url: String?,
-        enableComment: Boolean?,
+        commentStatus: Int?,
         status: Int?,
         pageNum: Int,
         pageSize: Int,
@@ -78,15 +77,10 @@ class ArticleServiceImpl: ArticleService {
         val page = PageHelper.startPage<Article>(pageNum, pageSize)
         articleMapper.selectByAdmin(Article(
             id = 0,
-            categoryId = category,
+            categoryId = categoryId,
             title = title,
             url = url,
-            commentStatus = enableComment?.let {
-                if (it)
-                    ArticleCommentStatusEnum.ENABLE.value
-                else
-                    ArticleCommentStatusEnum.DISABLE.value
-            },
+            commentStatus = commentStatus,
             status = status,
         ))
         return page
@@ -136,7 +130,7 @@ class ArticleServiceImpl: ArticleService {
         content: String,
         url: String?,
         weight: Int?,
-        enableComment: Boolean,
+        commentStatus: Int,
         status: Int,
         tags: Array<String>?
     ): Article {
@@ -148,7 +142,7 @@ class ArticleServiceImpl: ArticleService {
             url = url,
             weight = weight,
             views = 0,
-            commentStatus = if (enableComment) ArticleCommentStatusEnum.ENABLE.value else ArticleCommentStatusEnum.DISABLE.value,
+            commentStatus = commentStatus,
             status = status,
             createTime = Date(),
             updateTime = null,
@@ -170,7 +164,7 @@ class ArticleServiceImpl: ArticleService {
         content: String,
         url: String?,
         weight: Int?,
-        enableComment: Boolean,
+        commentStatus: Int,
         status: Int,
         tags: Array<String>?
     ): Int {
@@ -181,7 +175,7 @@ class ArticleServiceImpl: ArticleService {
             categoryId = categoryId,
             url = url,
             weight = weight,
-            commentStatus = if (enableComment) ArticleCommentStatusEnum.ENABLE.value else ArticleCommentStatusEnum.DISABLE.value,
+            commentStatus = commentStatus,
             status = status,
             updateTime = Date(),
         ))
