@@ -49,7 +49,7 @@ class ThemeServiceImpl: ThemeService {
         return cacheBlogVO!!
     }
 
-    override fun render(model: Model, template: String): String {
+    override fun render(template: String, model: MutableMap<String, Any?>): String {
         if (template != "article") {
             val title = when (template) {
                 "archive" -> "归档"
@@ -60,16 +60,16 @@ class ThemeServiceImpl: ThemeService {
                 "tags" -> "标签"
                 else -> null
             }
-            model.addAttribute("title", title)
+            model["title"] = title
         }
-        model.addAttribute("base", getCacheBase())
-        model.addAttribute("template", template)
+        model["base"] = getCacheBase()
+        model["template"] = template
         return "index"
     }
 
-    override fun renderArticle(model: Model, title: String, keywords: String): String {
-        model.addAttribute("title", title)
-        model.addAttribute("keywords", keywords)
-        return render(model, "article")
+    override fun renderArticle(model: MutableMap<String, Any?>, title: String, keywords: String): String {
+        model["title"] = title
+        model["keywords"] = keywords
+        return render("article", model)
     }
 }

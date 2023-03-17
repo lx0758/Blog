@@ -14,8 +14,8 @@ spring:
       connection-test-query: SELECT 1
   servlet:
     multipart:
-      max-file-size: 10240MB
-      max-request-size: 10240MB
+      max-file-size: 1024MB
+      max-request-size: 1024MB
   thymeleaf:
     cache: true
     mode: HTML
@@ -27,9 +27,12 @@ spring:
 server:
   max-http-request-header-size: 1MB
   error:
-    include-message: always
     include-exception: true
+    include-message: always
+    include-stacktrace: always
     include-binding-errors: always
+  tomcat:
+    max-swallow-size: -1
 
 mybatis:
   type-handlers-package: com.liux.blog.dao.typehandler

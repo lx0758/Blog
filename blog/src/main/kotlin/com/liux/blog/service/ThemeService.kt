@@ -6,6 +6,6 @@ import org.springframework.ui.Model
 interface ThemeService {
     fun updateBase()
     fun getCacheBase(): BlogVO
-    fun render(model: Model, template: String): String
-    fun renderArticle(model: Model, title: String, keywords: String): String
+    fun render(template: String, model: MutableMap<String, Any?>): String
+    fun renderArticle(model: MutableMap<String, Any?>, title: String, keywords: String): String
 }

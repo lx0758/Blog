@@ -1,7 +1,6 @@
 package com.liux.blog.controller
 
 import com.liux.blog.bean.Resp
-import com.liux.blog.config.ExceptionConfig
 import com.liux.blog.service.ThemeService
 import com.liux.blog.toBean
 import com.liux.blog.toJSONString
@@ -12,10 +11,10 @@ import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.servlet.error.ErrorAttributes
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 
@@ -38,7 +37,7 @@ class ErrorController(
                 404 -> "404"
                 else -> "error"
             }
-            viewName = themeService.render(ErrorModel(this), template)
+            viewName = themeService.render(template, model)
             addObject("error", getErrorAttributes(request, ErrorAttributeOptions.defaults()))
         }
     }
@@ -51,51 +50,6 @@ class ErrorController(
         val errorAttributes = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL))
         val body = Resp.failed(httpStatus.value(), (errorAttributes["message"] ?: httpStatus.reasonPhrase) as String)
         val bodyMap = body.toJSONString().toBean<MutableMap<String, Any>>()
-        return ResponseEntity(bodyMap, ExceptionConfig.transformHttpStatus(httpStatus))
-    }
-
-    class ErrorModel(
-            private val modelAndView: ModelAndView
-    ) : Model {
-
-        override fun addAttribute(attributeName: String, attributeValue: Any?): Model {
-            modelAndView.addObject(attributeName, attributeValue)
-            return this
-        }
-
-        override fun addAttribute(attributeValue: Any): Model {
-            modelAndView.addObject(attributeValue)
-            return this
-        }
-
-        override fun addAllAttributes(attributeValues: MutableCollection<*>): Model {
-            attributeValues.forEach {
-                if (it != null) modelAndView.addObject(it)
-            }
-            return this
-        }
-
-        override fun addAllAttributes(attributes: MutableMap<String, *>): Model {
-            modelAndView.addAllObjects(attributes)
-            return this
-        }
-
-        override fun mergeAttributes(attributes: MutableMap<String, *>): Model {
-            modelAndView.addAllObjects(attributes)
-            return this
-        }
-
-        override fun containsAttribute(attributeName: String): Boolean {
-            return modelAndView.model.containsKey(attributeName)
-        }
-
-        override fun getAttribute(attributeName: String): Any? {
-            return modelAndView.model[attributeName]
-        }
-
-        override fun asMap(): MutableMap<String, Any> {
-            return modelAndView.model
-        }
-
+        return ResponseEntity(bodyMap, HttpStatus.OK)
     }
 }

@@ -1,37 +1,40 @@
 package com.liux.blog.config
 
+import jakarta.servlet.RequestDispatcher
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.logging.LogFactory
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 @ControllerAdvice
 class ExceptionConfig {
 
     private val logger = LogFactory.getLog(javaClass)
 
-    companion object {
-        private const val ignoreHttpError = true
-        fun transformHttpStatus(httpStatus: HttpStatus): HttpStatus {
-            return if (ignoreHttpError) {
-                HttpStatus.OK
-            } else {
-                httpStatus
-            }
-        }
-    }
-
-    @ExceptionHandler(value = [HttpClientErrorException::class])
-    fun handler(response: HttpServletResponse, exception: HttpClientErrorException) {
-        response.sendError(exception.statusCode.value(), exception.statusText)
-        logger.error(exception.message, exception)
-    }
-
     @ExceptionHandler(value = [Exception::class])
-    fun handler(response: HttpServletResponse, exception: Exception) {
-        response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message)
-        logger.error(exception.message, exception)
+    fun handlerException(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        exception: Exception
+    ): String {
+        logger.error(exception.message)
+
+        val httpStatus = when(exception) {
+            is SizeLimitExceededException, is MaxUploadSizeExceededException -> HttpStatus.PAYLOAD_TOO_LARGE
+            is HttpClientErrorException -> HttpStatus.valueOf(response.status)
+            else -> HttpStatus.INTERNAL_SERVER_ERROR
+        }
+
+        request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exception)
+        request.setAttribute(RequestDispatcher.ERROR_EXCEPTION_TYPE, exception::class.java)
+        request.setAttribute(RequestDispatcher.ERROR_MESSAGE, exception.message ?: httpStatus.reasonPhrase)
+        request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.requestURI)
+        request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, httpStatus.value())
+
+        return "forward:/error"
     }
 }

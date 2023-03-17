@@ -38,7 +38,7 @@ class IndexController {
 
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render(model, "page")
+        return themeService.render("page", model.asMap())
     }
 
     @GetMapping("/archive/")
@@ -54,14 +54,14 @@ class IndexController {
 
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render(model, "archive")
+        return themeService.render("archive", model.asMap())
     }
 
     @GetMapping("/category/")
     fun category(model: Model): String {
         val categorys = categoryService.listByCategory().map { CategoryVO.of(it) }
         model.addAttribute("categorys", categorys)
-        return themeService.render(model, "categorys")
+        return themeService.render("categorys", model.asMap())
     }
 
     @GetMapping("/category/{categoryName}")
@@ -79,14 +79,14 @@ class IndexController {
         model.addAttribute("category", category.name)
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render(model, "category")
+        return themeService.render("category", model.asMap())
     }
 
     @GetMapping("/tag/")
     fun tag(model: Model): String {
         val tags = tagService.listByCount().map { TagVO.of(it) }
         model.addAttribute("tags", tags)
-        return themeService.render(model, "tags")
+        return themeService.render("tags", model.asMap())
     }
 
     @GetMapping("/tag/{tagName}")
@@ -104,7 +104,7 @@ class IndexController {
         model.addAttribute("tag", tag.name)
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render(model, "tag")
+        return themeService.render("tag", model.asMap())
     }
 
     @GetMapping("/article/{article}")
@@ -121,6 +121,6 @@ class IndexController {
         model.addAttribute("catalogues", catalogues)
         model.addAttribute("prev", prevVO)
         model.addAttribute("next", nextVO)
-        return themeService.renderArticle(model, articleVO.title, articleVO.tags.joinToString(","))
+        return themeService.renderArticle(model.asMap(), articleVO.title, articleVO.tags.joinToString(","))
     }
 }
