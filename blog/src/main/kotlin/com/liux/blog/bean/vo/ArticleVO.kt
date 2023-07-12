@@ -3,12 +3,14 @@ package com.liux.blog.bean.vo
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.po.ArticleCommentStatusEnum
 import com.liux.blog.render
+import com.liux.blog.renderDescription
 import java.util.*
 
 data class ArticleVO(
     var id: Int,
     var url: String,
     var title: String,
+    var description: String,
     var content: String,
     var createTime: Date,
     var updateTime: Date,
@@ -24,6 +26,7 @@ data class ArticleVO(
                 article.id!!,
                 article.url ?: article.id.toString(),
                 article.title ?: "",
+                article.renderDescription(),
                 article.render(catalogues),
                 article.createTime!!,
                 article.updateTime ?: article.createTime!!,

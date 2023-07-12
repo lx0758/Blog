@@ -1,5 +1,6 @@
 package com.liux.blog.controller
 
+import com.liux.blog.annotation.RequestUrl
 import com.liux.blog.bean.vo.*
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CategoryService
@@ -38,7 +39,7 @@ class IndexController {
 
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render("page", model.asMap())
+        return themeService.render(model.asMap(), "page")
     }
 
     @GetMapping("/archive/")
@@ -54,14 +55,14 @@ class IndexController {
 
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render("archive", model.asMap())
+        return themeService.render(model.asMap(), "archive")
     }
 
     @GetMapping("/category/")
     fun category(model: Model): String {
         val categorys = categoryService.listByCategory().map { CategoryVO.of(it) }
         model.addAttribute("categorys", categorys)
-        return themeService.render("categorys", model.asMap())
+        return themeService.render(model.asMap(), "categorys")
     }
 
     @GetMapping("/category/{categoryName}")
@@ -79,14 +80,14 @@ class IndexController {
         model.addAttribute("category", category.name)
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render("category", model.asMap())
+        return themeService.render(model.asMap(), "category")
     }
 
     @GetMapping("/tag/")
     fun tag(model: Model): String {
         val tags = tagService.listByCount().map { TagVO.of(it) }
         model.addAttribute("tags", tags)
-        return themeService.render("tags", model.asMap())
+        return themeService.render(model.asMap(), "tags")
     }
 
     @GetMapping("/tag/{tagName}")
@@ -104,11 +105,11 @@ class IndexController {
         model.addAttribute("tag", tag.name)
         model.addAttribute("articles", articles)
         model.addAttribute("pagination", paginationVO)
-        return themeService.render("tag", model.asMap())
+        return themeService.render(model.asMap(), "tag")
     }
 
     @GetMapping("/article/{article}")
-    fun article(model: Model, @PathVariable("article") articlePath: String): String {
+    fun article(model: Model, @RequestUrl url: String, @PathVariable("article") articlePath: String): String {
         val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
         val catalogues = ArrayList<CatalogueVO>()
         val articleVO = ArticleVO.of(article, catalogues)
@@ -121,6 +122,6 @@ class IndexController {
         model.addAttribute("catalogues", catalogues)
         model.addAttribute("prev", prevVO)
         model.addAttribute("next", nextVO)
-        return themeService.renderArticle(model.asMap(), articleVO.title, articleVO.tags.joinToString(","))
+        return themeService.render(model.asMap(), "article", articleVO.title, articleVO.description, articleVO.tags.joinToString(","), url)
     }
 }

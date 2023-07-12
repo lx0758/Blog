@@ -4,8 +4,14 @@ import com.liux.blog.bean.vo.BlogVO
 import org.springframework.ui.Model
 
 interface ThemeService {
-    fun updateBase()
-    fun getCacheBase(): BlogVO
-    fun render(template: String, model: MutableMap<String, Any?>): String
-    fun renderArticle(model: MutableMap<String, Any?>, title: String, keywords: String): String
+    fun updateBlogInfo()
+    fun getCacheBlogInfo(): BlogVO
+    fun render(
+        model: MutableMap<String, Any?>,
+        page: String,
+        pageTitle: String? = null,
+        pageDescription: String? = null,
+        pageKeywords: String? = null,
+        pageUrl: String? = null,
+    ): String
 }

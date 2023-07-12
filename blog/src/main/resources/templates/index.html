@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="title" type="java.lang.String"*/-->
-<!--/*@thymesVar id="keywords" type="java.lang.String"*/-->
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
+<!--/*@thymesVar id="page" type="java.lang.String"*/-->
+<!--/*@thymesVar id="pageTitle" type="java.lang.String"*/-->
+<!--/*@thymesVar id="pageDescription" type="java.lang.String"*/-->
+<!--/*@thymesVar id="pageKeywords" type="java.lang.String"*/-->
+<!--/*@thymesVar id="pageUrl" type="java.lang.String"*/-->
+<!--/*@thymesVar id="blog" type="com.liux.blog.bean.vo.BlogVO"*/-->
 <!--/*@thymesVar id="catalogues" type="java.util.List<com.liux.blog.bean.vo.CatalogueVO>"*/-->
 
 <head>
@@ -27,7 +30,7 @@
     <script id="hexo-configurations" th:inline="javascript">
         var NexT = window.NexT || {};
         var CONFIG = {
-            "hostname": [[${base.siteDomain}]],
+            "hostname": [[${blog.siteDomain}]],
             "root": "/",
             "scheme": "Gemini",
             "version": "7.8.0",
@@ -71,17 +74,22 @@
         };
     </script>
 
-    <meta name="description" th:content="${base.siteDescription}">
-    <meta name="keywords" th:content="${#strings.defaultString(keywords, 'Blog') + ',' + base.siteKeywords}">
-    <meta property="og:type" content="website">
-    <meta property="og:title" th:content="${base.siteTitle}">
-    <meta property="og:url" th:content="${'//' + base.siteDomain + '/'}">
-    <meta property="og:site_name" th:content="${base.siteTitle}">
-    <meta property="og:description" th:content="${base.siteDescription}">
+    <meta name="description" th:if="${pageDescription != null}" th:content="${pageDescription}">
+    <meta name="description" th:unless="${pageDescription != null}" th:content="${blog.siteDescription}">
+    <meta name="keywords" th:content="${#strings.defaultString(pageKeywords, 'Blog') + ',' + blog.siteKeywords}">
+    <meta property="og:type" th:if="${page == 'article'}" content="article">
+    <meta property="og:type" th:unless="${page == 'article'}" content="website">
+    <meta property="og:title" th:if="${pageTitle != null}" th:content="${pageTitle + ' | ' + blog.siteTitle}">
+    <meta property="og:title" th:unless="${pageTitle != null}" th:content="${blog.siteTitle}">
+    <meta property="og:url" th:if="${pageUrl != null}" th:content="${'https://' + blog.siteDomain + pageUrl}">
+    <meta property="og:url" th:unless="${pageUrl != null}" th:content="${'https://' + blog.siteDomain + '/'}">
+    <meta property="og:site_name" th:content="${blog.siteTitle}">
+    <meta property="og:description" th:if="${pageDescription != null}" th:content="${pageDescription}">
+    <meta property="og:description" th:unless="${pageDescription != null}" th:content="${blog.siteDescription}">
     <meta property="og:locale" content="zh_CN">
     <meta name="twitter:card" content="summary">
 
-    <link rel="canonical" th:href="${'//' + base.siteDomain + '/'}">
+    <link rel="canonical" th:href="${'https://' + blog.siteDomain + '/'}">
 
     <script id="page-configurations">
         // https://hexo.io/docs/variables.html
@@ -93,8 +101,8 @@
         };
     </script>
 
-    <title th:if="${title != null}" th:text="${title + ' | ' + base.siteTitle}"></title>
-    <title th:unless="${title != null}" th:text="${base.siteTitle}"></title>
+    <title th:if="${pageTitle != null}" th:text="${pageTitle + ' | ' + blog.siteTitle}"></title>
+    <title th:unless="${pageTitle != null}" th:text="${blog.siteTitle}"></title>
 
     <noscript>
         <style>
@@ -145,10 +153,10 @@
                 <div class="site-meta">
                     <a href="/" class="brand" rel="start">
                         <span class="logo-line-before"><i></i></span>
-                        <h1 class="site-title" th:text="${base.siteTitle}"></h1>
+                        <h1 class="site-title" th:text="${blog.siteTitle}"></h1>
                         <span class="logo-line-after"><i></i></span>
                     </a>
-                    <p class="site-subtitle" itemprop="description" th:text="${base.siteDescription}"></p>
+                    <p class="site-subtitle" itemprop="description" th:text="${blog.siteDescription}"></p>
                 </div>
 
                 <div class="site-nav-right">
@@ -171,21 +179,21 @@
                         <a href="/archive/" rel="section">
                             <i class="fa fa-fw fa-archive"></i>
                             归档
-                            <span class="badge" th:text="${base.siteArticleCount}"></span>
+                            <span class="badge" th:text="${blog.siteArticleCount}"></span>
                         </a>
                     </li>
                     <li class="menu-item menu-item-categories">
                         <a href="/category/" rel="section">
                             <i class="fa fa-fw fa-th"></i>
                             分类
-                            <span class="badge" th:text="${base.siteCategoryCount}"></span>
+                            <span class="badge" th:text="${blog.siteCategoryCount}"></span>
                         </a>
                     </li>
                     <li class="menu-item menu-item-tags">
                         <a href="/tag/" rel="section">
                             <i class="fa fa-fw fa-tags"></i>
                             标签
-                            <span class="badge" th:text="${base.siteTagCount}"></span>
+                            <span class="badge" th:text="${blog.siteTagCount}"></span>
                         </a>
                     </li>
                     <li class="menu-item menu-item-sitemap">
@@ -256,7 +264,7 @@
     <div class="reading-progress-bar"></div>
     <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-    <a th:href="${'https://github.com/' + base.ownerGithub}" class="github-corner" title="Follow me on GitHub"
+    <a th:href="${'https://github.com/' + blog.ownerGithub}" class="github-corner" title="Follow me on GitHub"
        aria-label="Follow me on GitHub" rel="noopener" target="_blank">
         <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
             <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -272,8 +280,7 @@
 
     <main class="main">
         <div class="main-inner">
-            <!--/*@thymesVar id="template" type="java.lang.String"*/-->
-            <div class="content-wrap" th:insert="~{${template}}">
+            <div class="content-wrap" th:insert="~{${page}}">
 
                 <script>
                     window.addEventListener('tabs:register', () => {
@@ -330,28 +337,28 @@
 
                     <div class="site-overview-wrap sidebar-panel">
                         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" src="/blog/images/avatar.gif" th:if="${base.ownerAvatar.isEmpty()}">
-                            <img class="site-author-image" itemprop="image" th:alt="${base.ownerNickname}" th:src="${base.ownerAvatar}" th:if="${!base.ownerAvatar.isEmpty()}">
-                            <p class="site-author-name" itemprop="name" th:text="${base.ownerNickname}"></p>
-                            <div class="site-description" itemprop="description" th:text="${base.ownerDescription}"></div>
+                            <img class="site-author-image" itemprop="image" th:alt="${blog.ownerNickname}" src="/blog/images/avatar.gif" th:if="${blog.ownerAvatar.isEmpty()}">
+                            <img class="site-author-image" itemprop="image" th:alt="${blog.ownerNickname}" th:src="${blog.ownerAvatar}" th:if="${!blog.ownerAvatar.isEmpty()}">
+                            <p class="site-author-name" itemprop="name" th:text="${blog.ownerNickname}"></p>
+                            <div class="site-description" itemprop="description" th:text="${blog.ownerDescription}"></div>
                         </div>
                         <div class="site-state-wrap motion-element">
                             <nav class="site-state">
                                 <div class="site-state-item site-state-posts">
                                     <a href="/archive/">
-                                        <span class="site-state-item-count" th:text="${base.siteArticleCount}"></span>
+                                        <span class="site-state-item-count" th:text="${blog.siteArticleCount}"></span>
                                         <span class="site-state-item-name">日志</span>
                                     </a>
                                 </div>
                                 <div class="site-state-item site-state-categories">
                                     <a href="/category/">
-                                        <span class="site-state-item-count" th:text="${base.siteCategoryCount}"></span>
+                                        <span class="site-state-item-count" th:text="${blog.siteCategoryCount}"></span>
                                         <span class="site-state-item-name">分类</span>
                                     </a>
                                 </div>
                                 <div class="site-state-item site-state-tags">
                                     <a href="/tag/">
-                                        <span class="site-state-item-count" th:text="${base.siteTagCount}"></span>
+                                        <span class="site-state-item-count" th:text="${blog.siteTagCount}"></span>
                                         <span class="site-state-item-name">标签</span>
                                     </a>
                                 </div>
@@ -359,62 +366,62 @@
                         </div>
 
                         <div class="links-of-author motion-element">
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerGithub)}">
-                                <a th:href="${'https://github.com/' + base.ownerGithub}" title="GitHub" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerGithub)}">
+                                <a th:href="${'https://github.com/' + blog.ownerGithub}" title="GitHub" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-github"></i>
                                     GitHub
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerEmail)}">
-                                <a th:href="${'mailto:' + base.ownerEmail}" title="E-Mail" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerEmail)}">
+                                <a th:href="${'mailto:' + blog.ownerEmail}" title="E-Mail" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-envelope"></i>
                                     E-Mail
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerWeibo)}">
-                                <a th:href="${'https://weibo.com/' + base.ownerWeibo}" title="Weibo" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerWeibo)}">
+                                <a th:href="${'https://weibo.com/' + blog.ownerWeibo}" title="Weibo" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-weibo"></i>
                                     Weibo
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerGoogle)}">
-                                <a th:href="${'https://plus.google.com/' + base.ownerGoogle}" title="Google" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerGoogle)}">
+                                <a th:href="${'https://plus.google.com/' + blog.ownerGoogle}" title="Google" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-google"></i>
                                     Google
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerTwitter)}">
-                                <a th:href="${'https://twitter.com/' + base.ownerTwitter}" title="Twitter" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerTwitter)}">
+                                <a th:href="${'https://twitter.com/' + blog.ownerTwitter}" title="Twitter" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-twitter"></i>
                                     Twitter
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerFacebook)}">
-                                <a th:href="${'https://www.facebook.com/' + base.ownerFacebook}" title="Facebook" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerFacebook)}">
+                                <a th:href="${'https://www.facebook.com/' + blog.ownerFacebook}" title="Facebook" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-facebook"></i>
                                     Facebook
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerStackOverflow)}">
-                                <a th:href="${'https://stackoverflow.com/' + base.ownerStackOverflow}" title="StackOverflow" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerStackOverflow)}">
+                                <a th:href="${'https://stackoverflow.com/' + blog.ownerStackOverflow}" title="StackOverflow" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-stack-overflow"></i>
                                     StackOverflow
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerYoutube)}">
-                                <a th:href="${'https://youtube.com/' + base.ownerYoutube}" title="YouTube" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerYoutube)}">
+                                <a th:href="${'https://youtube.com/' + blog.ownerYoutube}" title="YouTube" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-youtube"></i>
                                     YouTube
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerInstagram)}">
-                                <a th:href="${'https://instagram.com/' + base.ownerInstagram}" title="Instagram" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerInstagram)}">
+                                <a th:href="${'https://instagram.com/' + blog.ownerInstagram}" title="Instagram" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-instagram"></i>
                                     Instagram
                                 </a>
                             </span>
-                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(base.ownerSkype)}">
-                                <a th:href="${'skype:' + base.ownerSkype + '?call|chat'}" title="Skype" rel="noopener" target="_blank">
+                            <span class="links-of-author-item" th:if="${not #strings.isEmpty(blog.ownerSkype)}">
+                                <a th:href="${'skype:' + blog.ownerSkype + '?call|chat'}" title="Skype" rel="noopener" target="_blank">
                                     <i class="fa fa-fw fa-skype"></i>
                                     Skype
                                 </a>
@@ -427,13 +434,13 @@
                             </a>
                         </div>
 
-                        <div class="links-of-blogroll motion-element" th:if="${not base.links.isEmpty()}">
+                        <div class="links-of-blogroll motion-element" th:if="${not blog.links.isEmpty()}">
                             <div class="links-of-blogroll-title">
                                 <i class="fa fa-fw fa-link"></i>
                                 Links
                             </div>
                             <ul class="links-of-blogroll-list">
-                                <li class="links-of-blogroll-item" th:each="link : ${base.links}">
+                                <li class="links-of-blogroll-item" th:each="link : ${blog.links}">
                                     <a th:href="${link.url}" th:title="${link.title}" rel="noopener" target="_blank" th:text="${link.title}"></a>
                                 </li>
                             </ul>
@@ -453,22 +460,22 @@
         <div class="footer-inner">
 
             <div class="beian">
-                <a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank" th:text="${base.siteBeian}"></a>
+                <a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank" th:text="${blog.siteBeian}"></a>
             </div>
 
             <div class="copyright">
-                <span itemprop="copyrightYear" th:text="${'&copy; ' + base.siteCreateYear + ' – ' + #dates.format(#dates.createNow(), 'yyyy')}"></span>
+                <span itemprop="copyrightYear" th:text="${'&copy; ' + blog.siteCreateYear + ' – ' + #dates.format(#dates.createNow(), 'yyyy')}"></span>
                 <span class="with-love">
                     <i class="fa fa-user"></i>
                 </span>
-                <span class="author" itemprop="copyrightHolder" th:text="${base.ownerNickname}"></span>
+                <span class="author" itemprop="copyrightHolder" th:text="${blog.ownerNickname}"></span>
             </div>
 
             <div class="powered-by">
                 由
                 <a href="https://spring.io/projects/spring-boot" class="theme-link" rel="noopener" target="_blank">SpringBoot</a>
                 &amp;
-                <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+                <a href="https://github.com/theme-next/hexo-theme-next" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
                 强力驱动
             </div>
 
@@ -572,7 +579,7 @@
             hm.src = "https://hm.baidu.com/hm.js?" + key;
             var s = document.getElementsByTagName("script")[0];
             s.parentNode.insertBefore(hm, s);
-        })([[${base.siteBaidu}]]);
+        })([[${blog.siteBaidu}]]);
     }
 </script>
 

@@ -41,7 +41,7 @@ class OtherController {
 
     @GetMapping("/robots.txt", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun robots(): String {
-        val domain = themeService.getCacheBase().siteDomain
+        val domain = themeService.getCacheBlogInfo().siteDomain
         return """
             User-agent: *
             Disallow: /admin/
@@ -51,7 +51,7 @@ class OtherController {
 
     @GetMapping("/sitemap.xml", produces = [MediaType.APPLICATION_XML_VALUE])
     fun sitemap(): String {
-        val domain = themeService.getCacheBase().siteDomain
+        val domain = themeService.getCacheBlogInfo().siteDomain
         val articles = articleService.listBySitemap()
 
         val urlset = StringBuilder().apply {

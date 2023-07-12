@@ -45,12 +45,12 @@ class EmailServiceImpl : EmailService {
         nickname: String,
         content: String,
     ) {
-        val ownerEmail = themeService.getCacheBase().ownerEmail
+        val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(ownerEmail, null, "评论通知") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://" + themeService.getCacheBase().siteDomain + "/article/" + articleId
+            val url = "https://" + themeService.getCacheBlogInfo().siteDomain + "/article/" + articleId
 """
-你好, ${themeService.getCacheBase().ownerNickname}:
+你好, ${themeService.getCacheBlogInfo().ownerNickname}:
     您的文章《${article.title}》收到了来自 $nickname 的评论。内容如下：
 
 $content
@@ -66,11 +66,11 @@ $url
         content: String,
     ) {
         val comment = commentService.getCommentById(commentId)!!
-        val ownerEmail = themeService.getCacheBase().ownerEmail
+        val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(comment.email!!, ownerEmail, "评论收到新的回复") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://" + themeService.getCacheBase().siteDomain + "/article/" + articleId
-            val owner = themeService.getCacheBase().ownerNickname
+            val url = "https://" + themeService.getCacheBlogInfo().siteDomain + "/article/" + articleId
+            val owner = themeService.getCacheBlogInfo().ownerNickname
 """
 你好，${comment.author!!}:
     您在文章《${article.title}》发出的评论收到了来自 $owner 的回复。内容如下：

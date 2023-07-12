@@ -37,7 +37,7 @@ class ErrorController(
                 404 -> "404"
                 else -> "error"
             }
-            viewName = themeService.render(template, model)
+            viewName = themeService.render(model, template)
             addObject("error", getErrorAttributes(request, ErrorAttributeOptions.defaults()))
         }
     }

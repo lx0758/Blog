@@ -22,13 +22,13 @@ class EventConfig {
     @Async
     @EventListener
     fun started(event: ApplicationStartedEvent) {
-        themeService.updateBase()
+        themeService.updateBlogInfo()
     }
 
     @Async
     @EventListener
     fun updateBaseInfo(event: BaseInfoUpdateEvent) {
         logger.info("updateBaseInfo by:" + event.source)
-        themeService.updateBase()
+        themeService.updateBlogInfo()
     }
 }

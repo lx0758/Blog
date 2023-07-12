@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
+<!--/*@thymesVar id="blog" type="com.liux.blog.bean.vo.BlogVO"*/-->
 <!--/*@thymesVar id="articles" type="java.util.List<com.liux.blog.bean.vo.ArticlePageVO>"*/-->
 <!--/*@thymesVar id="pagination" type="com.liux.blog.bean.vo.PaginationVO"*/-->
 
@@ -12,13 +12,13 @@
         <link itemprop="mainEntityOfPage" th:href="${'/article/' + article.url}">
 
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <meta itemprop="image" th:content="${base.ownerAvatar}">
-            <meta itemprop="name" th:content="${base.ownerNickname}">
-            <meta itemprop="description" th:content="${base.ownerDescription}">
+            <meta itemprop="image" th:content="${blog.ownerAvatar}">
+            <meta itemprop="name" th:content="${blog.ownerNickname}">
+            <meta itemprop="description" th:content="${blog.ownerDescription}">
         </span>
 
         <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-            <meta itemprop="name" th:content="${base.siteTitle}">
+            <meta itemprop="name" th:content="${blog.siteTitle}">
         </span>
 
         <header class="post-header">

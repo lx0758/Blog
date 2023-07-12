@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
+    implementation("org.jsoup:jsoup:1.15.4")
     implementation("org.lionsoul:ip2region:2.7.0")
     implementation("org.postgresql:postgresql:42.5.4")
     implementation("com.github.ua-parser:uap-java:1.5.4")

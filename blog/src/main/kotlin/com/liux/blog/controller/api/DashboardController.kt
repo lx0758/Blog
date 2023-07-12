@@ -31,9 +31,9 @@ class DashboardController {
     fun query(): Resp<DashboardVO> {
 
         val dashboardVO = DashboardVO(
-            themeService.getCacheBase().siteArticleCount,
-            themeService.getCacheBase().siteCategoryCount,
-            themeService.getCacheBase().siteTagCount,
+            themeService.getCacheBlogInfo().siteArticleCount,
+            themeService.getCacheBlogInfo().siteCategoryCount,
+            themeService.getCacheBlogInfo().siteTagCount,
             uploadService.getCountByDashboard(),
             commentService.getCountByDashboard(),
             articleService.getViewsByDashboard(),

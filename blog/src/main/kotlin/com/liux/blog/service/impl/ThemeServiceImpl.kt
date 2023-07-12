@@ -11,7 +11,6 @@ import com.liux.blog.service.ThemeService
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.ui.Model
 
 @Service
 class ThemeServiceImpl: ThemeService {
@@ -33,8 +32,8 @@ class ThemeServiceImpl: ThemeService {
 
     private var cacheBlogVO: BlogVO? = null
 
-    override fun updateBase() {
-        logger.info("Update base info, current base info is ${if (cacheBlogVO != null) "not null" else "null"}")
+    override fun updateBlogInfo() {
+        logger.info("Update blog info, current blog info is ${if (cacheBlogVO != null) "not null" else "null"}")
         val configs = configService.listByTheme()
         val articleCount = articleMapper.getCount()
         val categoryCount = categoryMapper.getCount()
@@ -44,32 +43,39 @@ class ThemeServiceImpl: ThemeService {
         cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links)
     }
 
-    override fun getCacheBase(): BlogVO {
-        if (cacheBlogVO == null) updateBase()
+    override fun getCacheBlogInfo(): BlogVO {
+        if (cacheBlogVO == null) updateBlogInfo()
         return cacheBlogVO!!
     }
 
-    override fun render(template: String, model: MutableMap<String, Any?>): String {
-        if (template != "article") {
-            val title = when (template) {
+    override fun render(
+        model: MutableMap<String, Any?>,
+        page: String,
+        pageTitle: String?,
+        pageDescription: String?,
+        pageKeywords: String?,
+        pageUrl: String?,
+    ): String {
+        model["page"] = page
+        model["pageTitle"] = pageTitle
+        model["pageDescription"] = pageDescription
+        model["pageKeywords"] = pageKeywords
+        model["pageUrl"] = pageUrl
+        model["blog"] = getCacheBlogInfo()
+
+        if (model["pageTitle"] == null) {
+            model["pageTitle"] = when (page) {
                 "archive" -> "归档"
+                "article" -> "文章"
                 "category" -> "分类详情"
                 "categorys" -> "分类"
-                //"page" -> "首页"
+                "page" -> null
                 "tag" -> "标签详情"
                 "tags" -> "标签"
                 else -> null
             }
-            model["title"] = title
         }
-        model["base"] = getCacheBase()
-        model["template"] = template
-        return "index"
-    }
 
-    override fun renderArticle(model: MutableMap<String, Any?>, title: String, keywords: String): String {
-        model["title"] = title
-        model["keywords"] = keywords
-        return render("article", model)
+        return "index"
     }
 }

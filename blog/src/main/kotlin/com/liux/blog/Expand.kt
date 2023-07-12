@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest
 import org.commonmark.ext.next.FLAG_MORE_ANCHOR
 import org.commonmark.ext.next.FLAG_MORE_SUSPEND
 import org.commonmark.ext.next.FLAG_TOC
+import org.jsoup.Jsoup
 import ua_parser.Client
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+
 
 fun Any.toJSONString(): String {
     return jacksonObjectMapper().writeValueAsString(this)
@@ -66,6 +68,12 @@ fun Article.renderOther(): String {
 
 fun Article.renderPage(): String {
     return MarkdownHelper.parse(content, FLAG_MORE_SUSPEND)
+}
+
+fun Article.renderDescription(): String {
+    val html = MarkdownHelper.parse(content, FLAG_MORE_SUSPEND)
+    val document = Jsoup.parse(html)
+    return document.text()
 }
 
 val Client.browser: String

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="base" type="com.liux.blog.bean.vo.BlogVO"*/-->
+<!--/*@thymesVar id="blog" type="com.liux.blog.bean.vo.BlogVO"*/-->
 <!--/*@thymesVar id="article" type="com.liux.blog.bean.vo.ArticleVO"*/-->
 <!--/*@thymesVar id="tags" type="java.util.List<com.liux.blog.bean.vo.TagVO>"*/-->
 <!--/*@thymesVar id="prev" type="com.liux.blog.bean.vo.ArticleArchiveVO"*/-->
@@ -19,13 +19,13 @@
         <link itemprop="mainEntityOfPage" th:href="${'/article/' + article.url}">
 
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <meta itemprop="image" th:content="${base.ownerAvatar}">
-            <meta itemprop="name" th:content="${base.ownerNickname}">
-            <meta itemprop="description" th:content="${base.ownerDescription}">
+            <meta itemprop="image" th:content="${blog.ownerAvatar}">
+            <meta itemprop="name" th:content="${blog.ownerNickname}">
+            <meta itemprop="description" th:content="${blog.ownerDescription}">
         </span>
 
         <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-            <meta itemprop="name" th:content="${base.siteTitle}">
+            <meta itemprop="name" th:content="${blog.siteTitle}">
         </span>
 
         <header class="post-header">
@@ -82,7 +82,7 @@
                 </li>
                 <li class="post-copyright-link">
                     <strong>本文链接：</strong>
-                    <a th:href="${'https://' + base.siteDomain + '/article/' + article.url}" th:title="${article.title}" th:text="${'https://' + base.siteDomain + '/article/' + article.url}"></a>
+                    <a th:href="${'https://' + blog.siteDomain + '/article/' + article.url}" th:title="${article.title}" th:text="${'https://' + blog.siteDomain + '/article/' + article.url}"></a>
                 </li>
                 <li class="post-copyright-license">
                     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a
