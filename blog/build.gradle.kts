@@ -1,16 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.2"
+    id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.7.22"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.spring") version "1.8.22"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.8.22"
 }
 
 group = "com.liux.blog"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -24,11 +27,11 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.15.4")
     implementation("org.lionsoul:ip2region:2.7.0")
-    implementation("org.postgresql:postgresql:42.5.4")
+    implementation("org.postgresql:postgresql:42.6.0")
     implementation("com.github.ua-parser:uap-java:1.5.4")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
-    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
+    implementation("com.github.pagehelper:pagehelper-spring-boot-starter:1.4.7")
     implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.0.0")
 
     implementation("org.commonmark:commonmark:0.21.0")

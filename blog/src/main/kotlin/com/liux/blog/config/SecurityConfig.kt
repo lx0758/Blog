@@ -15,8 +15,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.*
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -59,12 +61,10 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity, authenticationManager: AuthenticationManager): SecurityFilterChain {
         return http
-            .cors().and()
-            .csrf().disable()
+            .cors(Customizer.withDefaults())
+            .csrf { configurer -> configurer.disable() }
 
-            .securityContext()
-            .requireExplicitSave(false)
-            .and()
+            .securityContext { configurer -> configurer.requireExplicitSave(false) }
 
             .addFilterAt(
                 CaptchaLoginFilter(
@@ -76,33 +76,36 @@ class SecurityConfig {
                 UsernamePasswordAuthenticationFilter::class.java
             )
 
-            .logout()
-            .logoutRequestMatcher(AntPathRequestMatcher("/api/session", "DELETE"))
-            .clearAuthentication(true)
-            .addLogoutHandler(SecurityContextLogoutHandler())
-            .logoutSuccessHandler { _, response, _ ->
-                response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                response.writer.print(
-                    Resp.succeed().toJSONString()
-                )
-                response.writer.flush()
+            .logout { configurer ->
+                configurer
+                    .logoutRequestMatcher(AntPathRequestMatcher("/api/session", "DELETE"))
+                    .clearAuthentication(true)
+                    .addLogoutHandler(SecurityContextLogoutHandler())
+                    .logoutSuccessHandler { _, response, _ ->
+                        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        response.writer.print(
+                            Resp.succeed().toJSONString()
+                        )
+                        response.writer.flush()
+                    }
             }
-            .and()
 
-            .exceptionHandling()
-            .authenticationEntryPoint { _, response, _ ->
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), "未登录")
+            .exceptionHandling { configurer ->
+                configurer
+                    .authenticationEntryPoint { _, response, _ ->
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "未登录")
+                    }
+                    .accessDeniedHandler { _, response, _ ->
+                        response?.sendError(HttpStatus.UNAUTHORIZED.value(), "无访问权限")
+                    }
             }
-            .accessDeniedHandler { _, response, _ ->
-                response?.sendError(HttpStatus.UNAUTHORIZED.value(), "无访问权限")
-            }
-            .and()
 
-            .authorizeHttpRequests()
-            .requestMatchers("/api/captcha").permitAll()
-            .requestMatchers("/api/**").authenticated()
-            .anyRequest().permitAll()
-            .and()
+            .authorizeHttpRequests { configurer ->
+                configurer
+                    .requestMatchers("/api/captcha").permitAll()
+                    .requestMatchers("/api/**").authenticated()
+                    .anyRequest().permitAll()
+            }
 
             .build()
     }

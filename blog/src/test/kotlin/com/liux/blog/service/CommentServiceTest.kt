@@ -26,6 +26,8 @@ class CommentServiceTest {
             status = null,
             pageNum = 1,
             pageSize = Int.MAX_VALUE,
+            orderName = null,
+            orderMethod = null,
         )
         comments.forEach { comment ->
             val location = locationService.getLocationFromIp(comment.ip!!)
