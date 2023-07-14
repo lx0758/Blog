@@ -69,7 +69,7 @@ noArg {
 abstract class BuildAdminTask : AbstractExecTask<BuildAdminTask>(BuildAdminTask::class.java) {
     init {
         workingDir = File("../admin")
-        commandLine = listOf("node", "./node_modules/@vue/cli-service/bin/vue-cli-service.js", "build")
+        commandLine = listOf("node", "./node_modules/vite/bin/vite.js", "build")
     }
 }
 tasks.register<BuildAdminTask>("buildAdmin").configure {
@@ -88,7 +88,7 @@ tasks.register<Copy>("buildAdminToBlog").configure {
     }
 }
 
-tasks.getByName("bootJar") {
+tasks.getByName("processResources") {
     mustRunAfter("buildAdminToBlog")
 }
 
@@ -97,9 +97,7 @@ tasks.create(name = "buildBlog") {
     dependsOn("buildAdminToBlog", "bootJar")
 
     doLast {
-        File("./src/main/resources/static/admin/css").deleteRecursively()
-        File("./src/main/resources/static/admin/js").deleteRecursively()
-        File("./src/main/resources/static/admin/fonts").deleteRecursively()
+        File("./src/main/resources/static/admin/assets").deleteRecursively()
         File("./src/main/resources/static/admin/favicon.ico").delete()
         File("./src/main/resources/static/admin/index.html").delete()
     }

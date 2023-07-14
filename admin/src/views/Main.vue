@@ -1,408 +1,488 @@
 <template>
   <el-container style="height: 100%">
-
     <el-aside unique-opened="true" style="width: auto">
-      <el-menu :default-active="menuNowRoute" style="height: 100%" unique-opened router :collapse="menuIsCollapse">
-        <el-menu-item index="dashboard">
-          <i class="el-icon-s-data"></i>
-          <span>仪表盘</span>
-        </el-menu-item>
-        <el-submenu index="content">
+      <el-menu
+        default-active="/dashboard"
+        style="height: 100%"
+        unique-opened
+        router
+        :collapse="state.menuIsCollapse"
+      >
+        <el-menu-item index="/dashboard">
           <template #title>
-            <i class="el-icon-menu"></i>
+            <el-icon><Odometer /></el-icon>
+            <span>仪表盘</span>
+          </template>
+        </el-menu-item>
+        <el-sub-menu index="/content">
+          <template #title>
+            <el-icon><MessageBox /></el-icon>
             <span>内容</span>
           </template>
-          <el-menu-item index="article">
-            <i class="el-icon-s-order"></i>
+          <el-menu-item index="/article">
+            <el-icon><Document /></el-icon>
             <span>文章</span>
           </el-menu-item>
-          <el-menu-item index="comment">
-            <i class="el-icon-s-comment"></i>
+          <el-menu-item index="/comment">
+            <el-icon><ChatDotSquare /></el-icon>
             <span>评论</span>
           </el-menu-item>
-          <el-menu-item index="category">
-            <i class="el-icon-s-ticket"></i>
+          <el-menu-item index="/category">
+            <el-icon><Filter /></el-icon>
             <span>分类</span>
           </el-menu-item>
-          <el-menu-item index="tag">
-            <i class="el-icon-s-flag"></i>
+          <el-menu-item index="/tag">
+            <el-icon><PriceTag /></el-icon>
             <span>标签</span>
           </el-menu-item>
-        </el-submenu>
-        <el-submenu index="other">
+        </el-sub-menu>
+        <el-sub-menu index="/other">
           <template #title>
-            <i class="el-icon-menu"></i>
+            <el-icon><Notification /></el-icon>
             <span>其他</span>
           </template>
-          <el-menu-item index="upload">
-            <i class="el-icon-picture"></i>
+          <el-menu-item index="/file">
+            <el-icon><Files /></el-icon>
             <span>文件</span>
           </el-menu-item>
-          <el-menu-item index="link">
-            <i class="el-icon-s-promotion"></i>
+          <el-menu-item index="/link">
+            <el-icon><Link /></el-icon>
             <span>友链</span>
           </el-menu-item>
-          <el-menu-item index="url">
-            <i class="el-icon-info"></i>
+          <el-menu-item index="/url">
+            <el-icon><Connection /></el-icon>
             <span>短链</span>
           </el-menu-item>
-        </el-submenu>
-        <el-submenu index="setting">
+        </el-sub-menu>
+        <el-sub-menu index="/setting">
           <template #title>
-            <i class="el-icon-menu"></i>
+            <el-icon><Setting /></el-icon>
             <span>设置</span>
           </template>
-          <el-menu-item index="config">
-            <i class="el-icon-s-tools"></i>
+          <el-menu-item index="/config">
+            <el-icon><Operation /></el-icon>
             <span>通用</span>
           </el-menu-item>
-          <el-menu-item index="smtp">
-            <i class="el-icon-s-opportunity"></i>
+          <el-menu-item index="/smtp">
+            <el-icon><Message /></el-icon>
             <span>邮件</span>
           </el-menu-item>
-        </el-submenu>
+        </el-sub-menu>
       </el-menu>
     </el-aside>
 
     <el-container>
-
-      <el-header style="box-shadow: 0 -8px 20px 2px #DEDEE3; height: 50px">
-
+      <el-header style="box-shadow: 0 -8px 20px 2px #dedee3; height: 50px">
         <el-row type="flex" align="middle" style="height: 50px">
           <el-col :span="16">
             <el-container style="align-items: center">
-              <div @click="onToggleMenu()" style="padding: 10px 10px 10px 0; font-size: 20px">
-                <i v-if="!menuIsCollapse" class="el-icon-s-unfold"></i>
-                <i v-if="menuIsCollapse" class="el-icon-s-fold"></i>
+              <div @click="onToggleMenu()" style="padding: 10px 10px 10px 0; font-size: 22px">
+                <el-icon v-if="state.menuIsCollapse" ><Expand /></el-icon>
+                <el-icon v-if="!state.menuIsCollapse"><Fold /></el-icon>
               </div>
               <el-breadcrumb separator="/">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item>{{ this.$route.name }}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{ $route.name }}</el-breadcrumb-item>
               </el-breadcrumb>
             </el-container>
           </el-col>
           <el-col :span="8">
-            <el-container style="align-items: center; float: right;">
-              <i class="el-icon-full-screen" @click="onFullScreen()" style="padding: 10px; font-size: 20px"></i>
-              <i class="el-icon-refresh-right" @click="onRefresh()" style="padding: 10px; font-size: 20px"></i>
+            <el-container style="align-items: center; float: right">
+              <el-icon @click="onFullScreen()" style="padding: 10px; font-size: 20px"
+                ><FullScreen
+              /></el-icon>
+              <el-icon @click="onRefreshView()" style="padding: 10px; font-size: 20px"
+                ><Refresh
+              /></el-icon>
               <el-dropdown @command="onOption" style="padding: 10px">
                 <span class="el-dropdown-link">
-                  {{ user.nickname }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  {{ state.nickname }}
+                  <el-icon><ArrowDownBold /></el-icon>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item icon="el-icon-user" command="profile">个人设置</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-lock" command="password">修改密码</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-switch-button" command="logout" divided>注销登录</el-dropdown-item>
+                    <el-dropdown-item icon="User" command="profile">个人设置</el-dropdown-item>
+                    <el-dropdown-item icon="Lock" command="password">修改密码</el-dropdown-item>
+                    <el-dropdown-item icon="SwitchButton" command="logout" divided
+                      >注销登录</el-dropdown-item
+                    >
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-avatar :size="36" :src="user.avatar" v-if="user.avatar.length > 0"></el-avatar>
-              <el-avatar :size="36" :src="require('@/assets/avatar.gif')" v-else></el-avatar>
+              <el-avatar :size="36" :src="state.avatar" v-if="state.avatar != null && state.avatar.length > 0"></el-avatar>
+              <el-avatar :size="36" :src="avatar_gif" v-else></el-avatar>
             </el-container>
           </el-col>
         </el-row>
-
       </el-header>
 
       <el-main>
-        <router-view v-slot="{ Component }" v-if="isRouterAvailable">
+        <router-view v-slot="{ Component }" v-if="state.isRouterAvailable">
           <keep-alive exclude="ArticleEditor">
-            <component :is="Component"/>
+            <component :is="Component" />
           </keep-alive>
         </router-view>
       </el-main>
-
     </el-container>
-
   </el-container>
 
-  <el-dialog title="个人资料" v-model="changeProfile.show"  width="600px" :close-on-click-modal="false">
-    <el-form :model="changeProfile" :rules="changeProfileRules" ref="changeProfile"  label-width="120px">
+  <el-dialog
+    title="个人资料"
+    width="600px"
+    v-model="changeUserInfoDialogState.isShow"
+    :close-on-click-modal="false"
+  >
+    <el-form
+      label-width="120px"
+      ref="changeUserInfoDialogStateFormRef"
+      :model="changeUserInfoDialogState.formModel"
+      :rules="changeUserInfoDialogState.formRules"
+    >
       <el-form-item prop="avatar" label="头像">
-        <el-input v-model="changeProfile.avatar" auto-complete="off" placeholder="请输入头像"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.avatar"
+          auto-complete="off"
+          placeholder="请输入头像" />
       </el-form-item>
       <el-form-item prop="nickname" label="昵称">
-        <el-input v-model="changeProfile.nickname" auto-complete="off" placeholder="请输入昵称"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.nickname"
+          auto-complete="off"
+          placeholder="请输入昵称" />
       </el-form-item>
       <el-form-item prop="description" label="签名">
-        <el-input v-model="changeProfile.description" auto-complete="off" placeholder="请输入签名"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.description"
+          auto-complete="off"
+          placeholder="请输入签名" />
       </el-form-item>
       <el-form-item prop="email" label="Email">
-        <el-input v-model="changeProfile.email" auto-complete="off" placeholder="请确认邮箱"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.email"
+          auto-complete="off"
+          placeholder="请确认邮箱" />
       </el-form-item>
 
       <el-form-item prop="github" label="Github">
-        <el-input v-model="changeProfile.github" auto-complete="off" placeholder="请输入 Github 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.github"
+          auto-complete="off"
+          placeholder="请输入 Github 账号" />
       </el-form-item>
       <el-form-item prop="weibo" label="Weibo">
-        <el-input v-model="changeProfile.weibo" auto-complete="off" placeholder="请输入 Weibo 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.weibo"
+          auto-complete="off"
+          placeholder="请输入 Weibo 账号" />
       </el-form-item>
       <el-form-item prop="google" label="Google">
-        <el-input v-model="changeProfile.google" auto-complete="off" placeholder="请输入 Google 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.google"
+          auto-complete="off"
+          placeholder="请输入 Google 账号" />
       </el-form-item>
       <el-form-item prop="twitter" label="Twitter">
-        <el-input v-model="changeProfile.twitter" auto-complete="off" placeholder="请输入 Twitter 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.twitter"
+          auto-complete="off"
+          placeholder="请输入 Twitter 账号" />
       </el-form-item>
       <el-form-item prop="facebook" label="Facebook">
-        <el-input v-model="changeProfile.facebook" auto-complete="off" placeholder="请输入 Facebook 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.facebook"
+          auto-complete="off"
+          placeholder="请输入 Facebook 账号" />
       </el-form-item>
       <el-form-item prop="stackOverflow" label="StackOverflow">
-        <el-input v-model="changeProfile.stackOverflow" auto-complete="off" placeholder="请输入 StackOverflow 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.stackOverflow"
+          auto-complete="off"
+          placeholder="请输入 StackOverflow 账号" />
       </el-form-item>
       <el-form-item prop="youtube" label="Youtube">
-        <el-input v-model="changeProfile.youtube" auto-complete="off" placeholder="请输入 Youtube 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.youtube"
+          auto-complete="off"
+          placeholder="请输入 Youtube 账号" />
       </el-form-item>
       <el-form-item prop="instagram" label="Instagram">
-        <el-input v-model="changeProfile.instagram" auto-complete="off" placeholder="请输入 Instagram 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.instagram"
+          auto-complete="off"
+          placeholder="请输入 Instagram 账号" />
       </el-form-item>
       <el-form-item prop="skype" label="Skype">
-        <el-input v-model="changeProfile.skype" auto-complete="off" placeholder="请输入 Skype 账号"></el-input>
+        <el-input
+          v-model="changeUserInfoDialogState.formModel.skype"
+          auto-complete="off"
+          placeholder="请输入 Skype 账号" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onChangeProfile()">更新</el-button>
-        <el-button @click="changeProfile.show = false">取消</el-button>
+        <el-button @click="changeUserInfoDialogState.hide()">取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
 
-  <el-dialog title="修改密码" v-model="changePassword.show"  width="600px" :close-on-click-modal="false">
-    <el-form :model="changePassword" :rules="changePasswordRules" ref="changePassword"  label-width="120px">
+  <el-dialog
+    title="修改密码"
+    width="600px"
+    v-model="changePasswordDialogState.isShow"
+    :close-on-click-modal="false"
+  >
+    <el-form
+      label-width="120px"
+      ref="changePasswordDialogStateFormRef"
+      :model="changePasswordDialogState.formModel"
+      :rules="changePasswordDialogState.formRules"
+    >
       <el-form-item prop="oldPassword" label="原始密码">
-        <el-input type="password" v-model="changePassword.oldPassword" auto-complete="off" placeholder="请输入原始密码"></el-input>
+        <el-input
+          type="password"
+          v-model="changePasswordDialogState.formModel.oldPassword"
+          auto-complete="off"
+          placeholder="请输入原始密码" />
       </el-form-item>
       <el-form-item prop="newPassword" label="新的密码">
-        <el-input type="password" v-model="changePassword.newPassword" auto-complete="off" placeholder="请输入新密码"></el-input>
+        <el-input
+          type="password"
+          v-model="changePasswordDialogState.formModel.newPassword"
+          auto-complete="off"
+          placeholder="请输入新密码" />
       </el-form-item>
       <el-form-item prop="confirmPassword" label="确认密码">
-        <el-input type="password" v-model="changePassword.confirmPassword" auto-complete="off" placeholder="请确认新密码"></el-input>
+        <el-input
+          type="password"
+          v-model="changePasswordDialogState.formModel.confirmPassword"
+          auto-complete="off"
+          placeholder="请确认新密码" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onChangePassword()">修改密码</el-button>
-        <el-button @click="changePassword.show = false">取消修改</el-button>
+        <el-button @click="changePasswordDialogState.hide()">取消修改</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
-
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import {queryProfile, updateProfile, updatePassword, logout} from "@/api"
+<script setup lang="ts">
 import screenfull from 'screenfull'
+import { ref, nextTick, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import avatar_gif from '@/assets/avatar.gif'
+import { useUserStore } from '@/stores'
+import { DialogState } from '@/bean'
+import { queryProfile, updateProfile, updatePassword, logout } from '@/api'
 
-export default defineComponent({
-  name: 'Main',
-  mounted() {
-    this.queryProfile()
-  },
-  data() {
-    const changePassword = {
-      show: false,
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    }
-    const validateConfirmPassword = (rule: any, value: string, callback: any) => {
-      if (!value || value === '') {
-        callback(new Error('请再次输入密码'));
-      } else if (value !== changePassword.newPassword) {
-        callback(new Error('两次输入密码不一致!'));
-      } else {
-        callback();
-      }
-    };
-    return {
-      menuIsCollapse: false,
-      menuNowRoute: '',
+interface State {
+  menuIsCollapse: boolean
+  isRouterAvailable: boolean
 
-      isRouterAvailable: true,
+  avatar: string|null
+  nickname: string|null
+}
 
-      user: {
-        avatar: '',
-        nickname: '',
-      },
+interface ChangeUserInfoState {
+  avatar: string
+  nickname: string
+  description: string
+  email: string
+  github: string
+  weibo: string
+  google: string
+  twitter: string
+  facebook: string
+  stackOverflow: string
+  youtube: string
+  instagram: string
+  skype: string
+}
 
-      changeProfile: {
-        show: false,
+interface ChangePasswordState {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}
 
-        avatar: '',
-        nickname: '',
-        description: '',
-        email: '',
+const router = useRouter()
 
-        github: '',
-        weibo: '',
-        google: '',
-        twitter: '',
-        facebook: '',
-        stackOverflow: '',
-        youtube: '',
-        instagram: '',
-        skype: '',
-      },
-      changeProfileRules: {
-        nickname: [
-          {required: true, message: '昵称不能为空', trigger: 'blur'},
-        ],
-        email: [
-          {required: true, message: '邮箱不能为空', trigger: 'blur'},
-        ],
-      },
+const state = ref<State>({
+  menuIsCollapse: false,
+  isRouterAvailable: true,
+  
+  avatar: '',
+  nickname: '',
+})
 
-      changePassword,
-      changePasswordRules: {
-        oldPassword: [
-          {required: true, message: '原始密码不能为空', trigger: 'blur'},
-        ],
-        newPassword: [
-          {required: true, message: '新密码不能为空', trigger: 'blur'},
-          {min: 6, max: 16, message: '新密码长度不合法', trigger: 'blur'},
-        ],
-        confirmPassword: [
-          {required: true, message: '请再次输入密码', trigger: 'blur'},
-          { validator: validateConfirmPassword, trigger: 'blur' }
-        ],
-      },
-    };
-  },
-  methods: {
-    onToggleMenu() {
-      this.menuIsCollapse = !this.menuIsCollapse;
-    },
-    onFullScreen() {
-      if (!screenfull.isEnabled) {
-        this.$message("您的浏览器不能全屏")
-        return
-      }
-      screenfull.toggle()
-    },
-    onRefresh() {
-      this.isRouterAvailable = false
-      this.$nextTick(() => {
-        this.isRouterAvailable = true
-      });
-    },
-    onOption(command: string) {
-      switch (command) {
-        case "profile":
-          this.onShowChangeProfile()
-          break
-        case "password":
-          this.onShowChangePassword()
-          break
-        case "logout":
-          this.onLogout()
-          break
-      }
-    },
-    queryProfile() {
-      queryProfile()
-          .then(data => {
-            data = data.data
-            this.user = data
-          })
-    },
-    onShowChangeProfile() {
-      this.changeProfile.show = true
-
-      this.changeProfile.avatar = ''
-      this.changeProfile.nickname = ''
-      this.changeProfile.description = ''
-      this.changeProfile.email = ''
-
-      this.changeProfile.github = ''
-      this.changeProfile.weibo = ''
-      this.changeProfile.google = ''
-      this.changeProfile.twitter = ''
-      this.changeProfile.facebook = ''
-      this.changeProfile.stackOverflow = ''
-      this.changeProfile.youtube = ''
-      this.changeProfile.instagram = ''
-      this.changeProfile.skype = ''
-      queryProfile()
-          .then(data => {
-            data = data.data
-
-            this.changeProfile.avatar = data.avatar
-            this.changeProfile.nickname = data.nickname
-            this.changeProfile.description = data.description
-            this.changeProfile.email = data.email
-
-            this.changeProfile.github = data.accounts.github
-            this.changeProfile.weibo = data.accounts.weibo
-            this.changeProfile.google = data.accounts.google
-            this.changeProfile.twitter = data.accounts.twitter
-            this.changeProfile.facebook = data.accounts.facebook
-            this.changeProfile.stackOverflow = data.accounts.stackOverflow
-            this.changeProfile.youtube = data.accounts.youtube
-            this.changeProfile.instagram = data.accounts.instagram
-            this.changeProfile.skype = data.accounts.skype
-          })
-    },
-    onChangeProfile() {
-      let from: any = this.$refs['changeProfile'];
-      from.validate((valid: boolean) => {
-        if (!valid) return
-        updateProfile(
-            this.changeProfile.avatar,
-            this.changeProfile.nickname,
-            this.changeProfile.description,
-            this.changeProfile.email,
-
-            this.changeProfile.github,
-            this.changeProfile.weibo,
-            this.changeProfile.google,
-            this.changeProfile.twitter,
-            this.changeProfile.facebook,
-            this.changeProfile.stackOverflow,
-            this.changeProfile.youtube,
-            this.changeProfile.instagram,
-            this.changeProfile.skype,
-        )
-            .then(_ => {
-              this.$message.success("个人资料更新成功")
-              this.changeProfile.show = false
-              this.queryProfile()
-            })
-      })
-    },
-    onShowChangePassword() {
-      this.changePassword.show = true
-      this.changePassword.oldPassword = ''
-      this.changePassword.newPassword = ''
-      this.changePassword.confirmPassword = ''
-    },
-    onChangePassword() {
-      let from: any = this.$refs['changePassword'];
-      from.validate((valid: boolean) => {
-        if (!valid) return
-        updatePassword(this.changePassword.oldPassword, this.changePassword.newPassword)
-            .then(_ => {
-              this.$message.success("密码修改成功")
-              this.changePassword.show = false
-            })
-      })
-    },
-    onLogout () {
-      this.$confirm('确认注销?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        logout()
-            .then(() => {
-              localStorage.setItem("isLogin", String(false));
-              this.$message.success("注销成功")
-              this.$router.replace('/login')
-            })
-      });
-    },
+const validateConfirmPassword = (rule: any, value: string, callback: any) => {
+  if (!value || value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== changePasswordDialogState.value.formModel.newPassword) {
+    callback(new Error('两次输入密码不一致!'))
+  } else {
+    callback()
   }
-});
+}
+
+const changeUserInfoDialogStateFormRef = ref()
+const changeUserInfoDialogState = ref(new DialogState<ChangeUserInfoState>(
+  changeUserInfoDialogStateFormRef,
+  {
+    avatar: '',
+    nickname: '',
+    description: '',
+    email: '',
+
+    github: '',
+    weibo: '',
+    google: '',
+    twitter: '',
+    facebook: '',
+    stackOverflow: '',
+    youtube: '',
+    instagram: '',
+    skype: '',
+  },
+  {
+    nickname: [
+      { required: true, message: '昵称不能为空', trigger: 'blur' }
+    ],
+    email: [
+      { required: true, message: '邮箱不能为空', trigger: 'blur' }
+    ],
+  },
+))
+
+const changePasswordDialogStateFormRef = ref()
+const changePasswordDialogState = ref(new DialogState<ChangePasswordState>(
+  changePasswordDialogStateFormRef,
+  {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  }, {
+    oldPassword: [
+      { required: true, message: '原始密码不能为空', trigger: 'blur' }
+    ],
+    newPassword: [
+      { required: true, message: '新密码不能为空', trigger: 'blur' },
+      { min: 6, max: 16, message: '新密码长度不合法', trigger: 'blur' }
+    ],
+    confirmPassword: [
+      { required: true, message: '请再次输入密码', trigger: 'blur' },
+      { validator: validateConfirmPassword, trigger: 'blur' }
+    ],
+  },
+))
+
+function onToggleMenu() {
+  state.value.menuIsCollapse = !state.value.menuIsCollapse
+}
+function onFullScreen() {
+  if (!screenfull.isEnabled) {
+    ElMessage.error('您的浏览器不能全屏')
+    return
+  }
+  screenfull.toggle()
+}
+function onRefreshView() {
+  state.value.isRouterAvailable = false
+  nextTick(() => {
+    state.value.isRouterAvailable = true
+  })
+}
+function onOption(command: string) {
+  switch (command) {
+    case 'profile':
+      onShowChangeProfile()
+      break
+    case 'password':
+      onShowChangePassword()
+      break
+    case 'logout':
+      onLogout()
+      break
+  }
+}
+function onQueryProfile() {
+  queryProfile().then((data) => {
+    data = data.data
+    state.value.avatar = data.avatar
+    state.value.nickname = data.nickname
+  })
+}
+function onShowChangeProfile() {
+  changeUserInfoDialogState.value.reset()
+  changeUserInfoDialogState.value.show()
+  queryProfile().then((data) => {
+    data = data.data
+    changeUserInfoDialogState.value.formModel = data
+  })
+}
+function onChangeProfile() {
+  if (changeUserInfoDialogState.value.formRef == undefined) return
+  changeUserInfoDialogState.value.formRef.validate((valid: boolean) => {
+    if (!valid) return
+    updateProfile(
+      changeUserInfoDialogState.value.formModel.avatar,
+      changeUserInfoDialogState.value.formModel.nickname,
+      changeUserInfoDialogState.value.formModel.description,
+      changeUserInfoDialogState.value.formModel.email,
+      changeUserInfoDialogState.value.formModel.github,
+      changeUserInfoDialogState.value.formModel.weibo,
+      changeUserInfoDialogState.value.formModel.google,
+      changeUserInfoDialogState.value.formModel.twitter,
+      changeUserInfoDialogState.value.formModel.facebook,
+      changeUserInfoDialogState.value.formModel.stackOverflow,
+      changeUserInfoDialogState.value.formModel.youtube,
+      changeUserInfoDialogState.value.formModel.instagram,
+      changeUserInfoDialogState.value.formModel.skype
+    ).then(() => {
+      ElMessage.success('个人资料更新成功')
+      changeUserInfoDialogState.value.hide()
+      onQueryProfile()
+    })
+  })
+}
+function onShowChangePassword() {
+  changePasswordDialogState.value.reset()
+  changePasswordDialogState.value.show()
+}
+function onChangePassword() {
+  if (changePasswordDialogState.value.formRef == undefined) return
+  changePasswordDialogState.value.formRef.validate((valid: boolean) => {
+    if (!valid) return
+    updatePassword(
+      changePasswordDialogState.value.formModel.oldPassword,
+      changePasswordDialogState.value.formModel.newPassword
+    ).then(() => {
+      ElMessage.success('密码修改成功')
+      changePasswordDialogState.value.hide()
+    })
+  })
+}
+function onLogout() {
+  ElMessageBox.confirm('确认注销?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    logout().then(() => {
+      let userStore = useUserStore()
+      userStore.logout()
+      ElMessage.success('注销成功')
+      router.replace('/login')
+    })
+  })
+}
+
+onMounted(() => {
+  onQueryProfile()
+})
 </script>
 
-<style lang="less">
+<style scoped>
 .el-menu:not(.el-menu--collapse) {
   width: 200px;
 }

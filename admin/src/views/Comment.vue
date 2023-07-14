@@ -1,320 +1,325 @@
 <template>
-  <el-container direction="vertical">
-
+  <el-container
+    class="full-page"
+    direction="vertical"
+  >
     <el-space wrap>
-      <el-input
-          placeholder="请输入文章ID"
-          v-model="filter.article"
-          size="small"
-          clearable/>
-      <el-input
-          placeholder="请输入作者"
-          v-model="filter.author"
-          size="small"
-          clearable/>
-      <el-input
-          placeholder="请输入内容"
-          v-model="filter.content"
-          size="small"
-          clearable/>
-      <el-input
-          placeholder="请输入邮箱"
-          v-model="filter.email"
-          size="small"
-          clearable/>
-      <el-input
-          placeholder="请输入IP地址"
-          v-model="filter.ip"
-          size="small"
-          clearable/>
-      <blog-select v-model:value="filter.status" v-bind:type="5" size="small"></blog-select>
-      <el-button type="primary" plain icon="el-icon-search" @click="onFilterSearch" size="small">搜索</el-button>
-      <el-button type="info" plain icon="el-icon-delete" @click="onFilterClear" size="small">清空</el-button>
+      <el-input placeholder="请输入文章ID" v-model="state.filter.article" clearable />
+      <el-input placeholder="请输入作者" v-model="state.filter.author" clearable />
+      <el-input placeholder="请输入内容" v-model="state.filter.content" clearable />
+      <el-input placeholder="请输入邮箱" v-model="state.filter.email" clearable />
+      <el-input placeholder="请输入IP地址" v-model="state.filter.ip" clearable />
+      <blog-selector v-model="state.filter.status" v-bind:type="5" />
+      <el-button type="primary" plain icon="Search" @click="onFilterSearch">搜索</el-button>
+      <el-button type="info" plain icon="Delete" @click="onFilterClear">清空</el-button>
     </el-space>
 
-    <el-divider/>
+    <el-divider />
 
     <el-table
-        :data="data.list"
-        border
-        stripe
-        style="width: 100%;"
-        @sort-change="onSortChange"
-        :height="mainContentHeight">
-      <el-table-column prop="id" label="ID" width="60" fixed sortable="custom"></el-table-column>
+      class="full-page"
+      stripe
+      :data="state.data.list"
+      @sort-change="onSortChange"
+    >
+      <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
       <el-table-column prop="articleName" label="文章标题" width="180" fixed>
         <template #default="scope">
-          <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">{{ scope.row.articleTitle }}</el-link>
+          <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">{{
+            scope.row.articleTitle
+          }}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="120"></el-table-column>
       <el-table-column prop="ip,location" label="IP" width="120">
         <template #default="scope">
-          <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="scope.row.location"
-              placement="top">
-            <el-link :href="'https://www.ip138.com/iplookup.php?ip=' + scope.row.ip" type="primary" target="_blank">{{ scope.row.ip }}</el-link>
+          <el-tooltip class="box-item" effect="dark" :content="scope.row.location" placement="top">
+            <el-link
+              :href="'https://www.ip138.com/iplookup.php?ip=' + scope.row.ip"
+              type="primary"
+              target="_blank"
+              >{{ scope.row.ip }}</el-link
+            >
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="createTime" label="创建时间" width="160" sortable="custom"></el-table-column>
-      <el-table-column :formatter="onFormatDate" prop="updateTime" label="更新时间" width="160" sortable="custom"></el-table-column>
-      <el-table-column prop="status" label="状态" width="80">
+      <el-table-column
+        prop="content"
+        label="内容"
+        min-width="300"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
+      <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
+      <el-table-column prop="status" label="状态" width="90">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 1 ? 'success' : 'danger'"
-              disable-transitions
-              size="medium">{{ scope.row.status === 1 ? '已发布' : '待审核'}}
+            :type="scope.row.status === 1 ? 'success' : 'danger'"
+            disable-transitions
+            size="small"
+            >{{ scope.row.status === 1 ? '已发布' : '待审核' }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
-          <el-button plain size="mini" @click="onShowReplyComment(scope.row)" v-if="scope.row.status === 1">回复</el-button>
-          <el-button plain size="mini" @click="onShowVerifyComment(scope.row)" v-if="scope.row.status === 0">审核</el-button>
-          <el-button plain type="danger" size="mini" @click="onDeleteComment(scope.row)">删除</el-button>
+          <el-button
+            plain
+            size="small"
+            @click="onShowReplyComment(scope.row)"
+            v-if="scope.row.status === 1"
+            >回复</el-button
+          >
+          <el-button
+            plain
+            size="small"
+            @click="onShowVerifyComment(scope.row)"
+            v-if="scope.row.status === 0"
+            >审核</el-button
+          >
+          <el-button plain type="danger" size="small" @click="onDeleteComment(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <el-pagination
-        :page-count="data.pages"
-        @current-change="onCurrentPageChange"
-        style="text-align: center; margin-top: 20px"
-        background
-        layout="prev, pager, next"/>
-
+      :page-count="state.data.pages"
+      @current-change="onCurrentPageChange"
+      style="text-align: center; margin-top: 20px"
+      background
+      layout="prev, pager, next"
+    />
   </el-container>
 
-  <el-dialog title="审核评论" v-model="verify" :close-on-click-modal="false">
+  <el-dialog title="审核评论" v-model="verifyCommentDialogState.isShow" :close-on-click-modal="false">
     <el-descriptions direction="horizontal" :column="3" border>
-      <el-descriptions-item label="文章" :span="2">{{verifyData.articleTitle}}</el-descriptions-item>
-      <el-descriptions-item label="时间" :span="1">{{verifyData.time}}</el-descriptions-item>
-      <el-descriptions-item label="昵称" :span="1">{{verifyData.nickname}}</el-descriptions-item>
-      <el-descriptions-item label="邮箱" :span="1">{{verifyData.email}}</el-descriptions-item>
-      <el-descriptions-item label="链接" :span="1">{{verifyData.url}}</el-descriptions-item>
-      <el-descriptions-item label="IP" :span="1">{{verifyData.ip}}</el-descriptions-item>
-      <el-descriptions-item label="浏览器" :span="1">{{verifyData.browser}}</el-descriptions-item>
-      <el-descriptions-item label="系统" :span="1">{{verifyData.system}}</el-descriptions-item>
+      <el-descriptions-item label="文章" :span="2">{{
+        verifyCommentDialogState.formModel.articleTitle
+      }}</el-descriptions-item>
+      <el-descriptions-item label="时间" :span="1">{{ verifyCommentDialogState.formModel.time }}</el-descriptions-item>
+      <el-descriptions-item label="昵称" :span="1">{{ verifyCommentDialogState.formModel.nickname }}</el-descriptions-item>
+      <el-descriptions-item label="邮箱" :span="1">{{ verifyCommentDialogState.formModel.email }}</el-descriptions-item>
+      <el-descriptions-item label="链接" :span="1">{{ verifyCommentDialogState.formModel.url }}</el-descriptions-item>
+      <el-descriptions-item label="IP" :span="1">{{ verifyCommentDialogState.formModel.ip }}</el-descriptions-item>
+      <el-descriptions-item label="浏览器" :span="1">{{ verifyCommentDialogState.formModel.browser }}</el-descriptions-item>
+      <el-descriptions-item label="系统" :span="1">{{ verifyCommentDialogState.formModel.system }}</el-descriptions-item>
     </el-descriptions>
-    <div style="margin: 20px 0 20px 0; word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
-      <span>{{verifyData.content}}</span>
+    <div
+      style="
+        margin: 20px 0 20px 0;
+        word-break: normal;
+        width: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+      "
+    >
+      <span>{{ verifyCommentDialogState.formModel.content }}</span>
     </div>
     <el-button type="primary" @click="onVerifyComment">通过</el-button>
-    <el-button @click="verify = false">取消</el-button>
+    <el-button @click="verifyCommentDialogState.hide()">取消</el-button>
   </el-dialog>
 
-  <el-dialog title="回复评论" v-model="replay" :close-on-click-modal="false">
+  <el-dialog title="回复评论" v-model="replayCommentDialogState.isShow" :close-on-click-modal="false">
     <el-descriptions direction="horizontal" :column="3" border>
-      <el-descriptions-item label="文章" :span="2">{{replayData.articleTitle}}</el-descriptions-item>
-      <el-descriptions-item label="时间" :span="1">{{replayData.time}}</el-descriptions-item>
-      <el-descriptions-item label="昵称" :span="1">{{replayData.nickname}}</el-descriptions-item>
-      <el-descriptions-item label="邮箱" :span="1">{{replayData.email}}</el-descriptions-item>
-      <el-descriptions-item label="链接" :span="1">{{replayData.url}}</el-descriptions-item>
-      <el-descriptions-item label="IP" :span="1">{{replayData.ip + "/" + replayData.location}}</el-descriptions-item>
-      <el-descriptions-item label="浏览器" :span="1">{{replayData.browser}}</el-descriptions-item>
-      <el-descriptions-item label="系统" :span="1">{{replayData.system}}</el-descriptions-item>
+      <el-descriptions-item label="文章" :span="2">{{
+        replayCommentDialogState.formModel.articleTitle
+      }}</el-descriptions-item>
+      <el-descriptions-item label="时间" :span="1">{{ replayCommentDialogState.formModel.time }}</el-descriptions-item>
+      <el-descriptions-item label="昵称" :span="1">{{ replayCommentDialogState.formModel.nickname }}</el-descriptions-item>
+      <el-descriptions-item label="邮箱" :span="1">{{ replayCommentDialogState.formModel.email }}</el-descriptions-item>
+      <el-descriptions-item label="链接" :span="1">{{ replayCommentDialogState.formModel.url }}</el-descriptions-item>
+      <el-descriptions-item label="IP" :span="1">{{
+        replayCommentDialogState.formModel.ip + '/' + replayCommentDialogState.formModel.location
+      }}</el-descriptions-item>
+      <el-descriptions-item label="浏览器" :span="1">{{ replayCommentDialogState.formModel.browser }}</el-descriptions-item>
+      <el-descriptions-item label="系统" :span="1">{{ replayCommentDialogState.formModel.system }}</el-descriptions-item>
     </el-descriptions>
-    <div style="margin: 20px 0 20px 0; word-break:normal; width:auto; white-space:pre-wrap; word-wrap:break-word; overflow:hidden;">
-      <span>{{replayData.content}}</span>
+    <div
+      style="
+        margin: 20px 0 20px 0;
+        word-break: normal;
+        width: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+      "
+    >
+      <span>{{ replayCommentDialogState.formModel.content }}</span>
     </div>
-    <el-input type="textarea" rows="6" v-model="replayData.replayContent" :placeholder="'@' + replayData.nickname"></el-input>
-    <div style="height: 20px"/>
+    <el-input
+      type="textarea"
+      rows="6"
+      v-model="replayCommentDialogState.formModel.replayContent"
+      :placeholder="'@' + replayCommentDialogState.formModel.nickname" />
+    <div style="height: 20px" />
     <el-button type="primary" @click="onReplyComment(true)">回复并邮件通知</el-button>
     <el-button type="primary" @click="onReplyComment(false)">仅回复不通知</el-button>
-    <el-button @click="replay = false">取消</el-button>
+    <el-button @click="replayCommentDialogState.hide()">取消</el-button>
   </el-dialog>
-
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import dayjs from "dayjs"
-import {addCommentByReplay, queryComment, updateCommentToVerify, deleteComment} from "@/api"
-import BlogSelect from "@/components/BlogSelect.vue";
+<script setup lang="ts">
+import dayjs from 'dayjs'
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ListState, DialogState } from '@/bean'
+import { addCommentByReplay, queryComment, updateCommentToVerify, deleteComment } from '@/api'
 
-export default defineComponent({
-  name: 'Comment',
-  components: {
-    BlogSelect
-  },
-  mounted() {
-    this.onRefresh()
-    window.onresize = () => {
-      this.onRefreshMainContentHeight()
-    }
-    this.onRefreshMainContentHeight()
-  },
-  unmounted() {
-    window.onresize = null;
-  },
-  data() {
-    const mainContentBottom = 250
-    return {
-      mainContentBottom,
-      mainContentHeight: window.innerHeight - mainContentBottom,
+interface CommentFilter {
+  article: string|null
+  author: string|null
+  content: string|null
+  email: string|null
+  ip: string|null
+  status: number|null
+}
 
-      filter: {
-        article: null,
-        author: null,
-        content: null,
-        email: null,
-        ip: null,
-        status: null,
-      },
+interface OptionCommentState {
+  articleId: number
+  parentId: number
+  articleTitle: string
+  time: string
+  nickname: string
+  email: string
+  url: string
+  ip: string
+  location: string
+  browser: string
+  system: string
+  content: string
 
-      data: {
-        pageNum: 1,
-        pageSize: 20,
-        pages: 0,
-        total: 0,
-        list: [],
-      },
+  replayContent: string
+}
 
-      order: {
-        name: null,
-        method: null,
-      },
+const state = ref(new ListState<CommentFilter>({} as CommentFilter))
 
-      verify: false,
-      verifyData: {},
+const verifyCommentDialogStateFormRef = ref()
+const verifyCommentDialogState = ref(new DialogState<OptionCommentState>(
+  verifyCommentDialogStateFormRef,
+  {} as OptionCommentState,
+  {},
+))
 
-      replay: false,
-      replayData: {},
-    }
-  },
-  methods: {
-    onRefreshMainContentHeight() {
-      this.mainContentHeight = window.innerHeight - this.mainContentBottom
-    },
+const replayCommentDialogStateFormRef = ref()
+const replayCommentDialogState = ref(new DialogState<OptionCommentState>(
+  replayCommentDialogStateFormRef,
+  {} as OptionCommentState,
+  {},
+))
 
-    onFilterSearch() {
-      this.onRefresh()
-    },
-    onFilterClear() {
-      this.filter.article = null
-      this.filter.author = null
-      this.filter.content = null
-      this.filter.email = null
-      this.filter.ip = null
-      this.filter.status = null
-      this.onRefresh()
-    },
-    onSortChange(column: any) {
-      this.order.name = column.prop
-      this.order.method = column.order
-      this.onRefresh()
-    },
-    onFormatDate(row: any, column: any) {
-      const date = row[column.property];
-      if (date == null) return "-"
-      return dayjs(date).format("YYYY-MM-DD\nHH:mm:ss");
-    },
-    onCurrentPageChange(currentPage: number) {
-      const changed = this.data.pageNum != currentPage
-      this.data.pageNum = currentPage;
-      if (changed) {
-        this.onRefresh();
-      }
-    },
-    onShowReplyComment(row: any) {
-      this.replayData = {
-        articleId: row.articleId,
-        parentId: row.id,
-
-        articleTitle: row.articleTitle,
-        nickname: row.nickname,
-        email: row.email,
-        url: row.url,
-        ip: row.ip,
-        location: row.location,
-        browser: row.browser,
-        system: row.system,
-        time: dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss"),
-        content: row.content,
-        replayContent: '',
-      }
-      this.replay = true
-    },
-    onReplyComment(emailNotify: boolean) {
-      const replayData = this.replayData as any
-      if (!replayData.replayContent || replayData.replayContent === '') {
-        this.$message.warning("回复内容不能为空");
-        return
-      }
-      addCommentByReplay(
-          replayData.articleId,
-          replayData.parentId,
-          '@' + replayData.nickname + '\n' + replayData.replayContent,
-          emailNotify
-      )
-          .then(() => {
-            this.$message.success("回复成功");
-            this.replay = false
-            this.onRefresh()
-          })
-    },
-    onShowVerifyComment(row: any) {
-      this.verifyData = {
-        id: row.id,
-        articleTitle: row.articleTitle,
-        nickname: row.nickname,
-        email: row.email,
-        url: row.url,
-        ip: row.ip,
-        location: row.location,
-        browser: row.browser,
-        system: row.system,
-        time: dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss"),
-        content: row.content,
-      }
-      this.verify = true
-    },
-    onVerifyComment() {
-      updateCommentToVerify((this.verifyData as any).id)
-          .then(() => {
-            this.$message.success("审核成功");
-            this.verify = false
-            this.onRefresh()
-          })
-    },
-    onDeleteComment(row: any) {
-      this.$confirm('确认删除?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteComment(row.id)
-            .then(() => {
-              this.$message.success("删除成功");
-              this.onRefresh()
-            })
-      });
-    },
-    onRefresh() {
-      queryComment(
-          this.filter.article,
-          this.filter.author,
-          this.filter.content,
-          this.filter.email,
-          this.filter.ip,
-          this.filter.status,
-          this.data.pageNum,
-          this.data.pageSize,
-          this.order.name,
-          this.order.method,
-      )
-          .then(data => {
-            this.data = data.data;
-          })
-    },
+function onRefresh() {
+  queryComment(
+    state.value.filter.article,
+    state.value.filter.author,
+    state.value.filter.content,
+    state.value.filter.email,
+    state.value.filter.ip,
+    state.value.filter.status,
+    state.value.data.pageNum,
+    state.value.data.pageSize,
+    state.value.order.name,
+    state.value.order.method
+  ).then((data) => {
+    state.value.data = data.data
+  })
+}
+function onFilterSearch() {
+  onRefresh()
+}
+function onFilterClear() {
+  state.value.clearFilter()
+  onRefresh()
+}
+function onSortChange(column: any) {
+  state.value.saveOrder(column.prop, column.order)
+  onRefresh()
+}
+function onCurrentPageChange(currentPage: number) {
+  const changed = state.value.data.pageNum != currentPage
+  state.value.data.pageNum = currentPage
+  if (changed) {
+    onRefresh()
   }
-});
+}
+function onShowReplyComment(row: any) {
+  replayCommentDialogState.value.formModel = {
+    articleId: row.articleId,
+    parentId: row.id,
+    articleTitle: row.articleTitle,
+    nickname: row.nickname,
+    email: row.email,
+    url: row.url,
+    ip: row.ip,
+    location: row.location,
+    browser: row.browser,
+    system: row.system,
+    time: dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss'),
+    content: row.content,
+    replayContent: ''
+  }
+  replayCommentDialogState.value.show()
+}
+function onReplyComment(emailNotify: boolean) {
+  const replayData = replayCommentDialogState.value.formModel
+  if (!replayData.replayContent || replayData.replayContent === '') {
+    ElMessage.warning('回复内容不能为空')
+    return
+  }
+  addCommentByReplay(
+    replayData.articleId,
+    replayData.parentId,
+    '@' + replayData.nickname + '\n' + replayData.replayContent,
+    emailNotify
+  ).then(() => {
+    ElMessage.success('回复成功')
+    replayCommentDialogState.value.hide()
+    onRefresh()
+  })
+}
+function onShowVerifyComment(row: any) {
+  verifyCommentDialogState.value.formModel =  {
+    articleId: row.id,
+    articleTitle: row.articleTitle,
+    nickname: row.nickname,
+    email: row.email,
+    url: row.url,
+    ip: row.ip,
+    location: row.location,
+    browser: row.browser,
+    system: row.system,
+    time: dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss'),
+    content: row.content
+  } as OptionCommentState
+  verifyCommentDialogState.value.show()
+}
+function onVerifyComment() {
+  const verifyData = verifyCommentDialogState.value.formModel
+  updateCommentToVerify(verifyData.articleId).then(() => {
+    ElMessage.success('审核成功')
+    verifyCommentDialogState.value.hide()
+    onRefresh()
+  })
+}
+function onDeleteComment(row: any) {
+  ElMessageBox.confirm('确认删除?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    deleteComment(row.id).then(() => {
+      ElMessage.success('删除成功')
+      onRefresh()
+    })
+  })
+}
+
+onMounted(() => {
+  onRefresh()
+})
 </script>
 
-<style lang="less">
-</style>
+<style></style>
