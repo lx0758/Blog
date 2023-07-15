@@ -3,8 +3,8 @@ package com.liux.blog.controller.api
 import com.liux.blog.annotation.CurrentUserId
 import com.liux.blog.bean.Resp
 import com.liux.blog.bean.vo.api.PaginationListVO
-import com.liux.blog.bean.vo.api.UploadVO
-import com.liux.blog.service.UploadService
+import com.liux.blog.bean.vo.api.FileVO
+import com.liux.blog.service.FileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,11 +12,11 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/api/upload")
-class UploadController {
+@RequestMapping("/api/file")
+class FileController {
 
     @Autowired
-    private lateinit var uploadService: UploadService
+    private lateinit var fileService: FileService
 
     @GetMapping
     fun query(
@@ -26,20 +26,20 @@ class UploadController {
         @RequestParam("pageSize") pageSize: Int,
         @RequestParam("orderName", required = false) orderName: String?,
         @RequestParam("orderMethod", required = false) orderMethod: String?,
-    ): Resp<PaginationListVO<UploadVO>> {
-        val uploads = uploadService.listByAdmin(name, type, pageNum, pageSize, orderName, orderMethod)
-        val uploadVOs = uploads.map { UploadVO.of(it) }
-        return Resp.succeed(PaginationListVO.of(uploadVOs, uploads))
+    ): Resp<PaginationListVO<FileVO>> {
+        val uploads = fileService.listByAdmin(name, type, pageNum, pageSize, orderName, orderMethod)
+        val fileVOs = uploads.map { FileVO.of(it) }
+        return Resp.succeed(PaginationListVO.of(fileVOs, uploads))
     }
 
     @PostMapping
     fun add(
         @CurrentUserId userId: Int,
         @RequestParam("file") file: MultipartFile,
-    ): Resp<UploadVO> {
-        val upload = uploadService.addByAdmin(userId, file)
-        val uploadVO = UploadVO.of(upload)
-        return Resp.succeed(uploadVO)
+    ): Resp<FileVO> {
+        val upload = fileService.addByAdmin(userId, file)
+        val fileVO = FileVO.of(upload)
+        return Resp.succeed(fileVO)
     }
 
     @PutMapping("{id}")
@@ -48,8 +48,11 @@ class UploadController {
         @PathVariable("id") id: Int,
         @RequestParam("file") file: MultipartFile,
     ): Resp<*> {
-        val uploadRow = uploadService.updateByAdmin(userId, id, file)
-        if (uploadRow < 1) {
+        val uploadRow = fileService.updateByAdmin(userId, id, file)
+        if (uploadRow == 0) {
+            throw HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "禁止不同类型文件覆盖更新")
+        }
+        if (uploadRow < 0) {
             throw HttpClientErrorException(HttpStatus.NOT_FOUND, "更新失败")
         }
         return Resp.succeed()
@@ -59,7 +62,7 @@ class UploadController {
     fun delete(
         @PathVariable("id") id: Int,
     ): Resp<*> {
-        val deleteRow = uploadService.deleteByAdmin(id)
+        val deleteRow = fileService.deleteByAdmin(id)
         if (deleteRow < 1) {
             throw HttpClientErrorException(HttpStatus.NOT_FOUND, "删除失败")
         }

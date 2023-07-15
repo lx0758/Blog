@@ -2,25 +2,24 @@ package com.liux.blog.service.impl
 
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
-import com.liux.blog.bean.po.Upload
-import com.liux.blog.config.UploadConfig
-import com.liux.blog.dao.UploadMapper
-import com.liux.blog.service.UploadService
+import com.liux.blog.bean.po.File
+import com.liux.blog.config.FileConfig
+import com.liux.blog.dao.FileMapper
+import com.liux.blog.service.FileService
 import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.util.FileCopyUtils
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Service
-class UploadServiceImpl: UploadService {
+class FileServiceImpl: FileService {
 
     @Autowired
-    private lateinit var uploadMapper: UploadMapper
+    private lateinit var fileMapper: FileMapper
 
     override fun listByAdmin(
         name: String?,
@@ -29,11 +28,11 @@ class UploadServiceImpl: UploadService {
         pageSize: Int,
         orderName: String?,
         orderMethod: String?,
-    ): Page<Upload> {
+    ): Page<com.liux.blog.bean.po.File> {
         PageHelperUtil.orderBy(PageHelperUtil.Type.UPLOAD, orderName, orderMethod)
-        val page = PageHelper.startPage<Upload>(pageNum, pageSize)
-        uploadMapper.selectByAdmin(
-            Upload(
+        val page = PageHelper.startPage<com.liux.blog.bean.po.File>(pageNum, pageSize)
+        fileMapper.selectByAdmin(
+            com.liux.blog.bean.po.File(
                 displayName = name,
                 type = type,
             )
@@ -41,53 +40,53 @@ class UploadServiceImpl: UploadService {
         return page
     }
 
-    override fun addByAdmin(userId: Int, file: MultipartFile): Upload {
-        val originalFilename = file.originalFilename ?: "unnamed"
+    override fun addByAdmin(userId: Int, multipartFile: MultipartFile): File {
+        val originalFilename = multipartFile.originalFilename ?: "unnamed"
         val localPath = generatorPath(originalFilename)
-        val localFile = File(UploadConfig.UPLOAD_DIR, localPath)
+        val localFile = java.io.File(FileConfig.STORE_DIR, localPath)
 
         if (!localFile.parentFile.exists()) {
             localFile.parentFile.mkdirs()
         }
         val fileOutputStream = FileOutputStream(localFile)
-        FileCopyUtils.copy(file.inputStream, fileOutputStream)
+        FileCopyUtils.copy(multipartFile.inputStream, fileOutputStream)
 
-        val upload = Upload(
+        val file = File(
             displayName = originalFilename,
-            length = file.size,
-            type = file.contentType,
+            length = multipartFile.size,
+            type = multipartFile.contentType,
             path = localPath,
             authorId = userId,
             createTime = Date(),
         )
-        uploadMapper.insertSelective(upload)
-        return upload
+        fileMapper.insertSelective(file)
+        return file
     }
 
-    override fun updateByAdmin(userId: Int, id: Int, file: MultipartFile): Int {
-        val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
+    override fun updateByAdmin(userId: Int, id: Int, multipartFile: MultipartFile): Int {
+        val upload = fileMapper.getByPrimaryKey(id) ?: return -1
 
-        if (file.contentType != upload.type) return 0
+        if (multipartFile.contentType != upload.type) return 0
 
-        val localFile = File(UploadConfig.UPLOAD_DIR, upload.path!!)
+        val localFile = java.io.File(FileConfig.STORE_DIR, upload.path!!)
 
         val fileOutputStream = FileOutputStream(localFile)
-        FileCopyUtils.copy(file.inputStream, fileOutputStream)
+        FileCopyUtils.copy(multipartFile.inputStream, fileOutputStream)
 
-        upload.length = file.size
+        upload.length = multipartFile.size
         upload.authorId = userId
         upload.updateTime = Date()
-        return uploadMapper.updateByPrimaryKeySelective(upload)
+        return fileMapper.updateByPrimaryKeySelective(upload)
     }
 
     override fun deleteByAdmin(id: Int): Int {
-        val upload = uploadMapper.getByPrimaryKey(id) ?: return 0
-        val deleteRow = uploadMapper.deleteByPrimaryKey(id)
+        val upload = fileMapper.getByPrimaryKey(id) ?: return 0
+        val deleteRow = fileMapper.deleteByPrimaryKey(id)
         if (deleteRow > 0) {
-            var target = File(UploadConfig.UPLOAD_DIR, upload.path!!)
+            var target = java.io.File(FileConfig.STORE_DIR, upload.path!!)
             while (target.delete()) {
                 val parent = target.parentFile
-                if (parent == UploadConfig.UPLOAD_DIR) break
+                if (parent == FileConfig.STORE_DIR) break
                 if (!parent.listFiles().isNullOrEmpty()) break
                 target = parent
             }
@@ -96,7 +95,7 @@ class UploadServiceImpl: UploadService {
     }
 
     override fun getCountByDashboard(): Int {
-        return uploadMapper.getCount()
+        return fileMapper.getCount()
     }
 
     fun generatorPath(originalName: String): String {

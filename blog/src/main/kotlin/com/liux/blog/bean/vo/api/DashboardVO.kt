@@ -10,5 +10,5 @@ class DashboardVO(
 
     val newArticles: List<ArticleVO>,
     val newComments: List<CommentVO>,
-    val newUploads: List<UploadVO>,
+    val newUploads: List<FileVO>,
 )

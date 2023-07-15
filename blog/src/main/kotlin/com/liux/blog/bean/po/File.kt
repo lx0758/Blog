@@ -4,7 +4,7 @@ import com.liux.blog.bean.NoArgsConstructor
 import java.util.*
 
 @NoArgsConstructor
-data class Upload(
+data class File(
     // ID
     var id: Int? = null,
     // 显示名称

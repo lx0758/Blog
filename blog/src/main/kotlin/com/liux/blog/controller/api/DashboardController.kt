@@ -4,11 +4,11 @@ import com.liux.blog.bean.Resp
 import com.liux.blog.bean.vo.api.ArticleVO
 import com.liux.blog.bean.vo.api.CommentVO
 import com.liux.blog.bean.vo.api.DashboardVO
-import com.liux.blog.bean.vo.api.UploadVO
+import com.liux.blog.bean.vo.api.FileVO
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CommentService
 import com.liux.blog.service.ThemeService
-import com.liux.blog.service.UploadService
+import com.liux.blog.service.FileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,7 +25,7 @@ class DashboardController {
     @Autowired
     private lateinit var commentService: CommentService
     @Autowired
-    private lateinit var uploadService: UploadService
+    private lateinit var fileService: FileService
 
     @GetMapping
     fun query(): Resp<DashboardVO> {
@@ -34,7 +34,7 @@ class DashboardController {
             themeService.getCacheBlogInfo().siteArticleCount,
             themeService.getCacheBlogInfo().siteCategoryCount,
             themeService.getCacheBlogInfo().siteTagCount,
-            uploadService.getCountByDashboard(),
+            fileService.getCountByDashboard(),
             commentService.getCountByDashboard(),
             articleService.getViewsByDashboard(),
 
@@ -61,14 +61,14 @@ class DashboardController {
                 null,
                 null
             ).map { CommentVO.of(it) },
-            uploadService.listByAdmin(
+            fileService.listByAdmin(
                 null,
                 null,
                 1,
                 10,
                 null,
                 null
-            ).map { UploadVO.of(it) },
+            ).map { FileVO.of(it) },
         )
         return Resp.succeed(dashboardVO)
     }

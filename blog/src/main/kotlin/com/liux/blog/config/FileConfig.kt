@@ -9,11 +9,11 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 @Configuration
-class UploadConfig: WebMvcConfigurer {
+class FileConfig: WebMvcConfigurer {
 
     companion object {
-        const val UPLOAD_URL_PREFIX = "/upload/"
-        val UPLOAD_DIR = File(System.getProperty("user.dir"), "upload")
+        const val URL_PREFIX = "/files/"
+        val STORE_DIR = File(System.getProperty("user.dir"), "files")
     }
 
     override fun configurePathMatch(configurer: PathMatchConfigurer) {
@@ -26,7 +26,7 @@ class UploadConfig: WebMvcConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry
-            .addResourceHandler("$UPLOAD_URL_PREFIX**")
-            .addResourceLocations("file:${UPLOAD_DIR.canonicalPath}${File.separator}")
+            .addResourceHandler("$URL_PREFIX**")
+            .addResourceLocations("file:${STORE_DIR.canonicalPath}${File.separator}")
     }
 }

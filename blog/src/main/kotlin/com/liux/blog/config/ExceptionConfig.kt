@@ -25,7 +25,7 @@ class ExceptionConfig {
 
         val httpStatus = when(exception) {
             is SizeLimitExceededException, is MaxUploadSizeExceededException -> HttpStatus.PAYLOAD_TOO_LARGE
-            is HttpClientErrorException -> HttpStatus.valueOf(response.status)
+            is HttpClientErrorException -> HttpStatus.valueOf(exception.statusCode.value())
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
 
