@@ -3,6 +3,7 @@ package com.liux.blog.bean.vo
 import com.liux.blog.bean.po.Config
 import com.liux.blog.bean.po.Link
 import com.liux.blog.bean.po.User
+import java.util.*
 
 data class BlogVO(
     var siteDomain: String,
@@ -34,9 +35,11 @@ data class BlogVO(
     var ownerSkype: String,
 
     var links: List<LinkVO> = emptyList(),
+
+    var updateTime: Date,
 ) {
     companion object {
-        fun of(configs: Map<String, String?>, articleCount: Int, categoryCount: Int, tagCount: Int, user: User, links: List<Link>): BlogVO {
+        fun of(configs: Map<String, String?>, articleCount: Int, categoryCount: Int, tagCount: Int, user: User, links: List<Link>, updateTime: Date): BlogVO {
             return BlogVO(
                 configs[Config.KEY_SITE_DOMAIN] ?: "domain.org",
                 configs[Config.KEY_SITE_TITLE] ?: "Blog",
@@ -65,7 +68,9 @@ data class BlogVO(
                 user.accounts?.instagram ?: "",
                 user.accounts?.skype ?: "",
 
-                links.map { LinkVO.of(it) }
+                links.map { LinkVO.of(it) },
+
+                updateTime,
             )
         }
     }

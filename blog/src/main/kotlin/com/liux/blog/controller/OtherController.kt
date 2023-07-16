@@ -44,7 +44,7 @@ class OtherController {
         val domain = themeService.getCacheBlogInfo().siteDomain
         return """
             User-agent: *
-            Disallow: /admin/
+            Allow: /article/
             Sitemap: https://$domain/sitemap.xml
             """.trimIndent()
     }
@@ -52,12 +52,13 @@ class OtherController {
     @GetMapping("/sitemap.xml", produces = [MediaType.APPLICATION_XML_VALUE])
     fun sitemap(): String {
         val domain = themeService.getCacheBlogInfo().siteDomain
+        val updateTime = themeService.getCacheBlogInfo().updateTime
         val articles = articleService.listBySitemap()
 
         val urlset = StringBuilder().apply {
             append("\t<url>\n")
             append("\t\t<loc>https://$domain/</loc>\n")
-            append("\t\t<lastmod>${Date().toDateString()}</lastmod>\n")
+            append("\t\t<lastmod>${updateTime.toDateString()}</lastmod>\n")
             append("\t\t<changefreq>always</changefreq>\n")
             append("\t\t<priority>1.0</priority>\n")
             append("\t</url>\n")

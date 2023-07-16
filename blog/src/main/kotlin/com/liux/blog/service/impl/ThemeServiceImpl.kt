@@ -11,6 +11,7 @@ import com.liux.blog.service.ThemeService
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class ThemeServiceImpl: ThemeService {
@@ -40,7 +41,8 @@ class ThemeServiceImpl: ThemeService {
         val tagCount = tagMapper.selectCount()
         val user = userMapper.getByOwner()
         val links = linkService.listByBlog()
-        cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links)
+        val updateTime = Date()
+        cacheBlogVO = BlogVO.of(configs, articleCount, categoryCount, tagCount, user, links, updateTime)
     }
 
     override fun getCacheBlogInfo(): BlogVO {
