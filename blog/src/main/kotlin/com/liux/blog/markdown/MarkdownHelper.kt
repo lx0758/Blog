@@ -1,4 +1,4 @@
-package com.liux.blog.util
+package com.liux.blog.markdown
 
 import com.liux.blog.bean.vo.CatalogueVO
 import org.commonmark.ext.autolink.AutolinkExtension
@@ -7,9 +7,6 @@ import org.commonmark.ext.gfm.tables.TablesExtension
 import org.commonmark.ext.heading.anchor.HeadingAnchorExtension
 import org.commonmark.ext.image.attributes.ImageAttributesExtension
 import org.commonmark.ext.ins.InsExtension
-import org.commonmark.ext.next.Catalogue
-import org.commonmark.ext.next.NexTDocument
-import org.commonmark.ext.next.NexTExtension
 import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer

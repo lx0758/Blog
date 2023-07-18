@@ -4,11 +4,11 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.vo.CatalogueVO
-import com.liux.blog.util.MarkdownHelper
+import com.liux.blog.markdown.MarkdownHelper
 import jakarta.servlet.http.HttpServletRequest
-import org.commonmark.ext.next.FLAG_MORE_ANCHOR
-import org.commonmark.ext.next.FLAG_MORE_SUSPEND
-import org.commonmark.ext.next.FLAG_TOC
+import com.liux.blog.markdown.FLAG_MORE_ANCHOR
+import com.liux.blog.markdown.FLAG_MORE_SUSPEND
+import com.liux.blog.markdown.FLAG_TOC
 import org.jsoup.Jsoup
 import ua_parser.Client
 import java.text.SimpleDateFormat

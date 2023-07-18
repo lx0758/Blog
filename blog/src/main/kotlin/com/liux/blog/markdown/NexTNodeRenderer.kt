@@ -1,4 +1,4 @@
-package org.commonmark.ext.next
+package com.liux.blog.markdown
 
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.CustomBlock
@@ -64,40 +64,13 @@ class NexTNodeRenderer(
     }
 
     override fun visit(fencedCodeBlock: FencedCodeBlock) {
-        val contents = fencedCodeBlock.literal.trim().lines()
         val language = fencedCodeBlock.info
-        val lineMap = mapOf("class" to "line")
-
         html.line()
-        html.tag("figure", mapOf("class" to "highlight $language"))
-        html.tag("table")
-        html.tag("tr")
-
-        html.tag("td", mapOf("class" to "gutter"))
-        html.tag("pre")
-        for (line in 1..contents.size) {
-            html.tag("span", lineMap)
-            html.text(line.toString())
-            html.tag("/span")
-            html.tag("br")
-        }
+        html.tag("pre", mapOf("class" to "line-numbers"))
+        html.tag("code", mapOf("class" to "language-${language.ifEmpty { "none" }}"))
+        html.text(fencedCodeBlock.literal)
+        html.tag("/code")
         html.tag("/pre")
-        html.tag("/td")
-
-        html.tag("td", mapOf("class" to "code"))
-        html.tag("pre")
-        contents.forEach {
-            html.tag("span", lineMap)
-            html.text(it)
-            html.tag("/span")
-            html.tag("br")
-        }
-        html.tag("/pre")
-        html.tag("/td")
-
-        html.tag("/tr")
-        html.tag("/table")
-        html.tag("/figure")
         html.line()
     }
 
