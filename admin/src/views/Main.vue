@@ -103,9 +103,7 @@
                   <el-dropdown-menu>
                     <el-dropdown-item icon="User" command="profile">个人设置</el-dropdown-item>
                     <el-dropdown-item icon="Lock" command="password">修改密码</el-dropdown-item>
-                    <el-dropdown-item icon="SwitchButton" command="logout" divided
-                      >注销登录</el-dropdown-item
-                    >
+                    <el-dropdown-item icon="SwitchButton" command="logout" divided>注销登录</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -288,6 +286,7 @@ interface ChangeUserInfoState {
   nickname: string
   description: string
   email: string
+
   github: string
   weibo: string
   google: string
@@ -417,7 +416,22 @@ function onShowChangeProfile() {
   changeUserInfoDialogState.value.show()
   queryProfile().then((data) => {
     data = data.data
-    changeUserInfoDialogState.value.formModel = data
+
+    let formModel = changeUserInfoDialogState.value.formModel
+    formModel.avatar = data.avatar
+    formModel.nickname = data.nickname
+    formModel.description = data.description
+    formModel.email = data.email
+
+    formModel.github = data.accounts.github
+    formModel.weibo = data.accounts.weibo
+    formModel.google = data.accounts.google
+    formModel.twitter = data.accounts.twitter
+    formModel.facebook = data.accounts.facebook
+    formModel.stackOverflow = data.accounts.stackOverflow
+    formModel.youtube = data.accounts.youtube
+    formModel.instagram = data.accounts.instagram
+    formModel.skype = data.accounts.skype
   })
 }
 function onChangeProfile() {
@@ -429,6 +443,7 @@ function onChangeProfile() {
       changeUserInfoDialogState.value.formModel.nickname,
       changeUserInfoDialogState.value.formModel.description,
       changeUserInfoDialogState.value.formModel.email,
+
       changeUserInfoDialogState.value.formModel.github,
       changeUserInfoDialogState.value.formModel.weibo,
       changeUserInfoDialogState.value.formModel.google,

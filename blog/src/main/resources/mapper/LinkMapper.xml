@@ -36,10 +36,10 @@
     from t_link
     where 1 = 1
     <if test="title != null and title != ''">
-      and title like CONCAT('%', #{title}, '%')
+      and upper(title) like upper(CONCAT('%', #{title}, '%'))
     </if>
     <if test="url != null and url != ''">
-      and url like CONCAT('%', #{url}, '%')
+      and upper(url) like upper(CONCAT('%', #{url}, '%'))
     </if>
     <if test="status != null">
       and status = #{status}

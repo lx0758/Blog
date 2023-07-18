@@ -33,10 +33,10 @@
     from t_file
     where 1 = 1
     <if test="displayName != null and displayName != ''">
-      and "display_name" like CONCAT('%', #{displayName,jdbcType=LONGVARCHAR}, '%')
+      and upper("display_name") like upper(CONCAT('%', #{displayName,jdbcType=LONGVARCHAR}, '%'))
     </if>
     <if test="type != null and type != ''">
-      and "type" like CONCAT('%', #{type,jdbcType=LONGVARCHAR}, '%')
+      and upper("type") like upper(CONCAT('%', #{type,jdbcType=LONGVARCHAR}, '%'))
     </if>
     order by id desc
   </select>

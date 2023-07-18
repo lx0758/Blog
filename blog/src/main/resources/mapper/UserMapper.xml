@@ -66,10 +66,10 @@
         from t_user
                 where 1 = 1
         <if test="username != null and username != ''">
-            and username like CONCAT('%', #{username}, '%')
+            and upper(username) like upper(CONCAT('%', #{username}, '%'))
         </if>
         <if test="nickname != null and nickname != ''">
-            and nickname like CONCAT('%', #{nickname}, '%')
+            and upper(nickname) like upper(CONCAT('%', #{nickname}, '%'))
         </if>
         <if test="status != null">
             and status = #{status}

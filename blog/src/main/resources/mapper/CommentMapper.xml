@@ -80,16 +80,16 @@
       and article_id = #{articleId}
     </if>
     <if test="author != null and author != ''">
-      and author like CONCAT('%', #{author}, '%')
+      and upper(author) like upper(CONCAT('%', #{author}, '%'))
     </if>
     <if test="email != null and email != ''">
-      and email like CONCAT('%', #{email}, '%')
+      and upper(email) like upper(CONCAT('%', #{email}, '%'))
     </if>
     <if test="ip != null and ip != ''">
-      and ip like CONCAT('%', #{ip}, '%')
+      and upper(ip) like upper(CONCAT('%', #{ip}, '%'))
     </if>
     <if test="content != null and content != ''">
-      and content like CONCAT('%', #{content}, '%')
+      and upper(content) like upper(CONCAT('%', #{content}, '%'))
     </if>
     <if test="status != null">
       and status = #{status}

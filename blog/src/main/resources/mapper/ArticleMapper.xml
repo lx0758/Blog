@@ -211,10 +211,10 @@
             and category_id = #{categoryId,jdbcType=INTEGER}
         </if>
         <if test="title != null and title != ''">
-            and title like CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%')
+            and upper(title) like upper(CONCAT('%', #{title,jdbcType=LONGVARCHAR}, '%'))
         </if>
         <if test="url != null and url != ''">
-            and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
+            and upper(url) like upper(CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%'))
         </if>
         <if test="commentStatus != null">
             and comment_status = #{commentStatus,jdbcType=INTEGER}

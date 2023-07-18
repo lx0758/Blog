@@ -32,13 +32,13 @@
     from t_config
     where 1 = 1
     <if test="key != null and key != ''">
-      and "key" like CONCAT('%', #{key}, '%')
+      and upper("key") like upper(CONCAT('%', #{key}, '%'))
     </if>
     <if test="value != null and value != ''">
-      and "value" like CONCAT('%', #{value}, '%')
+      and upper("value") like upper(CONCAT('%', #{value}, '%'))
     </if>
     <if test="description != null and description != ''">
-      and "description" like CONCAT('%', #{description}, '%')
+      and upper("description") like upper(CONCAT('%', #{description}, '%'))
     </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

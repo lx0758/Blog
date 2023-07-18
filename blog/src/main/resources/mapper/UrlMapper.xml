@@ -52,13 +52,13 @@
     from t_url
     where 1 = 1
     <if test="key != null and key != ''">
-      and "key" like CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%')
+      and upper("key") like upper(CONCAT('%', #{key,jdbcType=LONGVARCHAR}, '%'))
     </if>
     <if test="url != null and url != ''">
-      and url like CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%')
+      and upper(url) like upper(CONCAT('%', #{url,jdbcType=LONGVARCHAR}, '%'))
     </if>
     <if test="description != null and description != ''">
-      and description like CONCAT('%', #{description,jdbcType=LONGVARCHAR}, '%')
+      and upper(description) like upper(CONCAT('%', #{description,jdbcType=LONGVARCHAR}, '%'))
     </if>
     <if test="status != null">
       and "status" = #{status}
