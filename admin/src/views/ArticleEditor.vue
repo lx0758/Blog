@@ -25,22 +25,9 @@
       </el-col>
       <el-col :span="16">
         <el-form-item label="文章标签" prop="tags">
-          <el-select
-            v-model="state.tags"
-            clearable
-            multiple
-            filterable
-            allow-create
-            default-first-option
-            placeholder="请输入标签(回车添加)"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in state.tags"
-              :key="item"
-              :label="item"
-              :value="item"
-            ></el-option>
+          <el-select v-model="state.tags" clearable multiple filterable allow-create default-first-option
+            placeholder="请输入标签(回车添加)" style="width: 100%">
+            <el-option v-for="item in state.tags" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -48,12 +35,8 @@
 
     <el-container prop="content">
       <limit-height-container bottom="260" min="300">
-        <v-md-editor
-          v-model="state.content"
-          :disabled-menus="[]"
-          @save="onEditorSaveArticle"
-          @upload-image="onEditorUploadImage"
-        />
+        <v-md-editor v-model="state.content" :disabled-menus="[]" @save="onEditorSaveArticle"
+          @upload-image="onEditorUploadImage" />
       </limit-height-container>
     </el-container>
 
@@ -111,8 +94,9 @@ const state = ref<State>({
 
 
 function onRefreshHeight() {
-    height.value = window.innerHeight - bottom
+  height.value = window.innerHeight - bottom
 }
+
 function onQueryArticleInfo() {
   if (state.value.id != undefined && state.value.id != 0) {
     queryArticleInfo(state.value.id).then((data) => {
@@ -128,9 +112,11 @@ function onQueryArticleInfo() {
     })
   }
 }
+
 function onEditorSaveArticle(text: string, html: string) {
   onSaveArticle()
 }
+
 function onEditorUploadImage(event: any, insertImage: any, files: any[]) {
   addFile(files[0]).then((data) => {
     data = data.data
@@ -140,35 +126,37 @@ function onEditorUploadImage(event: any, insertImage: any, files: any[]) {
     })
   })
 }
+
 function onPageBack() {
   router.back()
 }
+
 function onSaveArticle() {
   if (!onCheckArticle()) return
   if (state.value.id != undefined && state.value.id != 0) {
     updateArticle(
-        state.value.id,
-        state.value.title,
-        state.value.categoryId,
-        state.value.url,
-        state.value.tags,
-        state.value.content,
-        state.value.weight,
-        state.value.enableComment,
-        state.value.status
+      state.value.id,
+      state.value.title,
+      state.value.categoryId,
+      state.value.url,
+      state.value.tags,
+      state.value.content,
+      state.value.weight,
+      state.value.enableComment,
+      state.value.status
     ).then(() => {
       ElMessage.success('更新成功')
     })
   } else {
     addArticle(
-        state.value.title,
-        state.value.categoryId,
-        state.value.url,
-        state.value.tags,
-        state.value.content,
-        state.value.weight,
-        state.value.enableComment,
-        0
+      state.value.title,
+      state.value.categoryId,
+      state.value.url,
+      state.value.tags,
+      state.value.content,
+      state.value.weight,
+      state.value.enableComment,
+      0
     ).then((data) => {
       data = data.data
       ElMessage.success('保存成功')
@@ -176,33 +164,34 @@ function onSaveArticle() {
     })
   }
 }
+
 function onPublishArticle() {
   if (!onCheckArticle()) return
   state.value.status = 1
   if (state.value.id != undefined && state.value.id != 0) {
     updateArticle(
-        state.value.id,
-        state.value.title,
-        state.value.categoryId,
-        state.value.url,
-        state.value.tags,
-        state.value.content,
-        state.value.weight,
-        state.value.enableComment,
-        state.value.status,
+      state.value.id,
+      state.value.title,
+      state.value.categoryId,
+      state.value.url,
+      state.value.tags,
+      state.value.content,
+      state.value.weight,
+      state.value.enableComment,
+      state.value.status,
     ).then(() => {
       ElMessage.success('更新成功')
     })
   } else {
     addArticle(
-        state.value.title,
-        state.value.categoryId,
-        state.value.url,
-        state.value.tags,
-        state.value.content,
-        state.value.weight,
-        state.value.enableComment,
-        state.value.status,
+      state.value.title,
+      state.value.categoryId,
+      state.value.url,
+      state.value.tags,
+      state.value.content,
+      state.value.weight,
+      state.value.enableComment,
+      state.value.status,
     ).then((data) => {
       data = data.data
       state.value.id = data.id
@@ -210,6 +199,7 @@ function onPublishArticle() {
     })
   }
 }
+
 function onCheckArticle(): boolean {
   if (!state.value.title || state.value.title === '') {
     ElMessage.error('标题不能为空')
@@ -232,7 +222,7 @@ onMounted(() => {
     state.value.id = Number.parseInt(params.id as string)
   }
   onQueryArticleInfo()
-  
+
   window.onresize = () => {
     onRefreshHeight()
   }
@@ -247,12 +237,12 @@ onBeforeRouteLeave((to, from, next) => {
     cancelButtonText: '取消',
     type: 'warning'
   })
-  .then(() => {
-    next()
-  })
-  .catch(() => {
-    next(false)
-  })
+    .then(() => {
+      next()
+    })
+    .catch(() => {
+      next(false)
+    })
 });
 </script>
 

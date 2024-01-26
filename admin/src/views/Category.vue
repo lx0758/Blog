@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    class="full-page"
-    direction="vertical"
-  >
+  <el-container class="full-page" direction="vertical">
     <el-space wrap>
       <el-input placeholder="请输入名称" v-model="state.filter.name" clearable />
       <el-button type="primary" plain icon="Search" @click="onFilterSearch">搜索</el-button>
@@ -12,25 +9,11 @@
 
     <el-divider />
 
-    <el-table
-      class="full-page"
-      stripe
-      :data="state.data.list"
-      @sort-change="onSortChange"
-    >
+    <el-table class="full-page" stripe :data="state.data.list" @sort-change="onSortChange">
       <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
-      <el-table-column
-        prop="name"
-        label="名称"
-        min-width="100"
-        fixed
-        sortable="custom" />
-      <el-table-column
-        prop="articleCount"
-        label="文章数量"
-        width="110"
-        sortable="custom" />
-      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
+      <el-table-column prop="name" label="名称" min-width="100" fixed sortable="custom" />
+      <el-table-column prop="articleCount" label="文章数量" width="110" sortable="custom" />
+      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
           <el-button plain size="small" @click="onEditCategory(scope.row)">编辑</el-button>
@@ -39,21 +22,14 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      :page-count="state.data.pages"
-      @current-change="onCurrentPageChange"
-      style="text-align: center; margin-top: 20px"
-      background
-      layout="prev, pager, next"
-    />
+    <el-pagination :page-count="state.data.pages" @current-change="onCurrentPageChange"
+      style="text-align: center; margin-top: 20px" background layout="prev, pager, next" />
   </el-container>
 
-  <el-dialog
-    :title="(editCategoryDialogState.formModel.id != 0 ? '新增' : '编辑') + '分类'"
-    v-model="editCategoryDialogState.isShow"
-    :close-on-click-modal="false"
-  >
-    <el-form ref="editCategoryDialogStateFormRef" :model="editCategoryDialogState.formModel" :rules="editCategoryDialogState.formRules" label-width="120px">
+  <el-dialog :title="(editCategoryDialogState.formModel.id != 0 ? '新增' : '编辑') + '分类'"
+    v-model="editCategoryDialogState.isShow" :close-on-click-modal="false">
+    <el-form ref="editCategoryDialogStateFormRef" :model="editCategoryDialogState.formModel"
+      :rules="editCategoryDialogState.formRules" label-width="120px">
       <el-form-item label="名称" prop="name">
         <el-input v-model="editCategoryDialogState.formModel.name" placeholder="请输入名称"></el-input>
       </el-form-item>
@@ -72,7 +48,7 @@ import { ListState, DialogState } from '@/bean'
 import { addCategory, deleteCategory, updateCategory, queryCategory } from '@/api'
 
 interface CategoryFilter {
-  name: string|null
+  name: string | null
 }
 
 interface EditCategoryState {
@@ -104,17 +80,21 @@ function onRefresh() {
     state.value.data = data.data
   })
 }
+
 function onFilterSearch() {
   onRefresh()
 }
+
 function onFilterClear() {
   state.value.clearFilter()
   onRefresh()
 }
+
 function onSortChange(column: any) {
   state.value.saveOrder(column.prop, column.order)
   onRefresh()
 }
+
 function onCurrentPageChange(currentPage: number) {
   const changed = state.value.data.pageNum != currentPage
   state.value.data.pageNum = currentPage
@@ -122,10 +102,12 @@ function onCurrentPageChange(currentPage: number) {
     onRefresh()
   }
 }
+
 function onAddCategory() {
   editCategoryDialogState.value.reset()
   editCategoryDialogState.value.show()
 }
+
 function onEditCategory(row: any) {
   editCategoryDialogState.value.formModel = {
     id: row.id,
@@ -133,6 +115,7 @@ function onEditCategory(row: any) {
   }
   editCategoryDialogState.value.show()
 }
+
 function onDeleteCategory(row: any) {
   ElMessageBox.confirm('确认删除?', '提示', {
     confirmButtonText: '确定',
@@ -145,6 +128,7 @@ function onDeleteCategory(row: any) {
     })
   })
 }
+
 function onDialogSubmit() {
   if (editCategoryDialogState.value.formRef == undefined) return
   editCategoryDialogState.value.formRef.validate((valid: boolean) => {

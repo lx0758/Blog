@@ -1,36 +1,17 @@
 <template>
   <el-container class="login" direction="vertical">
     <p id="title">登录</p>
-    <el-form
-      status-icon
-      label-width="0"
-      ref="formRef"
-      :model="formModel"
-      :rules="formRules"
-    >
+    <el-form status-icon label-width="0" ref="formRef" :model="formModel" :rules="formRules">
       <el-form-item prop="username">
-        <el-input
-          class="item"
-          v-model="formModel.username"
-          auto-complete="off"
-          placeholder="请输入用户名" />
+        <el-input class="item" v-model="formModel.username" auto-complete="off" placeholder="请输入用户名" />
       </el-form-item>
       <el-form-item prop="password">
-        <el-input
-          class="item"
-          type="password"
-          v-model="formModel.password"
-          auto-complete="off"
-          placeholder="请输入密码" />
+        <el-input class="item" type="password" v-model="formModel.password" auto-complete="off" placeholder="请输入密码" />
       </el-form-item>
       <el-row type="flex" justify="space-between">
         <el-col :span="15">
           <el-form-item prop="captcha">
-            <el-input
-              class="item"
-              v-model="formModel.captcha"
-              auto-complete="off"
-              placeholder="请输入验证码" />
+            <el-input class="item" v-model="formModel.captcha" auto-complete="off" placeholder="请输入验证码" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -81,6 +62,7 @@ const captchaUrl = ref('/api/captcha')
 function onRefreshCaptcha() {
   captchaUrl.value = '/api/captcha?t=' + Math.random()
 }
+
 function onLogin() {
   if (formRef.value == undefined) return
   formRef.value.validate((valid: boolean) => {
@@ -90,17 +72,18 @@ function onLogin() {
       formModel.value.password,
       formModel.value.captcha,
     ).then(() => {
-        let userStore = useUserStore()
-        userStore.login()
-        ElMessage.success('登录成功')
-        router.replace('/')
-      })
+      let userStore = useUserStore()
+      userStore.login()
+      ElMessage.success('登录成功')
+      router.replace('/')
+    })
       .catch(() => {
         formModel.value.captcha = ''
         onRefreshCaptcha()
       })
   })
 }
+
 function onKeyDown(e: KeyboardEvent) {
   if (e.keyCode === 13) onLogin()
 }
@@ -110,7 +93,7 @@ onMounted(() => {
   onRefreshCaptcha()
 })
 onUnmounted(() => {
-    document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('keydown', onKeyDown)
 })
 </script>
 

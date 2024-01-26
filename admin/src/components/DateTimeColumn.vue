@@ -1,11 +1,6 @@
 <template>
-  <el-table-column
-    :formatter="onFormatDate"
-    :prop="props.prop"
-    :label="props.label"
-    :width="props.width"
-    sortable="custom"
-  ></el-table-column>
+  <el-table-column :formatter="onFormatDate" :prop="props.prop" :label="props.label" :width="props.width"
+    sortable="custom"></el-table-column>
 </template>
 
 <script setup lang="ts">

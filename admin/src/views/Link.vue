@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    class="full-page"
-    direction="vertical"
-  >
+  <el-container class="full-page" direction="vertical">
     <el-space wrap>
       <el-input placeholder="请输入标题" v-model="state.filter.title" clearable />
       <el-input placeholder="请输入链接" v-model="state.filter.link" clearable />
@@ -14,63 +11,48 @@
 
     <el-divider />
 
-    <el-table
-      class="full-page"
-      stripe
-      :data="state.data.list"
-      @sort-change="onSortChange"
-    >
+    <el-table class="full-page" stripe :data="state.data.list" @sort-change="onSortChange">
       <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
       <el-table-column prop="title" label="标题" width="240" fixed sortable="custom">
         <template #default="scope">
-          <el-link :href="scope.row.url" type="primary" target="_blank">{{
-            scope.row.title
-          }}</el-link>
+          <el-link :href="scope.row.url" type="primary" target="_blank">
+            {{ scope.row.title }}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column prop="url" label="链接地址" min-width="250" :show-overflow-tooltip="true">
         <template #default="scope">
-          <el-link :href="scope.row.url" type="info" target="_blank">{{ scope.row.url }}</el-link>
+          <el-link :href="scope.row.url" type="info" target="_blank">
+            {{ scope.row.url }}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column prop="weight" label="权重" width="80" sortable="custom"></el-table-column>
-      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
-      <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
+      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
+      <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
       <el-table-column prop="status" label="状态" width="70">
         <template #default="scope">
-          <el-tag
-            :type="scope.row.status === 1 ? 'success' : 'danger'"
-            disable-transitions
-            size="small"
-            >{{ scope.row.status === 1 ? '启用' : '禁用' }}
+          <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'" disable-transitions size="small">
+            {{ scope.row.status === 1 ? '启用' : '禁用' }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
           <el-button plain size="small" @click="onEditLink(scope.row)">编辑</el-button>
-          <el-button plain type="danger" size="small" @click="onDeleteLink(scope.row)"
-            >删除</el-button
-          >
+          <el-button plain type="danger" size="small" @click="onDeleteLink(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      :page-count="state.data.pages"
-      @current-change="onCurrentPageChange"
-      style="text-align: center; margin-top: 20px"
-      background
-      layout="prev, pager, next"
-    />
+    <el-pagination :page-count="state.data.pages" @current-change="onCurrentPageChange"
+      style="text-align: center; margin-top: 20px" background layout="prev, pager, next" />
   </el-container>
 
-  <el-dialog
-    :title="(editLinkDialogState.formModel.id != 0 ? '新增' : '编辑') + '友链'"
-    v-model="editLinkDialogState.isShow"
-    :close-on-click-modal="false"
-  >
-    <el-form ref="editLinkDialogStateFormRef" :model="editLinkDialogState.formModel" :rules="editLinkDialogState.formRules" label-width="120px">
+  <el-dialog :title="(editLinkDialogState.formModel.id != 0 ? '新增' : '编辑') + '友链'" v-model="editLinkDialogState.isShow"
+    :close-on-click-modal="false">
+    <el-form ref="editLinkDialogStateFormRef" :model="editLinkDialogState.formModel"
+      :rules="editLinkDialogState.formRules" label-width="120px">
       <el-form-item label="标题" prop="title">
         <el-input v-model="editLinkDialogState.formModel.title" placeholder="请输入标题"></el-input>
       </el-form-item>
@@ -98,9 +80,9 @@ import { ListState, DialogState } from '@/bean'
 import { addLink, deleteLink, updateLink, queryLink } from '@/api'
 
 interface LinkFilter {
-  title: string|null
-  link: string|null
-  status: number|null
+  title: string | null
+  link: string | null
+  status: number | null
 }
 
 interface EditLinkState {
@@ -146,17 +128,21 @@ function onRefresh() {
     state.value.data = data.data
   })
 }
+
 function onFilterSearch() {
   onRefresh()
 }
+
 function onFilterClear() {
   state.value.clearFilter()
   onRefresh()
 }
+
 function onSortChange(column: any) {
   state.value.saveOrder(column.prop, column.order)
   onRefresh()
 }
+
 function onCurrentPageChange(currentPage: number) {
   const changed = state.value.data.pageNum != currentPage
   state.value.data.pageNum = currentPage
@@ -164,10 +150,12 @@ function onCurrentPageChange(currentPage: number) {
     onRefresh()
   }
 }
+
 function onAddLink() {
   editLinkDialogState.value.reset()
   editLinkDialogState.value.show()
 }
+
 function onEditLink(row: any) {
   editLinkDialogState.value.formModel = {
     id: row.id,
@@ -178,6 +166,7 @@ function onEditLink(row: any) {
   }
   editLinkDialogState.value.show()
 }
+
 function onDeleteLink(row: any) {
   ElMessageBox.confirm('确认删除?', '提示', {
     confirmButtonText: '确定',
@@ -190,6 +179,7 @@ function onDeleteLink(row: any) {
     })
   })
 }
+
 function onDialogSubmit() {
   if (editLinkDialogState.value.formRef == undefined) return
   editLinkDialogState.value.formRef.validate((valid: boolean) => {
@@ -197,11 +187,11 @@ function onDialogSubmit() {
     let dialogData = editLinkDialogState.value.formModel
     if (dialogData.id != undefined && dialogData.id != 0) {
       updateLink(
-          dialogData.id,
-          dialogData.title,
-          dialogData.url,
-          dialogData.weight,
-          dialogData.status,
+        dialogData.id,
+        dialogData.title,
+        dialogData.url,
+        dialogData.weight,
+        dialogData.status,
       ).then(() => {
         ElMessage.success('更新成功')
         editLinkDialogState.value.hide()
@@ -209,10 +199,10 @@ function onDialogSubmit() {
       })
     } else {
       addLink(
-          dialogData.title,
-          dialogData.url,
-          dialogData.weight,
-          dialogData.status,
+        dialogData.title,
+        dialogData.url,
+        dialogData.weight,
+        dialogData.status,
       ).then(() => {
         ElMessage.success('新增成功')
         editLinkDialogState.value.hide()

@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    class="full-page"
-    direction="vertical"
-  >
+  <el-container class="full-page" direction="vertical">
     <el-space wrap>
       <el-input placeholder="请输入键" v-model="state.filter.key" clearable />
       <el-input placeholder="请输入值" v-model="state.filter.value" clearable />
@@ -14,44 +11,31 @@
 
     <el-divider />
 
-    <el-table
-      class="full-page"
-      stripe
-      :data="state.data.list"
-      @sort-change="onSortChange"
-    >
+    <el-table class="full-page" stripe :data="state.data.list" @sort-change="onSortChange">
       <el-table-column prop="key" label="键" width="250" fixed sortable="custom"></el-table-column>
       <el-table-column prop="value" label="值" min-width="300"></el-table-column>
       <el-table-column prop="description" label="描述" min-width="150"></el-table-column>
-      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
-      <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss" ></date-time-column>
+      <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
+      <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
       <el-table-column label="操作" width="160">
         <template #default="scope">
           <el-button plain size="small" @click="onEditConfig(scope.row)">编辑</el-button>
-          <el-button plain type="danger" size="small" @click="onDeleteConfig(scope.row)"
-            >删除</el-button
-          >
+          <el-button plain type="danger" size="small" @click="onDeleteConfig(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      :page-count="state.data.pages"
-      @current-change="onCurrentPageChange"
-      style="text-align: center; margin-top: 20px"
-      background
-      layout="prev, pager, next"
-    />
+    <el-pagination :page-count="state.data.pages" @current-change="onCurrentPageChange"
+      style="text-align: center; margin-top: 20px" background layout="prev, pager, next" />
   </el-container>
 
-  <el-dialog
-    :title="(editConfigDialogState.formModel.id != 0 ? '新增' : '编辑') + '配置'"
-    v-model="editConfigDialogState.isShow"
-    :close-on-click-modal="false"
-  >
-    <el-form ref="editConfigDialogStateFormRef" :model="editConfigDialogState.formModel" :rules="editConfigDialogState.formRules" label-width="120px">
+  <el-dialog :title="(editConfigDialogState.formModel.id != 0 ? '新增' : '编辑') + '配置'"
+    v-model="editConfigDialogState.isShow" :close-on-click-modal="false">
+    <el-form ref="editConfigDialogStateFormRef" :model="editConfigDialogState.formModel"
+      :rules="editConfigDialogState.formRules" label-width="120px">
       <el-form-item label="键" prop="key">
-        <el-input v-if="editConfigDialogState.formModel.update" v-model="editConfigDialogState.formModel.key" placeholder="请输入配置键" disabled></el-input>
+        <el-input v-if="editConfigDialogState.formModel.update" v-model="editConfigDialogState.formModel.key"
+          placeholder="请输入配置键" disabled></el-input>
         <el-input v-else v-model="editConfigDialogState.formModel.key" placeholder="请输入配置键"></el-input>
       </el-form-item>
       <el-form-item label="值" prop="value">
@@ -75,9 +59,9 @@ import { ListState, DialogState } from '@/bean'
 import { addConfig, deleteConfig, updateConfig, queryConfig } from '@/api'
 
 interface ConfigFilter {
-  key: string|null
-  value: string|null
-  description: string|null
+  key: string | null
+  value: string | null
+  description: string | null
 }
 
 interface EditConfigState {
@@ -119,17 +103,21 @@ function onRefresh() {
     state.value.data = data.data
   })
 }
+
 function onFilterSearch() {
   onRefresh()
 }
+
 function onFilterClear() {
   state.value.clearFilter()
   onRefresh()
 }
+
 function onSortChange(column: any) {
   state.value.saveOrder(column.prop, column.order)
   onRefresh()
 }
+
 function onCurrentPageChange(currentPage: number) {
   const changed = state.value.data.pageNum != currentPage
   state.value.data.pageNum = currentPage
@@ -137,10 +125,12 @@ function onCurrentPageChange(currentPage: number) {
     onRefresh()
   }
 }
+
 function onAddConfig() {
   editConfigDialogState.value.reset()
   editConfigDialogState.value.show()
 }
+
 function onEditConfig(row: any) {
   editConfigDialogState.value.formModel = {
     update: true,
@@ -150,6 +140,7 @@ function onEditConfig(row: any) {
   }
   editConfigDialogState.value.show()
 }
+
 function onDeleteConfig(row: any) {
   ElMessageBox.confirm('确认删除?', '提示', {
     confirmButtonText: '确定',
@@ -162,6 +153,7 @@ function onDeleteConfig(row: any) {
     })
   })
 }
+
 function onDialogSubmit() {
   if (editConfigDialogState.value.formRef == undefined) return
   editConfigDialogState.value.formRef.validate((valid: boolean) => {

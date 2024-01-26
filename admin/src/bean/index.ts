@@ -2,8 +2,8 @@ import { ref, type Ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 
 interface ListOrder {
-    name: string|null
-    method: string|null
+    name: string | null
+    method: string | null
 }
 interface ListData {
     pageNum: number
@@ -28,7 +28,7 @@ export class ListState<T extends Object> {
         list: [],
     })
 
-    constructor(filter: T){
+    constructor(filter: T) {
         this.filter = filter
     }
 
@@ -36,7 +36,7 @@ export class ListState<T extends Object> {
         this.filter = {} as T
     }
 
-    saveOrder(name: string|null, method: string|null) {
+    saveOrder(name: string | null, method: string | null) {
         this.order.name = name
         this.order.method = method
     }
@@ -44,11 +44,11 @@ export class ListState<T extends Object> {
 
 export class DialogState<T extends Object> {
     isShow: boolean = false
-    formRef: Ref<FormInstance|undefined>
+    formRef: Ref<FormInstance | undefined>
     formModel: T
     formRules: FormRules<T>
 
-    constructor(formRef: Ref<FormInstance|undefined>, form: T, rules: FormRules<T>){
+    constructor(formRef: Ref<FormInstance | undefined>, form: T, rules: FormRules<T>) {
         this.formRef = formRef
         this.formModel = form
         this.formRules = rules

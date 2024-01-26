@@ -36,8 +36,8 @@ export const useXXXXStore = defineStore(
     const c = ref(2)
     const d = ref(3)
 
-    function method() {}
-    
+    function method() { }
+
     return { a, b, c, d, method }
   },
   {
