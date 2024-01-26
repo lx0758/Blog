@@ -23,17 +23,24 @@
       @sort-change="onSortChange"
     >
       <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
-      <el-table-column prop="title" label="标题" min-width="250" fixed>
+      <el-table-column prop="title" label="标题" min-width="200" fixed>
         <template #default="scope">
-          <el-link :href="'/article/' + scope.row.id" type="primary" target="_blank">{{
-            scope.row.title
-          }}</el-link>
+          <el-link v-if="scope.row.url" :href="'/article/' + scope.row.url" type="primary" target="_blank">
+            {{scope.row.title}}
+          </el-link>
+          <el-link v-else :href="'/article/' + scope.row.id" type="primary" target="_blank">
+            {{scope.row.title}}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
-      <el-table-column prop="url" label="url" width="100" sortable="custom">
+      <el-table-column prop="url" label="url" width="200" sortable="custom">
         <template #default="scope">
-          {{ scope.row.url ? scope.row.url : '-' }}
+          <el-link v-if="scope.row.url" :href="'/article/' + scope.row.url" type="primary" target="_blank">
+            {{scope.row.url}}</el-link>
+          <div v-else>
+            {{ scope.row.url ? scope.row.url : '-' }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="weight" label="权重" width="80" sortable="custom"></el-table-column>
