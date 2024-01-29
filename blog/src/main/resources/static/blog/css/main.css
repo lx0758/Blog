@@ -27,10 +27,6 @@ body {
 main {
   display: block;
 }
-h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
-}
 hr {
   box-sizing: content-box; /* 1 */
   height: 0; /* 1 */
@@ -56,7 +52,7 @@ code,
 kbd,
 samp {
   font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-size: 0.95em; /* 2 */
 }
 small {
   font-size: 80%;
@@ -178,7 +174,7 @@ body {
   color: var(--text-color);
   font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 1em;
-  line-height: 2;
+  line-height: 1.5;
 }
 @media (max-width: 991px) {
   body {
@@ -198,22 +194,22 @@ h6 {
   margin: 20px 0 15px;
 }
 h1 {
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 h2 {
-  font-size: 1.375em;
+  font-size: 1.175em;
 }
 h3 {
-  font-size: 1.25em;
+  font-size: 1.05em;
 }
 h4 {
-  font-size: 1.125em;
+  font-size: 0.925em;
 }
 h5 {
-  font-size: 1em;
+  font-size: 0.8em;
 }
 h6 {
-  font-size: 0.875em;
+  font-size: 0.675em;
 }
 p {
   margin: 0 0 20px 0;
@@ -422,7 +418,7 @@ code {
   background: #eee;
   border-radius: 3px;
   color: #555;
-  padding: 2px 4px;
+  padding: 1px 4px;
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
@@ -1658,7 +1654,7 @@ pre .javascript .function {
 }
 @media (min-width: 1200px) {
   .post-body {
-    font-size: 1.125em;
+    font-size: 1em;
   }
 }
 .post-body .exturl .fa {
