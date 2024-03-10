@@ -98,7 +98,7 @@ class ArticleServiceImpl: ArticleService {
         }
         return articleMapper.getByIdOrUrl(id, url)?.apply {
             views = views?.plus(1)
-            articleMapper.updateByPrimaryKeySelective(Article(id, views = views))
+            articleMapper.updateByPrimaryKeySelective(Article(this.id, views = this.views))
         }
     }
 
