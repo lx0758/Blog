@@ -16,7 +16,7 @@ data class ArticlePageVO(
     companion object {
         fun of(article: Article): ArticlePageVO {
             return ArticlePageVO(
-                article.url ?: article.id.toString(),
+                if (!article.url.isNullOrBlank()) article.url!! else article.id.toString(),
                 (article.weight ?: 0) > 0,
                 article.title ?: "",
                 article.renderPage(),

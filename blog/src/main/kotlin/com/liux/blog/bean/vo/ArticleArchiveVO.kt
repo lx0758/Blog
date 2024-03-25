@@ -11,7 +11,7 @@ data class ArticleArchiveVO(
     companion object {
         fun of(article: Article): ArticleArchiveVO {
             return ArticleArchiveVO(
-                article.url ?: article.id.toString(),
+                if (!article.url.isNullOrBlank()) article.url!! else article.id.toString(),
                 article.title ?: "",
                 article.createTime!!,
             )

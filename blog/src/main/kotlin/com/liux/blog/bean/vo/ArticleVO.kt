@@ -24,7 +24,7 @@ data class ArticleVO(
         fun of(article: Article, catalogues: ArrayList<CatalogueVO>): ArticleVO {
             return ArticleVO(
                 article.id!!,
-                article.url ?: article.id.toString(),
+                if (!article.url.isNullOrBlank()) article.url!! else article.id.toString(),
                 article.title ?: "",
                 article.renderDescription(),
                 article.render(catalogues),

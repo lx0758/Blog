@@ -32,10 +32,13 @@ class EmailServiceImpl : EmailService {
             smtp,
             to,
             null,
-            "测试邮件",
+            "博客邮件发送测试",
 """
-你好：
-    如果你能看到这封邮件，说明博客的邮件参数已正确配置，祝您使用愉快！
+来自博客的自动邮件：
+Automated emails from blogs:
+
+如果你能看到这封邮件，说明博客的邮件参数已正确配置，祝您使用愉快！
+If you can see this email, it means that the email parameters of the blog are correctly configured, I wish you a happy use!
 """.trimIndent(),
         )
     }
@@ -48,13 +51,17 @@ class EmailServiceImpl : EmailService {
         val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(ownerEmail, null, "评论通知") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://" + themeService.getCacheBlogInfo().siteDomain + "/article/" + articleId
+            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${if (!article.url.isNullOrBlank()) article.url else articleId}"
 """
-你好, ${themeService.getCacheBlogInfo().ownerNickname}:
-    您的文章《${article.title}》收到了来自 $nickname 的评论。内容如下：
+${themeService.getCacheBlogInfo().ownerNickname}:
+
+您的文章《${article.title}》收到了来自 $nickname 的评论。内容如下：
+Your article "${article.title}" received a comment from "$nickname". The contents are as follows:
 
 $content
 
+文章链接如下：
+The article is linked below:
 $url
 """.trimIndent()
         }
@@ -69,14 +76,18 @@ $url
         val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(comment.email!!, ownerEmail, "评论收到新的回复") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://" + themeService.getCacheBlogInfo().siteDomain + "/article/" + articleId
+            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${if (!article.url.isNullOrBlank()) article.url else articleId}"
             val owner = themeService.getCacheBlogInfo().ownerNickname
 """
-你好，${comment.author!!}:
-    您在文章《${article.title}》发出的评论收到了来自 $owner 的回复。内容如下：
+${comment.author!!}:
+
+您在文章《${article.title}》发出的评论收到了来自 $owner 的回复。内容如下：
+Your comment on the "${article.title}" received a reply from the "$owner". The contents are as follows:
 
 $content
 
+文章链接如下：
+The article is linked below:
 $url
 """.trimIndent()
         }
