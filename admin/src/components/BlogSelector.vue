@@ -1,6 +1,7 @@
 <template>
   <el-select
     v-model="value"
+    style="width: 180px"
     :placeholder="stateRef.placeholder"
     :size="size">
     <el-option v-for="item in stateRef.options" :key="item.value" :label="item.label" :value="item.value">
