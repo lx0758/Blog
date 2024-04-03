@@ -84,9 +84,9 @@ class CategoryServiceImpl: CategoryService {
         if (category == null || category.id == id) {
             return 0;
         }
+        articleMapper.updateByMoveCategory(id, category.id!!)
         val deleteRow = categoryMapper.deleteByPrimaryKey(id)
         if (deleteRow > 0) {
-            articleMapper.updateByMoveCategory(id, category.id!!)
             applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CATEGORY)
         }
         return deleteRow
