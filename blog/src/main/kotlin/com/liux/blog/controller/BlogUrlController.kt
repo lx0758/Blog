@@ -17,7 +17,7 @@ class BlogUrlController {
 
     @GetMapping("/u/{key}")
     fun query(response: HttpServletResponse, @PathVariable("key") key: String) {
-        val url = urlService.getByKey(key) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val url = urlService.getByKey(key) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "短链不存在")
         response.sendRedirect(url.url)
     }
 }

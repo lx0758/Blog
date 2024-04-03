@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.multipart.MaxUploadSizeExceededException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @ControllerAdvice
 class ExceptionConfig {
@@ -21,11 +22,12 @@ class ExceptionConfig {
         response: HttpServletResponse,
         exception: Exception
     ): String {
-        logger.error(exception.message)
+        logger.error("${exception.javaClass.simpleName}: ${exception.message} (${request.requestURI})")
 
         val httpStatus = when(exception) {
             is SizeLimitExceededException, is MaxUploadSizeExceededException -> HttpStatus.PAYLOAD_TOO_LARGE
             is HttpClientErrorException -> HttpStatus.valueOf(exception.statusCode.value())
+            is NoResourceFoundException -> HttpStatus.NOT_FOUND
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
 

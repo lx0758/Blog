@@ -72,7 +72,7 @@ class IndexController {
 
     @GetMapping("/category/{categoryName}/{pageNum}")
     fun category(model: Model, @PathVariable("categoryName") categoryName: String, @PathVariable("pageNum") pageNum: Int): String {
-        val category = categoryService.getByByName(categoryName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val category = categoryService.getByByName(categoryName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "分类不存在")
         val articlePage = articleService.listByCategory(category.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
@@ -97,7 +97,7 @@ class IndexController {
 
     @GetMapping("/tag/{tagName}/{pageNum}")
     fun tag(model: Model, @PathVariable("tagName") tagName: String, @PathVariable("pageNum") pageNum: Int): String {
-        val tag = tagService.getByName(tagName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val tag = tagService.getByName(tagName) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "标签不存在")
         val articlePage = articleService.listByTag(tag.id!!, pageNum)
         val articles = articlePage.map { ArticleArchiveVO.of(it) }
         val paginationVO = PaginationVO.of(articlePage)
@@ -110,7 +110,7 @@ class IndexController {
 
     @GetMapping("/article/{article}")
     fun article(model: Model, @RequestUrl url: String, @PathVariable("article") articlePath: String): String {
-        val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND)
+        val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
         val catalogues = ArrayList<CatalogueVO>()
         val articleVO = ArticleVO.of(article, catalogues)
         val prev = articleService.getByPrev(article.id!!)
