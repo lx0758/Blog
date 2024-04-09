@@ -61,7 +61,7 @@ class TagServiceImpl: TagService {
             updateTime = Date(),
         ))
         if (updateRow > 0) {
-            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CATEGORY)
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.TAG)
         }
         return updateRow
     }
@@ -71,7 +71,7 @@ class TagServiceImpl: TagService {
         val deleteRow = tagMapper.deleteByPrimaryKey(id)
         if (deleteRow > 0) {
             tagMapper.deleteByCleanTagLink(id)
-            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.CATEGORY)
+            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.TAG)
         }
         return deleteRow
     }

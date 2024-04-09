@@ -74,12 +74,12 @@ class LinkController {
 
     private fun checkParams(title: String, url: String, weight: Int?, status: Int) {
         if (title.isEmpty()) {
-            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "键不能为空")
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "标题不能为空")
         }
         if (url.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "键不能为空")
         }
-        if (!LinkStatusEnum.values().isValid(status)) {
+        if (!LinkStatusEnum.entries.toTypedArray().isValid(status)) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "状态不正确")
         }
     }

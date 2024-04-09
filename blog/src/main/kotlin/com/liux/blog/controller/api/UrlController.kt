@@ -77,7 +77,7 @@ class UrlController {
 
     private fun checkParams(key: String, url: String, description: String, status: Int) {
         if (key.isEmpty()) {
-            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "名称不能为空")
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "键不能为空")
         }
         if (url.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "链接不能为空")
@@ -85,7 +85,7 @@ class UrlController {
         if (description.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "描述不能为空")
         }
-        if (!UrlStatusEnum.values().isValid(status)) {
+        if (!UrlStatusEnum.entries.toTypedArray().isValid(status)) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "状态不正确")
         }
     }

@@ -68,3 +68,12 @@ enum class UrlStatusEnum(
     ENABLE(1, "已启用"),
     ;
 }
+
+enum class FragmentStatusEnum(
+    override val value: Int,
+    val description: String,
+): Enum {
+    DISABLE(0, "已禁用"),
+    ENABLE(1, "已启用"),
+    ;
+}

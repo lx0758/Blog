@@ -173,7 +173,7 @@ class ArticleController {
         if (content.isEmpty()) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "内容不能为空")
         }
-        if (!ArticleStatusEnum.values().isValid(status)) {
+        if (!ArticleStatusEnum.entries.toTypedArray().isValid(status)) {
             throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "状态类型不正确")
         }
     }

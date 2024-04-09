@@ -8,6 +8,7 @@ import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
 import com.liux.blog.dao.TagMapper
 import com.liux.blog.service.ArticleService
+import com.liux.blog.service.FragmentService
 import com.liux.blog.util.PageHelperUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
@@ -25,6 +26,9 @@ class ArticleServiceImpl: ArticleService {
     private lateinit var articleMapper: ArticleMapper
     @Autowired
     private lateinit var tagMapper: TagMapper
+
+    @Autowired
+    private lateinit var fragmentService: FragmentService
 
     override fun listByPage(pageNum: Int): Page<Article> {
         val page = PageHelper.startPage<Article>(pageNum, 10)
@@ -99,6 +103,7 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.getByIdOrUrl(id, url)?.apply {
             views = views?.plus(1)
             articleMapper.updateByPrimaryKeySelective(Article(this.id, views = this.views))
+            fragmentService.apply(this)
         }
     }
 
