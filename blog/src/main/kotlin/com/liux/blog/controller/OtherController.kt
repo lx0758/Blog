@@ -1,5 +1,6 @@
 package com.liux.blog.controller
 
+import com.liux.blog.bean.po.Article
 import com.liux.blog.renderOther
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.CaptchaService
@@ -45,6 +46,12 @@ class OtherController {
         return """
             User-agent: *
             Allow: /article/
+            Disallow: /admin/
+            Disallow: /archive/
+            Disallow: /category/
+            Disallow: /page/
+            Disallow: /tag/
+            Disallow: /u/
             Sitemap: https://$domain/sitemap.xml
             """.trimIndent()
     }
@@ -58,16 +65,16 @@ class OtherController {
         val urlset = StringBuilder().apply {
             append("\t<url>\n")
             append("\t\t<loc>https://$domain/</loc>\n")
-            append("\t\t<lastmod>${updateTime.toDateString()}</lastmod>\n")
-            append("\t\t<changefreq>always</changefreq>\n")
-            append("\t\t<priority>1.0</priority>\n")
+            append("\t\t<lastmod>${updateTime.toDateString("yyyy-MM-dd")}</lastmod>\n")
+            append("\t\t<changefreq>daily</changefreq>\n")
+            append("\t\t<priority>0.5</priority>\n")
             append("\t</url>\n")
             articles.forEach {
                 append("\t<url>\n")
                 append("\t\t<loc>https://$domain/article/${it.url ?: it.id.toString()}</loc>\n")
-                append("\t\t<lastmod>${(it.updateTime ?: it.createTime!!).toDateString()}</lastmod>\n")
-                append("\t\t<changefreq>monthly</changefreq>\n")
-                append("\t\t<priority>0.8</priority>\n")
+                append("\t\t<lastmod>${(it.updateTime ?: it.createTime!!).toDateString("yyyy-MM-dd")}</lastmod>\n")
+                append("\t\t<changefreq>${getSitemapChangeFreq(it)}</changefreq>\n")
+                append("\t\t<priority>${if ((it.weight ?: 0) == 0) "0.6" else "0.9"}</priority>\n")
                 append("\t</url>\n")
             }
         }.toString()
@@ -76,5 +83,15 @@ class OtherController {
             $urlset
             </urlset>
             """.trimIndent()
+    }
+
+    private fun getSitemapChangeFreq(article: Article): String {
+        val updateTime = article.updateTime ?: article.createTime!!
+        val differenceDay = (Date().time - updateTime.time) / (1000 * 60 * 60 * 24)
+        if (differenceDay <= 0) return "daily"
+        if (differenceDay <= 7) return "weekly"
+        if (differenceDay <= 30) return "monthly"
+        if (differenceDay <= 365) return "yearly"
+        return "never"
     }
 }
