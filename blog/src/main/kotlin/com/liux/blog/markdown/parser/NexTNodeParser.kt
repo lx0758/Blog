@@ -1,13 +1,21 @@
-package com.liux.blog.markdown
+package com.liux.blog.markdown.parser
 
+import com.liux.blog.markdown.Flag
+import com.liux.blog.markdown.bean.CatalogueItem
+import com.liux.blog.markdown.node.*
 import org.commonmark.internal.BlockContinueImpl
 import org.commonmark.node.Block
 import org.commonmark.node.CustomBlock
 import org.commonmark.parser.block.*
 
-class NexTBlockParser(
+class NexTNodeParser(
     private val block: CustomBlock
 ) : AbstractBlockParser() {
+
+    companion object {
+        private const val CUSTOM_NODE_TOC = "[toc]"
+        private const val CUSTOM_NODE_MORE = "<!--more-->"
+    }
 
     override fun getBlock(): Block {
         return block
@@ -15,7 +23,7 @@ class NexTBlockParser(
 
     override fun tryContinue(parserState: ParserState?): BlockContinue? {
         return when (block) {
-            is SuspendMoreBlock -> {
+            is MoreSuspend -> {
                 BlockContinueImpl(-1, -1, false)
             }
             else -> BlockContinue.finished()
@@ -23,25 +31,30 @@ class NexTBlockParser(
     }
 
     class Factory(
-        private val flag: Flag
+        private val flag: Flag,
+        private val catalogues: List<CatalogueItem>,
     ) : AbstractBlockParserFactory() {
         override fun tryStart(state: ParserState, matchedBlockParser: MatchedBlockParser): BlockStart? {
             if (state.nextNonSpaceIndex > 0) return BlockStart.none()
+
             if (CUSTOM_NODE_TOC[0] == state.line.content[0] && CUSTOM_NODE_TOC == state.line.content.toString().lowercase()) {
-                if (flag.isShowToc()) {
-                    return BlockStart.of(NexTBlockParser(ShowTocBlock())).atIndex(state.index)
+                return if (flag.showToc()) {
+                    BlockStart.of(NexTNodeParser(Catalogue(catalogues))).atIndex(state.index)
+                } else {
+                    BlockStart.of(NexTNodeParser(NoneCatalogue())).atIndex(state.index)
                 }
-                return BlockStart.of(NexTBlockParser(TocBlock())).atIndex(state.index)
             }
+
             if (CUSTOM_NODE_MORE[0] == state.line.content[0] && CUSTOM_NODE_MORE == state.line.content.toString().replace(" ", "").lowercase()) {
+                if (flag.showMoreAnchor()) {
+                    return BlockStart.of(NexTNodeParser(MoreAnchor())).atIndex(state.index)
+                }
                 if (flag.isMoreSuspend()) {
-                    return BlockStart.of(NexTBlockParser(SuspendMoreBlock())).atIndex(state.index)
+                    return BlockStart.of(NexTNodeParser(MoreSuspend())).atIndex(state.index)
                 }
-                if (flag.isMoreAnchor()) {
-                    return BlockStart.of(NexTBlockParser(AnchorMoreBlock())).atIndex(state.index)
-                }
-                return BlockStart.of(NexTBlockParser(MoreBlock())).atIndex(state.index)
+                return BlockStart.of(NexTNodeParser(NoneMore())).atIndex(state.index)
             }
+
             return BlockStart.none()
         }
     }

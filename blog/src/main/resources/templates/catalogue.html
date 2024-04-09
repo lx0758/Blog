@@ -6,7 +6,7 @@
 <body>
 <div th:fragment="tree(childs, level)">
     <li th:class="${'nav-item nav-level-' + level}" th:each="child,iterator : ${childs}">
-        <a class="nav-link" th:href="${'#' + child.title}">
+        <a class="nav-link" th:href="${'#' + child.anchor}">
             <span class="nav-number" th:text="${iterator.count + '.'}"></span>
             <span class="nav-text" th:text="${child.title}"></span>
         </a>

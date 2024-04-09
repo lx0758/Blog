@@ -1,28 +1,26 @@
-package com.liux.blog.markdown
+package com.liux.blog.markdown.render
 
+import com.liux.blog.markdown.bean.CatalogueItem
+import com.liux.blog.markdown.node.*
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.CustomBlock
 import org.commonmark.node.FencedCodeBlock
 import org.commonmark.node.Node
 import org.commonmark.renderer.NodeRenderer
 import org.commonmark.renderer.html.HtmlNodeRendererContext
-import org.commonmark.renderer.html.HtmlNodeRendererFactory
 
 class NexTNodeRenderer(
-    htmlNodeRendererContext: HtmlNodeRendererContext,
+    htmlNodeRendererContext: HtmlNodeRendererContext
 ) : AbstractVisitor(), NodeRenderer {
 
     private val html = htmlNodeRendererContext.writer
 
     override fun getNodeTypes(): MutableSet<Class<out Node>> {
         return hashSetOf(
-            TocBlock::class.java,
-            ShowTocBlock::class.java,
-
-            MoreBlock::class.java,
-            SuspendMoreBlock::class.java,
-            AnchorMoreBlock::class.java,
-
+            Catalogue::class.java,
+            NoneCatalogue::class.java,
+            MoreSuspend::class.java,
+            MoreAnchor::class.java,
             FencedCodeBlock::class.java,
         )
     }
@@ -33,34 +31,20 @@ class NexTNodeRenderer(
 
     override fun visit(customBlock: CustomBlock) {
         when(customBlock) {
-            is ShowTocBlock -> {
-                rendererCatalogues(customBlock.catalogues)
+            is Catalogue -> {
+                rendererCatalogue(customBlock.catalogues)
             }
-            is SuspendMoreBlock -> {
-                html.raw(CUSTOM_NODE_MORE)
+            is NoneCatalogue -> {}
+            is MoreSuspend -> {
+                html.raw("<!--more-->")
             }
-            is AnchorMoreBlock -> {
+            is MoreAnchor -> {
                 html.tag("a", mapOf("id" to "more", "href" to "#more"))
                 html.tag("/a")
             }
+            is NoneMore -> {}
             else -> {}
         }
-    }
-
-    private fun rendererCatalogues(catalogues: Collection<Catalogue>?) {
-        if (catalogues == null) return
-        html.tag("ol")
-        catalogues.forEach {
-            html.tag("li")
-            html.tag("strong")
-            html.tag("a", mapOf("href" to "#${it.title}"))
-            html.raw(it.title)
-            html.tag("/a")
-            html.tag("/strong")
-            html.tag("/li")
-            rendererCatalogues(it.childs)
-        }
-        html.tag("/ol")
     }
 
     override fun visit(fencedCodeBlock: FencedCodeBlock) {
@@ -74,9 +58,19 @@ class NexTNodeRenderer(
         html.line()
     }
 
-    class Factory : HtmlNodeRendererFactory {
-        override fun create(context: HtmlNodeRendererContext): NodeRenderer {
-            return NexTNodeRenderer(context)
+    private fun rendererCatalogue(catalogues: List<CatalogueItem>?) {
+        if (catalogues == null) return
+        html.tag("ol")
+        catalogues.forEach { catalogue ->
+            html.tag("li")
+            html.tag("strong")
+            html.tag("a", mapOf("href" to "#${catalogue.anchor}"))
+            html.raw(catalogue.title)
+            html.tag("/a")
+            html.tag("/strong")
+            html.tag("/li")
+            rendererCatalogue(catalogue.childs)
         }
+        html.tag("/ol")
     }
 }

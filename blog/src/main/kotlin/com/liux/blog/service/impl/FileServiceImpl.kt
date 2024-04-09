@@ -115,8 +115,8 @@ class FileServiceImpl: FileService {
         val uuid = UUID.randomUUID().toString().replace("-", "")
 
         for (index in uuid.indices step 4) {        //分为8组
-            val sub = uuid.substring(index, index + 4);  //每组4位
-            val int = Integer.parseInt(sub, 16);
+            val sub = uuid.substring(index, index + 4)  //每组4位
+            val int = Integer.parseInt(sub, 16)
             stringBuilder.append(chars[int % 0x3E])
         }
         return stringBuilder.toString()

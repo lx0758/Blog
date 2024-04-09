@@ -19,9 +19,11 @@ data class ArticleVO(
     var views: Int,
     var enableComment: Boolean,
     var tags: List<String>,
+    var catalogues: List<CatalogueVO>,
 ) {
     companion object {
-        fun of(article: Article, catalogues: ArrayList<CatalogueVO>): ArticleVO {
+        fun of(article: Article): ArticleVO {
+            val catalogues = ArrayList<CatalogueVO>()
             return ArticleVO(
                 article.id!!,
                 if (!article.url.isNullOrBlank()) article.url!! else article.id.toString(),
@@ -35,6 +37,7 @@ data class ArticleVO(
                 article.views!!,
                 article.commentStatus == ArticleCommentStatusEnum.ENABLE.value,
                 article.tags?.map { it.name!! } ?: emptyList(),
+                catalogues,
             )
         }
     }

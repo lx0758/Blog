@@ -1,15 +1,13 @@
-package com.liux.blog.markdown
+package com.liux.blog.markdown.render
 
 import org.commonmark.node.Heading
 import org.commonmark.node.Link
 import org.commonmark.node.Node
 import org.commonmark.renderer.html.AttributeProvider
-import org.commonmark.renderer.html.AttributeProviderContext
-import org.commonmark.renderer.html.AttributeProviderFactory
 
 /**
  * 1. 给超链接设置新标签打开属性
- * 2. 给标题添加锚点
+ * 2. 获取标题锚点
  */
 class NexTAttributeProvider : AttributeProvider {
 
@@ -22,16 +20,9 @@ class NexTAttributeProvider : AttributeProvider {
                 }
             }
             is Heading -> {
-                val title = node.parseTitle()
-                attributes?.set("id", title);
-                attributes?.set("href", "#$title");
+                val anchor = attributes?.get("id") ?: return
+                attributes["href"] = "#${anchor}"
             }
-        }
-    }
-
-    class Factory : AttributeProviderFactory {
-        override fun create(context: AttributeProviderContext): AttributeProvider {
-            return NexTAttributeProvider()
         }
     }
 }

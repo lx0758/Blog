@@ -82,7 +82,7 @@ class CategoryServiceImpl: CategoryService {
     override fun deleteByAdmin(id: Int): Int {
         val category = getDefaultCategory()
         if (category == null || category.id == id) {
-            return 0;
+            return 0
         }
         articleMapper.updateByMoveCategory(id, category.id!!)
         val deleteRow = categoryMapper.deleteByPrimaryKey(id)

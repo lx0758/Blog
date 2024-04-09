@@ -4,17 +4,16 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.liux.blog.bean.po.Article
 import com.liux.blog.bean.vo.CatalogueVO
-import com.liux.blog.markdown.MarkdownHelper
+import com.liux.blog.markdown.*
+import com.liux.blog.markdown.bean.CatalogueItem
 import jakarta.servlet.http.HttpServletRequest
-import com.liux.blog.markdown.FLAG_MORE_ANCHOR
-import com.liux.blog.markdown.FLAG_MORE_SUSPEND
-import com.liux.blog.markdown.FLAG_TOC
 import org.jsoup.Jsoup
 import ua_parser.Client
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun Any.toJSONString(): String {
@@ -58,29 +57,41 @@ fun HttpServletRequest.getUserAgent(): String {
     return getHeader("User-Agent")
 }
 
-fun Article.render(catalogues: ArrayList<CatalogueVO>): String {
-    return MarkdownHelper.parse(content, FLAG_TOC or FLAG_MORE_ANCHOR, catalogues)
+fun Article.render(catalogueResult: ArrayList<CatalogueVO>): String {
+    val catalogues = ArrayList<CatalogueItem>()
+    val html = MarkdownHelper.parseHtml(content, MarkdownHelper.FLAG_SHOW_INFO, catalogues)
+    transformCatalogueItem(catalogues, catalogueResult)
+    return html
 }
-
-fun Article.renderOther(): String {
-    return MarkdownHelper.parse(content)
-}
-
 fun Article.renderPage(): String {
-    return MarkdownHelper.parse(content, FLAG_MORE_SUSPEND)
+    return MarkdownHelper.parseHtml(content, MarkdownHelper.FLAG_MORE_SUSPEND)
 }
-
 fun Article.renderDescription(): String {
-    val html = MarkdownHelper.parse(content, FLAG_MORE_SUSPEND)
-    val document = Jsoup.parse(html)
-    return document.text()
+    val html = MarkdownHelper.parseHtml(content, MarkdownHelper.FLAG_MORE_SUSPEND)
+    val text = Jsoup.parse(html).text()
+    return text
+}
+fun Article.renderSearch(): String {
+    val html = MarkdownHelper.parseHtml(content)
+    val text = Jsoup.parse(html).text()
+    return text
+}
+private fun transformCatalogueItem(catalogues: Collection<CatalogueItem>, catalogueVOs: MutableList<CatalogueVO>) {
+    for (catalogue in catalogues) {
+        val childs = catalogue.childs
+        var childVOs: MutableList<CatalogueVO>? = null
+        if (childs != null) {
+            childVOs = ArrayList()
+            transformCatalogueItem(childs, childVOs)
+        }
+        catalogueVOs.add(CatalogueVO(catalogue.title, catalogue.anchor, childVOs))
+    }
 }
 
 val Client.browser: String
     get() {
         return if (userAgent != null) "${userAgent.family} ${userAgent.major}${if (userAgent.minor.isNullOrEmpty()) "" else '.' + userAgent.minor}${if (userAgent.patch.isNullOrEmpty()) "" else '.' + userAgent.patch}" else "Unknown"
     }
-
 val Client.system: String
     get() {
         return if (os != null) "${os.family} ${os.major}${if (os.minor.isNullOrEmpty()) "" else '.' + os.minor}${if (os.patch.isNullOrEmpty()) "" else '.' + os.patch}" else "Unknown"

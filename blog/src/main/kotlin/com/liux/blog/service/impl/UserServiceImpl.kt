@@ -105,7 +105,7 @@ class UserServiceImpl: UserService {
     }
 
     override fun updatePassword(id: Int, password: String): Boolean {
-        val encodedPassword = passwordEncoder.encode(password);
+        val encodedPassword = passwordEncoder.encode(password)
         val updateRow = userMapper.updateByPrimaryKeySelective(User(
             id = id,
             password = encodedPassword,
