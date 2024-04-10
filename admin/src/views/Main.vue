@@ -23,6 +23,12 @@
             </el-icon>
             <span>文章</span>
           </el-menu-item>
+          <el-menu-item index="/fragment">
+            <el-icon>
+              <DocumentCopy />
+            </el-icon>
+            <span>片段</span>
+          </el-menu-item>
           <el-menu-item index="/comment">
             <el-icon>
               <ChatDotSquare />
@@ -143,9 +149,7 @@
 
       <el-main>
         <router-view v-slot="{ Component }" v-if="state.isRouterAvailable">
-          <keep-alive exclude="ArticleEditor">
-            <component :is="Component" />
-          </keep-alive>
+          <component :is="Component" />
         </router-view>
       </el-main>
     </el-container>

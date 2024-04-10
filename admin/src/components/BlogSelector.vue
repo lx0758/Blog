@@ -89,6 +89,13 @@ onMounted(() => {
         {value: 1, label: '启用'}
       ]
       break
+    case 8:
+      stateRef.value.placeholder = '片段状态'
+      stateRef.value.options = [
+        {value: 0, label: '禁用'},
+        {value: 1, label: '启用'}
+      ]
+      break
   }
 })
 </script>

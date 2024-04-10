@@ -27,6 +27,19 @@ const routes = [
         }
       },
       {
+        path: '/fragment',
+        name: '片段',
+        component: () => import('@/views/Fragment.vue')
+      },
+      {
+        path: '/fragment-edit/:id*',
+        name: '片段编辑',
+        component: () => import('@/views/FragmentEditor.vue'),
+        meta: {
+          notKeepAlive: true
+        }
+      },
+      {
         path: '/comment',
         name: '评论',
         component: () => import('@/views/Comment.vue')
