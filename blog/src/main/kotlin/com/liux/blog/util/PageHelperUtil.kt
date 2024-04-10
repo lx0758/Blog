@@ -17,11 +17,12 @@ class PageHelperUtil {
     }
 
     enum class Type(
-        private val transformer: Transformer = AutoHumpTransformer()
+        vararg pairs: Pair<String, String>
     ) {
-        ARTICLE(SupplementTransformer(mapOf(
-            Pair("example", "convert_to(example, 'GBK')")
-        ))),
+        ARTICLE(
+            // 按需添加自定义规则
+            "column_name" to "convert_to(field_name, 'GBK')",
+        ),
         CATEGORY,
         CONFIG,
         COMMENT,
@@ -31,6 +32,8 @@ class PageHelperUtil {
         URL,
         ;
 
+        private val transformer = CustomRuleTransformer(*pairs)
+
         fun transform(name: String): String {
             return transformer.transform(name)
         }
@@ -39,7 +42,7 @@ class PageHelperUtil {
             fun transform(name: String): String
         }
 
-        private open class AutoHumpTransformer : Transformer {
+        private open class AutoConvertTransformer : Transformer {
             override fun transform(name: String): String {
                 val builder = StringBuilder()
                 name.forEach {
@@ -54,9 +57,10 @@ class PageHelperUtil {
             }
         }
 
-        private class SupplementTransformer(
-            private val map: Map<String, String>
-        ) : AutoHumpTransformer() {
+        private open class CustomRuleTransformer(
+            vararg pairs: Pair<String, String>
+        ) : AutoConvertTransformer() {
+            private val map = mapOf(*pairs)
             override fun transform(name: String): String {
                 return map[name] ?: super.transform(name)
             }

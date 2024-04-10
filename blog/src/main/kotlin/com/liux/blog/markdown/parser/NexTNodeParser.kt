@@ -26,7 +26,7 @@ class NexTNodeParser(
             is MoreSuspend -> {
                 BlockContinueImpl(-1, -1, false)
             }
-            else -> BlockContinue.finished()
+            else -> BlockContinue.none()
         }
     }
 
