@@ -59,7 +59,9 @@ class MarkdownHelper {
                 .build()
                 .parse(content)
 
-            return HTML_RENDERER.render(document)
+            val html = HTML_RENDERER.render(document)
+
+            return html
         }
     }
 }

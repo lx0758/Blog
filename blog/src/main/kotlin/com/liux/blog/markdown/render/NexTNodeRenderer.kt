@@ -2,10 +2,7 @@ package com.liux.blog.markdown.render
 
 import com.liux.blog.markdown.bean.CatalogueItem
 import com.liux.blog.markdown.node.*
-import org.commonmark.node.AbstractVisitor
-import org.commonmark.node.CustomBlock
-import org.commonmark.node.FencedCodeBlock
-import org.commonmark.node.Node
+import org.commonmark.node.*
 import org.commonmark.renderer.NodeRenderer
 import org.commonmark.renderer.html.HtmlNodeRendererContext
 
@@ -22,6 +19,7 @@ class NexTNodeRenderer(
             MoreSuspend::class.java,
             MoreAnchor::class.java,
             FencedCodeBlock::class.java,
+            SoftLineBreak::class.java,
         )
     }
 
@@ -55,6 +53,11 @@ class NexTNodeRenderer(
         html.text(fencedCodeBlock.literal)
         html.tag("/code")
         html.tag("/pre")
+        html.line()
+    }
+
+    override fun visit(softLineBreak: SoftLineBreak) {
+        html.tag("br", null, true)
         html.line()
     }
 
