@@ -11,7 +11,8 @@ data class BlogVO(
     var siteDescription: String,
     var siteKeywords: String,
 
-    var siteBeian: String,
+    var siteBeianIcp: String,
+    var siteBeianPs: String,
     var siteBaidu: String,
     var siteCreateYear: String,
 
@@ -45,7 +46,8 @@ data class BlogVO(
                 configs[Config.KEY_SITE_TITLE] ?: "Blog",
                 configs[Config.KEY_SITE_DESCRIPTION] ?: "",
                 configs[Config.KEY_SITE_KEYWORDS] ?: "",
-                configs[Config.KEY_SITE_BEIAN] ?: "",
+                configs[Config.KEY_SITE_BEIAN_ICP] ?: "",
+                configs[Config.KEY_SITE_BEIAN_PS] ?: "",
                 configs[Config.KEY_SITE_BAIDU] ?: "",
                 configs[Config.KEY_SITE_CREATE_YEAR] ?: "2020",
 

@@ -460,16 +460,13 @@
     <footer class="footer">
         <div class="footer-inner">
 
-            <div class="beian">
-                <a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank" th:text="${blog.siteBeian}"></a>
+            <div class="beian" th:if="${not blog.siteBeianIcp.isEmpty()}">
+                <a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank" th:text="${blog.siteBeianIcp}"></a>
             </div>
 
-            <div class="copyright">
-                <span itemprop="copyrightYear" th:text="${'&copy; ' + blog.siteCreateYear + ' – ' + #dates.format(#dates.createNow(), 'yyyy')}"></span>
-                <span class="with-love">
-                    <i class="fa fa-user"></i>
-                </span>
-                <span class="author" itemprop="copyrightHolder" th:text="${blog.ownerNickname}"></span>
+            <div class="beian" th:if="${not blog.siteBeianPs.isEmpty()}">
+                <img style="height: 21px;display: inline;vertical-align: text-top;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAbCAYAAACJISRoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4NpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpmNDFkNGExYy0xMjZjLTQ4MDQtYTE3Zi1mNTJkYTJjZDkzMmYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OEJBRjQ0MDRGN0RDMTFFRUI5NENGNzI0MUE2OEQwQ0YiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OEJBRjQ0MDNGN0RDMTFFRUI5NENGNzI0MUE2OEQwQ0YiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjIgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDplZmVjMTAxOS02ZjI2LTRlNjMtYmU3ZC03ZTI3ZDMxYmE3NzUiIHN0UmVmOmRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo1MThjZTRmYS1hMjQ4LTAwNGYtYWVhYi1h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">
+                <a th:href="${'https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=' + blog.siteBeianPs.replaceAll('[\u4e00-\u9fa5]', '')}" rel="noopener" target="_blank" th:text="${blog.siteBeianPs}"></a>
             </div>
 
             <div class="powered-by">
@@ -478,6 +475,14 @@
                 &amp;
                 <a href="https://github.com/theme-next/hexo-theme-next" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
                 强力驱动
+            </div>
+
+            <div class="copyright">
+                <span itemprop="copyrightYear" th:text="${'&copy; ' + blog.siteCreateYear + ' – ' + #dates.format(#dates.createNow(), 'yyyy')}"></span>
+                <span class="with-love">
+                    <i class="fa fa-user"></i>
+                </span>
+                <span class="author" itemprop="copyrightHolder" th:text="${blog.ownerNickname}"></span>
             </div>
 
 
@@ -573,7 +578,7 @@
 </script>
 
 
-<script th:inline="javascript">
+<script th:inline="javascript" th:if="${not blog.siteBaidu.isEmpty()}">
     if (!/^http:\/\/(localhost|127.0.0.1)/.test(location.href)) {
         var _hmt = _hmt || [];
         (function (key) {

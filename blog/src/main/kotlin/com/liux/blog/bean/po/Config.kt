@@ -22,7 +22,8 @@ data class Config(
         const val KEY_SITE_TITLE = "SITE_TITLE"
         const val KEY_SITE_DESCRIPTION = "SITE_DESCRIPTION"
         const val KEY_SITE_KEYWORDS = "SITE_KEYWORDS"
-        const val KEY_SITE_BEIAN = "SITE_BEIAN"
+        const val KEY_SITE_BEIAN_ICP = "SITE_BEIAN_ICP"
+        const val KEY_SITE_BEIAN_PS = "SITE_BEIAN_PS"
         const val KEY_SITE_BAIDU = "SITE_BAIDU"
         const val KEY_SITE_CREATE_YEAR = "SITE_CREATE_YEAR"
     }
