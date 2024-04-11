@@ -81,9 +81,6 @@ const editConfigDialogState = ref(new DialogState<EditConfigState>(
     key: [
       { required: true, message: '键不能为空', trigger: 'blur' }
     ],
-    value: [
-      { required: true, message: '值不能为空', trigger: 'blur' }
-    ],
     description: [
       { required: true, message: '描述不能为空', trigger: 'blur' }
     ],
