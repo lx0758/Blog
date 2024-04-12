@@ -23,7 +23,7 @@ data class ArticleVO(
                 article.id!!,
                 article.title ?: "",
                 article.categoryId!!,
-                article.url,
+                article.url?.url ?: "",
                 article.tags?.map { it.name!! } ?: emptyList(),
                 article.content ?: "",
                 article.weight,

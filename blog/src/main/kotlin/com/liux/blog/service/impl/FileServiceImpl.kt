@@ -20,6 +20,11 @@ class FileServiceImpl: FileService {
 
     @Autowired
     private lateinit var fileMapper: FileMapper
+    override fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<File> {
+        val page = PageHelper.startPage<File>(pageNum, pageSize)
+        fileMapper.selectByAdminDashboard()
+        return page
+    }
 
     override fun listByAdmin(
         name: String?,

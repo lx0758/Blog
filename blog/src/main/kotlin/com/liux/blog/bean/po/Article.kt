@@ -17,8 +17,6 @@ data class Article(
     var categoryId: Int? = null,
     // 作者ID
     var authorId: Int? = null,
-    // 自定义url
-    var url: String? = null,
     // 权重
     var weight: Int? = null,
     // 阅读量
@@ -36,6 +34,10 @@ data class Article(
     var category: Category? = null,
     /* 作者 */
     var author: User? = null,
+    // 自定义url
+    var url: ArticleUrl? = null,
+    // 自定义urls
+    var urls: List<ArticleUrl>? = null,
     /* 标签 */
     var tags: List<Tag>? = null,
 ) : Serializable

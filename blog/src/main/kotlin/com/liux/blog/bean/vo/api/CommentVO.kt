@@ -1,5 +1,6 @@
 package com.liux.blog.bean.vo.api
 
+import com.liux.blog.bean.po.ArticleUrl
 import com.liux.blog.bean.po.Comment
 import com.liux.blog.browser
 import com.liux.blog.system
@@ -9,6 +10,7 @@ data class CommentVO(
     val id: Int,
     val articleId: Int,
     val articleTitle: String,
+    val articleUrl: String,
     val nickname: String,
     val email: String,
     val url: String,
@@ -29,6 +31,7 @@ data class CommentVO(
                 comment.id!!,
                 comment.article?.id ?: 0,
                 comment.article?.title ?: "",
+                comment.article?.url?.url ?: "",
                 comment.author ?: "匿名用户",
                 comment.email ?: "",
                 comment.url ?: "",

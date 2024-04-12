@@ -18,8 +18,8 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
-    <association property="childs" javaType="java.util.List" select="selectChildById" column="id" />
+    <association column="article_id" property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper"/>
+    <collection column="id" property="childs" javaType="java.util.List" ofType="com.liux.blog.bean.po.Comment" select="selectChildById"/>
   </resultMap>
   <resultMap id="ItemResultMap" type="com.liux.blog.bean.po.Comment">
     <!--@mbg.generated-->
@@ -37,7 +37,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper" column="article_id"/>
+    <association column="article_id" property="article" select="com.liux.blog.dao.ArticleMapper.getByMapper"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
@@ -69,6 +69,14 @@
     select count(id)
     from t_comment
     where status = 1
+  </select>
+  <select id="selectByAdminDashboard" resultMap="ItemResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from t_comment
+    where status = 1
+    order by id desc
   </select>
   <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.Comment" resultMap="ItemResultMap">
     <!--@mbg.generated-->

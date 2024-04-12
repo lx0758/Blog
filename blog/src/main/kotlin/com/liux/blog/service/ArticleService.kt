@@ -11,8 +11,8 @@ interface ArticleService {
     fun listByTag(tagId: Int, pageNum: Int): Page<Article>
     fun listBySearch(): List<Article>
     fun listBySitemap(): List<Article>
-
     fun listByExport(): List<Article>
+    fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<Article>
     fun listByAdmin(
         title: String?,
         categoryId: Int?,
@@ -26,7 +26,6 @@ interface ArticleService {
     ): Page<Article>
 
     fun getByBlog(id: Int): Article?
-    fun getByUrl(url: String): Article?
     fun getByPrev(articleId: Int): Article?
     fun getByNext(articleId: Int): Article?
     fun getByAdmin(id: Int): Article?

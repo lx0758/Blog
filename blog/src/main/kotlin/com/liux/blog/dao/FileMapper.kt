@@ -10,6 +10,7 @@ interface FileMapper {
     fun insertSelective(record: File?): Int
     fun getByPrimaryKey(id: Int?): File?
     fun getCount(): Int
+    fun selectByAdminDashboard(): List<File>
     fun selectByAdmin(file: File): List<File>
     fun updateByPrimaryKeySelective(file: File?): Int
     fun updateByPrimaryKey(file: File?): Int

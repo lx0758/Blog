@@ -105,7 +105,7 @@
             update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <select id="selectByArticle" resultMap="BaseResultMap">
+    <select id="selectByArticleId" resultMap="BaseResultMap">
         select t_tag.id,
                t_tag."name",
                t_tag.create_time,
@@ -142,7 +142,7 @@
         </if>
         ORDER BY t_tag.id
     </select>
-    <select id="selectCount" resultType="INTEGER">
+    <select id="getCount" resultType="INTEGER">
         SELECT count(1) FROM (select 1 from t_article_tag group by tag_id) as temp
     </select>
     <select id="getByTagCount" resultType="INTEGER">

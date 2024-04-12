@@ -30,6 +30,12 @@ class CommentServiceImpl: CommentService {
         return page
     }
 
+    override fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<Comment> {
+        val page = PageHelper.startPage<Comment>(pageNum, pageSize)
+        commentMapper.selectByAdminDashboard()
+        return page
+    }
+
     override fun listByAdmin(
         articleId: Int?,
         author: String?,

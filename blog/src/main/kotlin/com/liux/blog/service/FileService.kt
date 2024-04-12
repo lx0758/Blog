@@ -5,6 +5,7 @@ import com.liux.blog.bean.po.File
 import org.springframework.web.multipart.MultipartFile
 
 interface FileService {
+    fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<File>
     fun listByAdmin(
         name: String?,
         type: String?,

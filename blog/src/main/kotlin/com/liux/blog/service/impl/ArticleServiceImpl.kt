@@ -4,8 +4,11 @@ import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
 import com.liux.blog.bean.event.BaseInfoUpdateEvent
 import com.liux.blog.bean.po.Article
+import com.liux.blog.bean.po.ArticleUrl
+import com.liux.blog.bean.po.ArticleUrlStatusEnum
 import com.liux.blog.bean.po.Tag
 import com.liux.blog.dao.ArticleMapper
+import com.liux.blog.dao.ArticleUrlMapper
 import com.liux.blog.dao.TagMapper
 import com.liux.blog.service.ArticleService
 import com.liux.blog.service.FragmentService
@@ -24,6 +27,8 @@ class ArticleServiceImpl: ArticleService {
 
     @Autowired
     private lateinit var articleMapper: ArticleMapper
+    @Autowired
+    private lateinit var articleUrlMapper: ArticleUrlMapper
     @Autowired
     private lateinit var tagMapper: TagMapper
 
@@ -66,6 +71,12 @@ class ArticleServiceImpl: ArticleService {
         return articleMapper.selectByExport()
     }
 
+    override fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<Article> {
+        val page = PageHelper.startPage<Article>(pageNum, pageSize)
+        articleMapper.selectByAdminDashboard()
+        return page
+    }
+
     override fun listByAdmin(
         title: String?,
         categoryId: Int?,
@@ -83,24 +94,14 @@ class ArticleServiceImpl: ArticleService {
             id = 0,
             categoryId = categoryId,
             title = title,
-            url = url,
             commentStatus = commentStatus,
             status = status,
-        ))
+        ), url)
         return page
     }
 
     override fun getByBlog(id: Int): Article? {
-        return articleMapper.getByBlog(id)
-    }
-
-    override fun getByUrl(url: String): Article? {
-        val id = try {
-            url.toInt()
-        } catch (e: NumberFormatException) {
-            0
-        }
-        return articleMapper.getByIdOrUrl(id, url)?.apply {
+        return articleMapper.getByBlog(id)?.apply {
             views = views?.plus(1)
             articleMapper.updateByPrimaryKeySelective(Article(this.id, views = this.views))
             fragmentService.apply(this)
@@ -144,7 +145,6 @@ class ArticleServiceImpl: ArticleService {
             content = content,
             categoryId = categoryId,
             authorId = userId,
-            url = url,
             weight = weight,
             views = 0,
             commentStatus = commentStatus,
@@ -153,6 +153,16 @@ class ArticleServiceImpl: ArticleService {
             updateTime = null,
         )
         articleMapper.insertSelective(article)
+
+        if (!url.isNullOrBlank()) {
+            val articleUrl = ArticleUrl(
+                url = url,
+                articleId = article.id,
+                status = ArticleUrlStatusEnum.CURRENT.value,
+                createTime = article.createTime
+            )
+            articleUrlMapper.insertSelective(articleUrl)
+        }
 
         linkArticleAndTags(article.id!!, tags)
 
@@ -173,19 +183,34 @@ class ArticleServiceImpl: ArticleService {
         status: Int,
         tags: Array<String>?
     ): Int {
-        val updateRow = articleMapper.updateByPrimaryKeyNullable(Article(
+        val article = Article(
             id = id,
             title = title,
             content = content,
             categoryId = categoryId,
-            url = url,
             weight = weight,
             commentStatus = commentStatus,
             status = status,
             updateTime = Date(),
-        ))
+        )
+        val updateRow = articleMapper.updateByPrimaryKeyNullable(article)
+        if (updateRow < 1) return updateRow
 
-        val tagPOs = tagMapper.selectByArticle(id)
+        if (!url.isNullOrBlank()) {
+            articleUrlMapper.updateToHistoryByArticleId(id)
+            if (articleUrlMapper.getByPrimaryKey(url) != null) {
+                articleUrlMapper.deleteByPrimaryKey(url)
+            }
+            val articleUrl = ArticleUrl(
+                url = url,
+                articleId = id,
+                status = ArticleUrlStatusEnum.CURRENT.value,
+                createTime = article.updateTime,
+            )
+            articleUrlMapper.insertSelective(articleUrl)
+        }
+
+        val tagPOs = tagMapper.selectByArticleId(id)
         val tagStrings = ArrayList<String>().apply {
             if (tags != null) addAll(tags)
         }
@@ -209,9 +234,8 @@ class ArticleServiceImpl: ArticleService {
         // 只需要 查找/创建 然后关联起来即可
         linkArticleAndTags(id, tagStrings.toTypedArray())
 
-        if (updateRow > 0) {
-            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
-        }
+        applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+
         return updateRow
     }
 
@@ -222,26 +246,31 @@ class ArticleServiceImpl: ArticleService {
             status = status,
             updateTime = Date(),
         ))
-        if (updateRow > 0) {
-            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
-        }
+        if (updateRow < 1) return updateRow
+
+        applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+
         return updateRow
     }
 
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteByAdmin(id: Int): Int {
         val deleteRow = articleMapper.deleteByPrimaryKey(id)
-        if (deleteRow > 0) {
-            val tagPOs = tagMapper.selectByArticle(id)
-            tagPOs.forEach {
-                val tagId = it.id!!
-                tagMapper.deleteByRemoveArticleLink(id, tagId)
-                if (tagMapper.getByTagCount(tagId) == 0) {
-                    tagMapper.deleteByPrimaryKey(tagId)
-                }
+        if (deleteRow < 1) return deleteRow
+
+        articleUrlMapper.deleteByArticleId(id)
+
+        val tagPOs = tagMapper.selectByArticleId(id)
+        tagPOs.forEach {
+            val tagId = it.id!!
+            tagMapper.deleteByRemoveArticleLink(id, tagId)
+            if (tagMapper.getByTagCount(tagId) == 0) {
+                tagMapper.deleteByPrimaryKey(tagId)
             }
-            applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
         }
+
+        applicationEventPublisher.publishEvent(BaseInfoUpdateEvent.ARTICLE)
+
         return deleteRow
     }
 

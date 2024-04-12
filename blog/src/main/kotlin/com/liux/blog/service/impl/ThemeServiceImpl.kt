@@ -38,7 +38,7 @@ class ThemeServiceImpl: ThemeService {
         val configs = configService.listByTheme()
         val articleCount = articleMapper.getCount()
         val categoryCount = categoryMapper.getCount()
-        val tagCount = tagMapper.selectCount()
+        val tagCount = tagMapper.getCount()
         val user = userMapper.getByOwner()
         val links = linkService.listByBlog()
         val updateTime = Date()

@@ -26,7 +26,7 @@ data class ArticleVO(
             val catalogues = ArrayList<CatalogueVO>()
             return ArticleVO(
                 article.id!!,
-                if (!article.url.isNullOrBlank()) article.url!! else article.id.toString(),
+                article.url?.url ?: article.id.toString(),
                 article.title ?: "",
                 article.renderDescription(),
                 article.render(catalogues),

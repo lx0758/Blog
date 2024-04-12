@@ -1,11 +1,9 @@
 package com.liux.blog.controller
 
 import com.liux.blog.annotation.RequestUrl
+import com.liux.blog.bean.po.ArticleUrlStatusEnum
 import com.liux.blog.bean.vo.*
-import com.liux.blog.service.ArticleService
-import com.liux.blog.service.CategoryService
-import com.liux.blog.service.TagService
-import com.liux.blog.service.ThemeService
+import com.liux.blog.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
@@ -21,6 +19,8 @@ class IndexController {
     private lateinit var themeService: ThemeService
     @Autowired
     private lateinit var articleService: ArticleService
+    @Autowired
+    private lateinit var articleUrlService: ArticleUrlService
     @Autowired
     private lateinit var categoryService: CategoryService
     @Autowired
@@ -108,9 +108,26 @@ class IndexController {
         return themeService.render(model.asMap(), "tag")
     }
 
-    @GetMapping("/article/{article}")
-    fun article(model: Model, @RequestUrl url: String, @PathVariable("article") articlePath: String): String {
-        val article = articleService.getByUrl(articlePath) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+    @GetMapping("/article/{path}")
+    fun article(model: Model, @RequestUrl url: String, @PathVariable("path") path: String): String {
+        val articleUrl = articleUrlService.findArticleUrlByPath(path)
+        if (articleUrl != null && articleUrl.status != ArticleUrlStatusEnum.CURRENT.value) {
+            // 如果使用旧的URL访问则重定向
+            val articleId = articleUrl.articleId!!
+            val redirectPath = articleUrlService.getCurrentArticleUrl(articleId)?.url ?: articleId
+            return "redirect:/article/${redirectPath}"
+        }
+
+        val articleId = if (articleUrl != null) {
+            articleUrl.articleId!!
+        } else {
+            try {
+                path.toInt()
+            } catch (_: NumberFormatException) {
+                throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+            }
+        }
+        val article = articleService.getByBlog(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
         val articleVO = ArticleVO.of(article)
         val prev = articleService.getByPrev(article.id!!)
         val next = articleService.getByNext(article.id!!)

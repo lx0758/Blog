@@ -51,7 +51,7 @@ If you can see this email, it means that the email parameters of the blog are co
         val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(ownerEmail, null, "评论通知") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${if (!article.url.isNullOrBlank()) article.url else articleId}"
+            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${article.url?.url ?: article.id.toString()}"
 """
 ${themeService.getCacheBlogInfo().ownerNickname}:
 
@@ -76,7 +76,7 @@ $url
         val ownerEmail = themeService.getCacheBlogInfo().ownerEmail
         checkAndSendEmail(comment.email!!, ownerEmail, "评论收到新的回复") {
             val article = articleService.getByAdmin(articleId)!!
-            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${if (!article.url.isNullOrBlank()) article.url else articleId}"
+            val url = "https://${themeService.getCacheBlogInfo().siteDomain}/article/${article.url?.url ?: article.id.toString()}"
             val owner = themeService.getCacheBlogInfo().ownerNickname
 """
 ${comment.author!!}:

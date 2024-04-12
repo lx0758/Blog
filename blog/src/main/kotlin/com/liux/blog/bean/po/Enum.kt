@@ -42,6 +42,24 @@ enum class ArticleStatusEnum(
     ;
 }
 
+enum class ArticleUrlStatusEnum(
+    override val value: Int,
+    val description: String,
+): Enum {
+    HISTORY(0, "历史的"),
+    CURRENT(1, "当前的"),
+    ;
+}
+
+enum class FragmentStatusEnum(
+    override val value: Int,
+    val description: String,
+): Enum {
+    DISABLE(0, "已禁用"),
+    ENABLE(1, "已启用"),
+    ;
+}
+
 enum class CommentStatusEnum(
     override val value: Int,
     val description: String,
@@ -61,15 +79,6 @@ enum class LinkStatusEnum(
 }
 
 enum class UrlStatusEnum(
-    override val value: Int,
-    val description: String,
-): Enum {
-    DISABLE(0, "已禁用"),
-    ENABLE(1, "已启用"),
-    ;
-}
-
-enum class FragmentStatusEnum(
     override val value: Int,
     val description: String,
 ): Enum {

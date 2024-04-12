@@ -7,6 +7,8 @@ interface CommentService {
 
     fun listByArticle(articleId: Int, pageNum: Int): Page<Comment>
 
+    fun listByAdminDashboard(pageNum: Int, pageSize: Int): Page<Comment>
+
     fun listByAdmin(
         articleId: Int?,
         author: String?,

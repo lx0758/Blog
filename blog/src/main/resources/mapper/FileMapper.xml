@@ -11,7 +11,7 @@
     <result column="author_id" jdbcType="INTEGER" property="authorId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <association property="author" select="com.liux.blog.dao.UserMapper.getByMapper" column="author_id"/>
+    <association column="author_id" property="author" select="com.liux.blog.dao.UserMapper.getByMapper"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, display_name, "length", "type", "path", author_id, create_time, update_time
@@ -26,6 +26,12 @@
     select
         count(id)
     from t_file
+  </select>
+  <select id="selectByAdminDashboard" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_file
+    order by id desc
   </select>
   <select id="selectByAdmin" parameterType="com.liux.blog.bean.po.File" resultMap="BaseResultMap">
     select

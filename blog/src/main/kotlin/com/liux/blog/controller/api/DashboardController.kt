@@ -38,37 +38,9 @@ class DashboardController {
             commentService.getCountByDashboard(),
             articleService.getViewsByDashboard(),
 
-            articleService.listByAdmin(
-                null,
-                null,
-                null,
-                null,
-                null,
-                1,
-                10,
-                null,
-                null
-            ).map { ArticleVO.of(it) },
-            commentService.listByAdmin(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                1,
-                10,
-                null,
-                null
-            ).map { CommentVO.of(it) },
-            fileService.listByAdmin(
-                null,
-                null,
-                1,
-                10,
-                null,
-                null
-            ).map { FileVO.of(it) },
+            articleService.listByAdminDashboard(1, 10).map { ArticleVO.of(it) },
+            commentService.listByAdminDashboard(1, 10).map { CommentVO.of(it) },
+            fileService.listByAdminDashboard(1, 10).map { FileVO.of(it) },
         )
         return Resp.succeed(dashboardVO)
     }

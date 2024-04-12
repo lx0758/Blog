@@ -57,7 +57,7 @@ class FragmentServiceImpl : FragmentService {
     }
 
     override fun getByAdmin(id: Int): Fragment? {
-        return fragmentMapper.getByAdmin(id)
+        return fragmentMapper.getByPrimaryKey(id)
     }
 
     override fun addByAdmin(userId: Int, key: String?, content: String, status: Int): Fragment {

@@ -35,7 +35,7 @@ class OtherController {
             HashMap<String, String>().apply {
                 put("title", article.title!!)
                 put("content", article.renderSearch())
-                put("url", "/article/" + (article.url ?: article.id.toString()))
+                put("url", "/article/" + (article.url?.url ?: article.id.toString()))
             }
         }
     }
@@ -69,12 +69,12 @@ class OtherController {
             append("\t\t<changefreq>daily</changefreq>\n")
             append("\t\t<priority>0.5</priority>\n")
             append("\t</url>\n")
-            articles.forEach {
+            articles.forEach { article ->
                 append("\t<url>\n")
-                append("\t\t<loc>https://$domain/article/${it.url ?: it.id.toString()}</loc>\n")
-                append("\t\t<lastmod>${(it.updateTime ?: it.createTime!!).toDateString("yyyy-MM-dd")}</lastmod>\n")
-                append("\t\t<changefreq>${getSitemapChangeFreq(it)}</changefreq>\n")
-                append("\t\t<priority>${if ((it.weight ?: 0) == 0) "0.6" else "0.9"}</priority>\n")
+                append("\t\t<loc>https://$domain/article/${article.url?.url ?: article.id.toString()}</loc>\n")
+                append("\t\t<lastmod>${(article.updateTime ?: article.createTime!!).toDateString("yyyy-MM-dd")}</lastmod>\n")
+                append("\t\t<changefreq>${getSitemapChangeFreq(article)}</changefreq>\n")
+                append("\t\t<priority>${if ((article.weight ?: 0) == 0) "0.6" else "0.9"}</priority>\n")
                 append("\t</url>\n")
             }
         }.toString()

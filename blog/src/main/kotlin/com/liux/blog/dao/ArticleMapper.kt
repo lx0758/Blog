@@ -11,11 +11,10 @@ interface ArticleMapper {
     fun insert(record: Article): Int
     fun insertSelective(record: Article): Int
     fun getByPrimaryKey(id: Int): Article?
-    fun getByBlog(@Param("id") id: Int?): Article?
-    fun getByIdOrUrl(@Param("id") id: Int, @Param("url") url: String): Article?
+    fun getByBlog(id: Int?): Article?
     fun getByPrev(articleId: Int): Article?
     fun getByNext(articleId: Int): Article?
-    fun getByAdmin(@Param("id") id: Int?): Article?
+    fun getByAdmin(id: Int?): Article?
     fun getCount(): Int
     fun getViews(): Int
     fun selectByPage(): List<Article>
@@ -25,7 +24,8 @@ interface ArticleMapper {
     fun selectBySearch(): List<Article>
     fun selectBySitemap(): List<Article>
     fun selectByExport(): List<Article>
-    fun selectByAdmin(article: Article): List<Article>
+    fun selectByAdminDashboard(): List<Article>
+    fun selectByAdmin(@Param("article") article: Article, @Param("url") url: String?): List<Article>
     fun updateByPrimaryKeySelective(record: Article): Int
     fun updateByPrimaryKeyNullable(record: Article): Int
     fun updateByPrimaryKey(record: Article): Int
