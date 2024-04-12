@@ -26,13 +26,22 @@
         </template>
       </el-table-column>
       <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
-      <el-table-column prop="url" label="url" width="200" sortable="custom">
+      <el-table-column prop="historyUrls" label="url" width="200" sortable="custom">
         <template #default="scope">
-          <el-link v-if="scope.row.url" :href="'/article/' + scope.row.url" type="primary" target="_blank">
-            {{ scope.row.url }}
-          </el-link>
+          <div v-if="scope.row.urls.length > 0">
+            <div v-for="(url, index) in scope.row.urls">
+              <el-link
+                  :key="index"
+                  :href="'/article/' + url"
+                  target="_blank"
+                  class="single-line">
+                {{ url }}
+                <span v-if="index == 0" style="color:red; margin-left: 2px;">*</span>
+              </el-link>
+            </div>
+          </div>
           <div v-else>
-            {{ scope.row.url ? scope.row.url : '-' }}
+            {{ '-' }}
           </div>
         </template>
       </el-table-column>
@@ -78,6 +87,7 @@ interface ArticleFilter {
   title: string | null
   categoryId: number | null
   url: string | null
+  urls: string[] | null
   enableComment: boolean | null
   status: number | null
 }
@@ -159,4 +169,10 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+.single-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

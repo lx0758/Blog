@@ -17,7 +17,10 @@
       <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
       <el-table-column prop="articleName" label="文章标题" width="180" fixed>
         <template #default="scope">
-          <el-link :href="'/article/' + scope.row.articleId" type="primary" target="_blank">
+          <el-link v-if="scope.row.articleUrl" :href="'/article/' + scope.row.articleUrl" type="primary" target="_blank">
+            {{ scope.row.articleTitle }}
+          </el-link>
+          <el-link v-else :href="'/article/' + scope.row.articleId" type="primary" target="_blank">
             {{ scope.row.articleTitle }}
           </el-link>
         </template>
@@ -155,9 +158,10 @@ interface CommentFilter {
 }
 
 interface OptionCommentState {
-  articleId: number
   parentId: number
+  articleId: number
   articleTitle: string
+  articleUrl: string
   time: string
   nickname: string
   email: string
