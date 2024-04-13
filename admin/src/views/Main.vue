@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 100%">
     <el-aside unique-opened="true" style="width: auto">
-      <el-menu default-active="/dashboard" style="height: 100%" unique-opened router :collapse="state.menuIsCollapse">
+      <el-menu :default-active="state.defaultActive" style="height: 100%" unique-opened router :collapse="state.menuIsCollapse">
         <el-menu-item index="/dashboard">
           <template #title>
             <el-icon>
@@ -235,7 +235,7 @@
 
 <script setup lang="ts">
 import screenfull from 'screenfull'
-import { ref, nextTick, onMounted } from 'vue'
+import {ref, nextTick, onMounted, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import avatar_gif from '@/assets/avatar.gif'
@@ -244,6 +244,7 @@ import { DialogState } from '@/bean'
 import { queryProfile, updateProfile, updatePassword, logout } from '@/api'
 
 interface State {
+  defaultActive: string
   menuIsCollapse: boolean
   isRouterAvailable: boolean
 
@@ -277,6 +278,7 @@ interface ChangePasswordState {
 const router = useRouter()
 
 const state = ref<State>({
+  defaultActive: '',
   menuIsCollapse: false,
   isRouterAvailable: true,
 
@@ -474,6 +476,14 @@ function onLogout() {
 onMounted(() => {
   onQueryProfile()
 })
+
+watch(
+    () => router.currentRoute.value.path,
+    (toPath) => {
+      state.value.defaultActive = toPath
+    },
+    {immediate: true, deep: true}
+)
 </script>
 
 <style scoped>
