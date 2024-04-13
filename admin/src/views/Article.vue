@@ -26,20 +26,32 @@
         </template>
       </el-table-column>
       <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
-      <el-table-column prop="historyUrls" label="url" width="200" sortable="custom">
+      <el-table-column prop="url,historyUrls" label="url" width="200" sortable="custom">
         <template #default="scope">
-          <div v-if="scope.row.urls.length > 0">
-            <div v-for="(url, index) in scope.row.urls">
-              <el-link
-                  :key="index"
-                  :href="'/article/' + url"
-                  target="_blank"
-                  class="single-line">
-                {{ url }}
-                <span v-if="index == 0" style="color:red; margin-left: 2px;">*</span>
-              </el-link>
-            </div>
-          </div>
+          <el-tooltip
+              v-if="scope.row.urls.length > 0"
+              class="box-item"
+              effect="dark"
+              placement="top">
+            <template #content>
+              <div :key="index" v-for="(url, index) in scope.row.urls">
+                <el-link
+                    :href="'/article/' + url"
+                    type="primary"
+                    target="_blank"
+                    class="single-line">
+                  {{ url }}
+                </el-link>
+              </div>
+            </template>
+            <el-link
+                :href="'/article/' + scope.row.url"
+                type="primary"
+                target="_blank"
+                class="single-line">
+              {{ scope.row.url }}
+            </el-link>
+          </el-tooltip>
           <div v-else>
             {{ '-' }}
           </div>

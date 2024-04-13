@@ -15,7 +15,7 @@
 
     <el-table class="full-page" stripe :data="state.data.list" @sort-change="onSortChange">
       <el-table-column prop="id" label="ID" width="70" fixed sortable="custom"></el-table-column>
-      <el-table-column prop="articleName" label="文章标题" width="180" fixed>
+      <el-table-column prop="articleName" label="文章" width="180" fixed>
         <template #default="scope">
           <el-link v-if="scope.row.articleUrl" :href="'/article/' + scope.row.articleUrl" type="primary" target="_blank">
             {{ scope.row.articleTitle }}
@@ -25,9 +25,29 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="120"></el-table-column>
-      <el-table-column prop="ip,location" label="IP" width="120">
+      <el-table-column prop="nickname" label="昵称" width="100">
+        <template #default="scope">
+          <el-tooltip
+              class="box-item"
+              effect="dark"
+              placement="top"
+              :content="scope.row.nickname">
+            {{ scope.row.nickname }}
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column prop="email" label="邮箱" width="150">
+        <template #default="scope">
+          <el-tooltip
+              class="box-item"
+              effect="dark"
+              placement="top"
+              :content="scope.row.email">
+            {{ scope.row.email }}
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column prop="ip,location" label="IP" width="130">
         <template #default="scope">
           <el-tooltip class="box-item" effect="dark" :content="scope.row.location" placement="top">
             <el-link :href="'https://www.ip138.com/iplookup.php?ip=' + scope.row.ip" type="primary" target="_blank">
@@ -36,7 +56,21 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="内容" min-width="300" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="content" label="内容" min-width="300">
+        <template #default="scope">
+          <el-tooltip
+              class="box-item"
+              effect="dark"
+              placement="top">
+            <template #content>
+              <pre>{{ scope.row.content }}</pre>
+            </template>
+            <p class="single-line">
+              {{ scope.row.content }}
+            </p>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <date-time-column prop="createTime" label="创建时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
       <date-time-column prop="updateTime" label="更新时间" width="170" format="YYYY-MM-DD HH:mm:ss"></date-time-column>
       <el-table-column prop="status" label="状态" width="90">
@@ -235,6 +269,7 @@ function onShowReplyComment(row: any) {
     articleId: row.articleId,
     parentId: row.id,
     articleTitle: row.articleTitle,
+    articleUrl: row.articleUrl,
     nickname: row.nickname,
     email: row.email,
     url: row.url,
@@ -311,4 +346,10 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+.single-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
