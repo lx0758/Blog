@@ -110,23 +110,25 @@ class IndexController {
 
     @GetMapping("/article/{path}")
     fun article(model: Model, @RequestUrl url: String, @PathVariable("path") path: String): String {
-        val articleUrl = articleUrlService.findArticleUrlByPath(path)
-        if (articleUrl != null && articleUrl.status != ArticleUrlStatusEnum.CURRENT.value) {
-            // 如果使用旧的URL访问则重定向
-            val articleId = articleUrl.articleId!!
-            val redirectPath = articleUrlService.getCurrentArticleUrl(articleId)?.url ?: articleId
-            return "redirect:/article/${redirectPath}"
+        val pathId = path.toIntOrNull()
+        val articleId = if (pathId != null) {
+            val articleUrl = articleUrlService.getCurrentUrlByArticleId(pathId)
+            if (articleUrl != null) {
+                // 如果文章有URL则重定向
+                return "redirect:/article/${articleUrl.url}"
+            }
+            pathId
+        } else {
+            val articleUrl = articleUrlService.getUrlByPath(path) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
+            if (articleUrl.status != ArticleUrlStatusEnum.CURRENT.value) {
+                // 如果使用旧的URL访问则重定向
+                val articleId = articleUrl.articleId!!
+                val redirectPath = articleUrlService.getCurrentUrlByArticleId(articleId)?.url ?: articleId
+                return "redirect:/article/${redirectPath}"
+            }
+            articleUrl.articleId!!
         }
 
-        val articleId = if (articleUrl != null) {
-            articleUrl.articleId!!
-        } else {
-            try {
-                path.toInt()
-            } catch (_: NumberFormatException) {
-                throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
-            }
-        }
         val article = articleService.getByBlog(articleId) ?: throw HttpClientErrorException(HttpStatus.NOT_FOUND, "文章不存在")
         val articleVO = ArticleVO.of(article)
         val prev = articleService.getByPrev(article.id!!)

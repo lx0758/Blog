@@ -12,11 +12,11 @@ class ArticleUrlServiceImpl : ArticleUrlService {
     @Autowired
     private lateinit var articleUrlMapper: ArticleUrlMapper
 
-    override fun findArticleUrlByPath(url: String): ArticleUrl? {
+    override fun getUrlByPath(url: String): ArticleUrl? {
         return articleUrlMapper.getByPrimaryKey(url)
     }
 
-    override fun getCurrentArticleUrl(articleId: Int): ArticleUrl? {
+    override fun getCurrentUrlByArticleId(articleId: Int): ArticleUrl? {
         return articleUrlMapper.getCurrentUrlByArticleId(articleId)
     }
 }
