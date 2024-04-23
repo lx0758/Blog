@@ -169,7 +169,7 @@
     </select>
     <select id="selectByTag" resultMap="SimpleResultMap">
         select
-        <include refid="Simple_Column_List"/>
+        t_article.id AS id, t_article.title AS title, t_article.create_time AS create_time
         from t_article
         LEFT JOIN t_article_tag ON t_article.id = t_article_tag.article_id
         where t_article.status = 1 and t_article_tag.tag_id = #{tagId,jdbcType=INTEGER}
