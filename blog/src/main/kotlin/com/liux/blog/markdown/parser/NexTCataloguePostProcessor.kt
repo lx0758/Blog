@@ -31,57 +31,64 @@ class NexTCataloguePostProcessor(
 
     class CatalogueStore(
         private val idGenerator: IdGenerator,
-        private val catalogueResult : MutableList<CatalogueItem>?,
+        catalogueResult: MutableList<CatalogueItem>?,
     ) {
-        private var lastHeadingLevel = 0
-        private var lastCatalogueLevel = 0
 
-        private val catalogueList: MutableList<CatalogueItem> = catalogueResult ?: ArrayList()
+        private val root: CatalogueItem = CatalogueItem("", "", 0, null, catalogueResult ?: ArrayList())
+        private var last: CatalogueItem = root
 
-        fun getCatalogueList() : List<CatalogueItem> = catalogueList
+        fun getCatalogueList(): List<CatalogueItem> = root.childs!!
 
+        /**
+         * 处理某些文章跳级使用标题标签, 导致无法正常解析标题列表的错误
+         *
+         * #     ........ 1
+         * ###   ........ 2
+         * ##### ........ 3
+         * ##    ........ 2
+         * ####  ........ 3
+         * ###   ........ 3
+         * #     ........ 1
+         **/
         fun append(heading: Heading) {
-            heading.apply {
-                // 修正某些文章跳级使用标题, 导致无法正常解析标题的错误
-                if (level != lastHeadingLevel) {
-                    if (level > lastCatalogueLevel + 1) {
-                        lastCatalogueLevel += 1
-                    } else {
-                        lastCatalogueLevel = level
-                    }
-                    lastHeadingLevel = level
+            if (heading.level == last.rawLevel) {
+                last = addCatalogueItem(last.parent!!, heading)
+            } else if (heading.level > last.rawLevel) {
+                last = addCatalogueItem(last, heading)
+            } else {
+                var current = last
+                while (heading.level <= current.rawLevel) {
+                    current = current.parent ?: break
                 }
+                last = addCatalogueItem(current, heading)
             }
-            val title = heading.let {
-                val builder = StringBuilder()
-                it.accept(object : AbstractVisitor() {
-                    override fun visit(text: Text) {
-                        builder.append(text.literal)
-                    }
-                    override fun visit(code: Code) {
-                        builder.append(code.literal)
-                    }
-                })
-                builder.toString()
-            }
-            val anchor = idGenerator.generateId(title)
-            val parent = catalogueList.let {
-                var childs = it
-                var index = lastCatalogueLevel
-                while (index > 1) {
-                    val last = childs.last()
-                    if (last.childs == null) {
-                        last.childs = ArrayList()
-                    }
-                    childs = last.childs!!
-                    index--
-                }
-                childs
-            }
+        }
 
-            parent.add(
-                CatalogueItem(title, anchor)
-            )
+        private fun addCatalogueItem(parent: CatalogueItem, heading: Heading): CatalogueItem {
+            val title = getHeadingTitle(heading)
+            val anchor = idGenerator.generateId(title)
+            val item = CatalogueItem(title, anchor, heading.level, parent)
+
+            if (parent.childs == null) {
+                parent.childs = ArrayList()
+            }
+            parent.childs!!.add(item)
+
+            return item
+        }
+
+        private fun getHeadingTitle(heading: Heading): String {
+            val builder = StringBuilder()
+            heading.accept(object : AbstractVisitor() {
+                override fun visit(text: Text) {
+                    builder.append(text.literal)
+                }
+
+                override fun visit(code: Code) {
+                    builder.append(code.literal)
+                }
+            })
+            return builder.toString()
         }
     }
 }

@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.9.22"
+    id("org.springframework.boot") version "3.3.0"
+    id("io.spring.dependency-management") version "1.1.5"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0"
 }
 
 group = "com.liux.blog"
@@ -27,21 +27,21 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("org.lionsoul:ip2region:2.7.0")
-    implementation("org.postgresql:postgresql:42.7.2")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.github.ua-parser:uap-java:1.6.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
     implementation("com.github.pagehelper:pagehelper-spring-boot-starter:2.1.0")
-    implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.4.0")
+    implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.5.0")
 
-    implementation("org.commonmark:commonmark:0.21.0")
-    implementation("org.commonmark:commonmark-ext-ins:0.21.0")
-    implementation("org.commonmark:commonmark-ext-autolink:0.21.0")
-    implementation("org.commonmark:commonmark-ext-heading-anchor:0.21.0")
-    implementation("org.commonmark:commonmark-ext-task-list-items:0.21.0")
-    implementation("org.commonmark:commonmark-ext-image-attributes:0.21.0")
-    implementation("org.commonmark:commonmark-ext-gfm-tables:0.21.0")
-    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.21.0")
+    implementation("org.commonmark:commonmark:0.22.0")
+    implementation("org.commonmark:commonmark-ext-ins:0.22.0")
+    implementation("org.commonmark:commonmark-ext-autolink:0.22.0")
+    implementation("org.commonmark:commonmark-ext-heading-anchor:0.22.0")
+    implementation("org.commonmark:commonmark-ext-task-list-items:0.22.0")
+    implementation("org.commonmark:commonmark-ext-image-attributes:0.22.0")
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.22.0")
+    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.22.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-starter-actuator")
