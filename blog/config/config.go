@@ -11,6 +11,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -41,14 +42,12 @@ func Init(engine *gin.Engine) {
 
 	// 使用 engine.SetHTMLTemplate 自定义模板引擎时, 通过 engine.SetFuncMap 设置自定义函数无效
 	funcMap := template.FuncMap{
-		"func0": func() (string, error) {
-			return "func0", nil
+		"filterChinese": func(param string) (string, error) {
+			re := regexp.MustCompile("[\u4e00-\u9fa5]")
+			return re.ReplaceAllString(param, ""), nil
 		},
-		"func1": func(param string) (string, error) {
-			return param, nil
-		},
-		"func2": func(param1 string, param2 string) (string, error) {
-			return param1 + "/" + param2, nil
+		"nowYear": func() (string, error) {
+			return strconv.Itoa(time.Now().Year()), nil
 		},
 	}
 	templateInstance, _ := template.New("").Funcs(funcMap).ParseFS(res.TemplatesFS, "html/*.html")

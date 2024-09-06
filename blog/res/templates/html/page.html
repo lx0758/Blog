@@ -1,0 +1,93 @@
+{{template "header" .}}
+
+<body>
+<div class="content index posts-expand">
+    <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN" th:each="article : ${articles}">
+        <link itemprop="mainEntityOfPage" th:href="${'/article/' + article.url}">
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <meta itemprop="image" th:content="${blog.ownerAvatar}">
+            <meta itemprop="name" th:content="${blog.ownerNickname}">
+            <meta itemprop="description" th:content="${blog.ownerDescription}">
+        </span>
+        <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+            <meta itemprop="name" th:content="${blog.siteTitle}">
+        </span>
+        <header class="post-header">
+            <h2 class="post-title" itemprop="name headline">
+                <span class="post-sticky-flag" title="置顶" style="font-size: 20px;" th:if="${article.top}">
+                    <i class="fa fa-thumb-tack"></i>
+                </span>
+                <a th:href="${'/article/' + article.url}" class="post-title-link" itemprop="url" th:text="${article.title}"></a>
+            </h2>
+            <div class="post-meta">
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-calendar-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">发表于</span>
+                    <time th:title="${'创建时间：' + #dates.format(article.createTime, 'yyyy-MM-dd HH:mm:ss')}"
+                          itemprop="dateCreated datePublished"
+                          th:text="${#dates.format(article.createTime, 'yyyy-MM-dd')}"></time>
+                </span>
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">更新于</span>
+                    <time th:title="${'更新时间：' + #dates.format(article.updateTime, 'yyyy-MM-dd HH:mm:ss')}"
+                          itemprop="dateCreated datePublished"
+                          th:text="${#dates.format(article.updateTime, 'yyyy-MM-dd')}"></time>
+                </span>
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-folder-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">分类于</span>
+                    <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                        <a th:href="${'/category/' + article.categoryName}" itemprop="url" rel="index">
+                            <span itemprop="name" th:text="${article.categoryName}"></span>
+                        </a>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <div class="post-body" itemprop="articleBody">
+            <th:block th:utext="${article.content}"></th:block>
+            <!--noindex-->
+            <div class="post-button" th:if="${article.content.endsWith('<!--more-->')}">
+                <a class="btn" th:href="${'/article/' + article.url + '#more'}" rel="contents">阅读全文 »</a>
+            </div>
+            <!--/noindex-->
+        </div>
+        <footer class="post-footer">
+            <div class="post-eof"></div>
+        </footer>
+    </article>
+    <nav class="pagination" th:if="${pagination.pages > 1}">
+        <!-- 上一页按钮 -->
+        <a class="extend prev" rel="prev" th:href="${'/page/' + (pagination.pageNum - 1)}" th:if="${pagination.pageNum > 1}">
+            <i class="fa fa-angle-left" aria-label="上一页"></i>
+        </a>
+        <!-- 首页 -->
+        <a class="page-number" href="/page/1" th:if="${pagination.pageNum > 2}">1</a>
+        <!-- 首页间隔 -->
+        <span class="space" th:if="${pagination.pageNum > 3}">&hellip;</span>
+        <!-- 上一页 -->
+        <a class="page-number" th:href="${'/page/' + (pagination.pageNum - 1)}" th:if="${pagination.pageNum > 1}" th:text="${pagination.pageNum - 1}"></a>
+        <!-- 当前页 -->
+        <span class="page-number current" th:text="${pagination.pageNum}"></span>
+        <!-- 下一页 -->
+        <a class="page-number" th:href="${'/page/' + (pagination.pageNum + 1)}" th:if="${pagination.pageNum <= pagination.pages - 1}" th:text="${pagination.pageNum + 1}"></a>
+        <!-- 尾页间隔 -->
+        <span class="space" th:if="${pagination.pageNum <= pagination.pages - 3}">&hellip;</span>
+        <!-- 页尾 -->
+        <a class="page-number" th:href="${'/page/' + pagination.pages}" th:if="${pagination.pageNum <= pagination.pages - 2}" th:text="${pagination.pages}"></a>
+        <!-- 下一页按钮 -->
+        <a class="extend next" rel="next" th:href="${'/page/' + (pagination.pageNum + 1)}" th:if="${pagination.pageNum < pagination.pages}">
+            <i class="fa fa-angle-right" aria-label="下一页"></i>
+        </a>
+    </nav>
+</div>
+</body>
+
+{{template "footer" .}}
