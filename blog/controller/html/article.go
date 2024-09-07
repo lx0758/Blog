@@ -2,15 +2,19 @@ package html
 
 import (
 	"blog/controller"
+	"blog/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type ArticleController struct {
 	controller.Controller
+	*service.ThemeService
 }
 
 func (c *ArticleController) OnInitController() {
+	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
+
 	c.Group.GET(":key", c.getArticle)
 	c.Group.GET(":key/comment", c.getArticleComment)
 	c.Group.POST(":key/comment", c.postArticleComment)

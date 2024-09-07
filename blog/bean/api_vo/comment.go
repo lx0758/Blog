@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type Comment struct {
+type CommentVO struct {
 	Id           int
 	ArticleId    int
 	ArticleTitle string

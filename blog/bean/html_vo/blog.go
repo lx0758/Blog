@@ -1,6 +1,6 @@
 package html_vo
 
-type Blog struct {
+type BlogVO struct {
 	SiteDomain         string
 	SiteTitle          string
 	SiteDescription    string
@@ -25,5 +25,5 @@ type Blog struct {
 	OwnerYoutube       string
 	OwnerInstagram     string
 	OwnerSkype         string
-	Links              []Link
+	Links              []LinkVO
 }

@@ -2,18 +2,22 @@ package html
 
 import (
 	"blog/controller"
+	"blog/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type CategoryController struct {
 	controller.Controller
+	*service.ThemeService
 }
 
 func (c *CategoryController) OnInitController() {
+	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
+
 	c.Group.GET("", c.getCategories)
 	c.Group.GET(":categoryName", c.getCategory)
-	c.Group.GET(":categoryName/:pageNumber", c.getCategory)
+	c.Group.GET(":categoryName/:PageNum", c.getCategory)
 }
 
 func (c *CategoryController) getCategories(context *gin.Context) {
@@ -23,6 +27,6 @@ func (c *CategoryController) getCategories(context *gin.Context) {
 
 func (c *CategoryController) getCategory(context *gin.Context) {
 	_ = context.Param("categoryName")
-	_ = context.Param("pageNumber")
+	_ = context.Param("PageNum")
 	c.Render(context, http.StatusOK, "category.html", nil)
 }

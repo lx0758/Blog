@@ -1,7 +1,7 @@
 package html_vo
 
-type Catalogue struct {
+type CatalogueVO struct {
 	Title  string
 	Anchor string
-	Childs []Catalogue
+	Childs []CatalogueVO
 }

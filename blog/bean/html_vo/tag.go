@@ -1,6 +1,6 @@
 package html_vo
 
-type Tag struct {
+type TagVO struct {
 	Name         string
 	ArticleCount int
 }

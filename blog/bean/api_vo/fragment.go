@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type Fragment struct {
+type FragmentVO struct {
 	Id         int
 	Key        string
 	Content    string

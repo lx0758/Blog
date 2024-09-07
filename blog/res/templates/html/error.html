@@ -1,5 +1,6 @@
 {{template "header" .}}
 
+{{with .PageData}}
 <head>
     <style type="text/css">
         .error {
@@ -39,5 +40,6 @@
     </div>
 </div>
 </body>
+{{end}}
 
 {{template "footer" .}}

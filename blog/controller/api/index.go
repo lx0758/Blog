@@ -8,11 +8,11 @@ import (
 
 type IndexController struct {
 	controller.RestController
-	*service.IndexService
+	*service.BlogService
 }
 
 func (c *IndexController) OnInitController() {
-	c.IndexService = service.GetService[*service.IndexService](c.IndexService)
+	c.BlogService = service.GetService[*service.BlogService](c.BlogService)
 
 	c.Group.Use(c.authorize)
 

@@ -1,5 +1,6 @@
 {{template "header" .}}
 
+{{with .PageData}}
 <body>
 <div class="content tag">
     <div class="post-block">
@@ -54,5 +55,5 @@
     </nav>
 </div>
 </body>
-
+{{end}}
 {{template "footer" .}}

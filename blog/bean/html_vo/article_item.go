@@ -2,7 +2,7 @@ package html_vo
 
 import "time"
 
-type ArticleItem struct {
+type ArticleItemVO struct {
 	Url          string
 	Top          bool
 	Title        string

@@ -1,13 +1,13 @@
 package api_vo
 
-type Dashboard struct {
+type DashboardVO struct {
 	ArticleCount  int
 	CategoryCount int
 	TagCount      int
 	UploadCount   int
 	CommentCount  int
 	BrowseCount   int
-	NewArticles   []Article
-	NewComments   []Comment
-	NewUploads    []File
+	NewArticles   []ArticleVO
+	NewComments   []CommentVO
+	NewUploads    []FileVO
 }

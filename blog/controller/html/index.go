@@ -1,9 +1,11 @@
 package html
 
 import (
+	"blog/bean/html_vo"
 	"blog/controller"
 	"blog/res"
 	"blog/service"
+	"blog/util"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
@@ -13,11 +15,12 @@ import (
 
 type IndexController struct {
 	controller.Controller
-	*service.IndexService
+
+	articleService *service.ArticleService
 }
 
 func (c *IndexController) OnInitController() {
-	c.IndexService = service.GetService[*service.IndexService](c.IndexService)
+	c.articleService = service.GetService[*service.ArticleService](c.articleService)
 
 	c.Group.GET("", c.getIndex)
 	c.Group.GET("admin", c.getAdmin)
@@ -56,18 +59,47 @@ func (c *IndexController) getRobotsTxt(context *gin.Context) {
 
 func (c *IndexController) getSitemapXml(context *gin.Context) {
 	host := context.Request.Host
-	builder := strings.Builder{}
-	tmpl, _ := template.ParseFS(res.TemplatesFS, "sitemap.xml")
-	_ = tmpl.Execute(&builder, map[string]any{
-		"Host": host,
-		"Date": time.DateOnly,
-		"Urls": []map[string]any{
-			{"Host": host, "Url": "1", "Date": "2024-09-01", "Freq": "daily", "Weight": 1.0},
-			{"Host": host, "Url": "2", "Date": "2024-09-01", "Freq": "weekly", "Weight": 1.0},
-			{"Host": host, "Url": "3", "Date": "2024-09-01", "Freq": "monthly", "Weight": 1.0},
-			{"Host": host, "Url": "4", "Date": "2024-09-01", "Freq": "yearly", "Weight": 1.0},
-			{"Host": host, "Url": "5", "Date": "2024-09-01", "Freq": "never", "Weight": 1.0},
-		},
+	articles := c.articleService.ListArticle()
+	urls := make([]map[string]any, 0)
+	urls = append(urls, map[string]any{
+		"Host":   host,
+		"Url":    "/",
+		"Date":   time.Now().Format(time.DateOnly),
+		"Freq":   "daily",
+		"Weight": 0.6,
 	})
+	for _, article := range articles {
+		articleVO := &html_vo.ArticleVO{}
+		articleVO.From(article)
+		freq := c.getArticleUpdateFreq(articleVO)
+		urls = append(urls, map[string]any{
+			"Host":   host,
+			"Url":    "/article/" + articleVO.GetSafeUrl(),
+			"Date":   articleVO.GetSafeDate().Format(time.DateOnly),
+			"Freq":   freq,
+			"Weight": util.If(article.Weight > 0, 0.9, 0.6),
+		})
+	}
+	builder := &strings.Builder{}
+	tmpl, _ := template.ParseFS(res.TemplatesFS, "sitemap.xml")
+	_ = tmpl.Execute(builder, urls)
 	context.Data(http.StatusOK, "application/xml; charset=utf-8", []byte(builder.String()))
+}
+
+func (c *IndexController) getArticleUpdateFreq(article *html_vo.ArticleVO) string {
+	lastUpdateTime := article.GetSafeDate()
+	differenceDay := (time.Now().Unix() - lastUpdateTime.Unix()) / (24 * 60 * 60)
+	if differenceDay <= 0 {
+		return "daily"
+	}
+	if differenceDay <= 7 {
+		return "weekly"
+	}
+	if differenceDay <= 30 {
+		return "monthly"
+	}
+	if differenceDay <= 365 {
+		return "yearly"
+	}
+	return "never"
 }

@@ -1,8 +1,9 @@
 package html_vo
 
-type Pagination struct {
+type PaginationVO[T interface{}] struct {
 	PageNum  int
 	PageSize int
-	Pages    int
+	Size     int
 	Total    int
+	List     []T
 }

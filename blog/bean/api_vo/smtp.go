@@ -1,6 +1,6 @@
 package api_vo
 
-type SMTP struct {
+type SMTPVO struct {
 	Enable    bool
 	Hostname  string
 	Port      int

@@ -1,6 +1,7 @@
 package config
 
 import (
+	bloglogger "blog/logger"
 	"blog/res"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -39,6 +40,9 @@ func Init(engine *gin.Engine) {
 	if Config().Server.Release {
 		gin.SetMode(gin.ReleaseMode)
 	}
+	gin.LoggerWithConfig(gin.LoggerConfig{
+		Output: bloglogger.Writer(),
+	})
 
 	// 使用 engine.SetHTMLTemplate 自定义模板引擎时, 通过 engine.SetFuncMap 设置自定义函数无效
 	funcMap := template.FuncMap{
@@ -78,8 +82,9 @@ type Server struct {
 }
 
 type DataSource struct {
-	Type string `yaml:"type"`
-	Dsn  string `yaml:"dsn"`
+	Debug bool   `yaml:"debug"`
+	Type  string `yaml:"type"`
+	Dsn   string `yaml:"dsn"`
 }
 
 type Session struct {

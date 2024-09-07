@@ -1,5 +1,6 @@
 {{template "header" .}}
 
+{{with .PageData}}
 <body>
 <div class="content page posts-expand">
     <div class="post-block" lang="zh-CN">
@@ -18,5 +19,6 @@
     </div>
 </div>
 </body>
+{{end}}
 
 {{template "footer" .}}

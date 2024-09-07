@@ -1,6 +1,6 @@
 package html_vo
 
-type Category struct {
+type CategoryVO struct {
 	Name         string
 	ArticleCount int
 }

@@ -1,8 +1,10 @@
 package api_vo
 
-import "time"
+import (
+	"time"
+)
 
-type Article struct {
+type ArticleVO struct {
 	Id            int
 	Title         string
 	CategoryId    int

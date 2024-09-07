@@ -1,5 +1,6 @@
 {{template "header" .}}
 
+{{with .PageData}}
 <header th:if="${article.enableComment}">
     <link rel="stylesheet" href="/blog/css/comment.css">
     <script type="text/javascript" src="/blog/js/comment.js"></script>
@@ -138,5 +139,6 @@
     </article>
 </div>
 </body>
+{{end}}
 
 {{template "footer" .}}

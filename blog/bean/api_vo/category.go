@@ -1,8 +1,10 @@
 package api_vo
 
-import "time"
+import (
+	"time"
+)
 
-type Category struct {
+type CategoryVO struct {
 	Id           int
 	Name         string
 	CreateTime   time.Time

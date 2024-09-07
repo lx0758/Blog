@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type File struct {
+type FileVO struct {
 	Id          int
 	DisplayName string
 	Length      int64

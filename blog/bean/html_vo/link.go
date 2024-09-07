@@ -1,6 +1,6 @@
 package html_vo
 
-type Link struct {
+type LinkVO struct {
 	Title string
 	Url   string
 }

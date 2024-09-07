@@ -2,21 +2,21 @@ package api_vo
 
 import "time"
 
-type User struct {
+type UserVO struct {
 	Id            int
 	Username      string
 	Avatar        string
 	Nickname      string
 	Description   string
 	Email         string
-	Accounts      UserAccounts
+	Accounts      UserAccountsVO
 	LastLoginTime time.Time
 	Status        int
 	CreateTime    time.Time
 	UpdateTime    time.Time
 }
 
-type UserAccounts struct {
+type UserAccountsVO struct {
 	Github        string
 	Weibo         string
 	Google        string

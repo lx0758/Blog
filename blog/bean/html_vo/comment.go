@@ -1,6 +1,6 @@
 package html_vo
 
-type Comment struct {
+type CommentVO struct {
 	Id       int
 	Avatar   string
 	Nickname string
@@ -8,5 +8,11 @@ type Comment struct {
 	System   string
 	Time     string
 	Content  string
-	Children []Comment
+	Children []CommentVO
+}
+
+type CommentPagination struct {
+	Total    int
+	HasMore  bool
+	Comments []CommentVO
 }

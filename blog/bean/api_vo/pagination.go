@@ -1,9 +1,9 @@
 package api_vo
 
-type Pagination[T interface{}] struct {
+type PaginationVO[T interface{}] struct {
 	PageNum  int
 	PageSize int
-	Pages    int
+	Size     int
 	Total    int
 	List     []T
 }

@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type Tag struct {
+type TagVO struct {
 	Id           int
 	Name         string
 	CreateTime   time.Time

@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type Config struct {
+type ConfigVO struct {
 	Key         string
 	Value       string
 	Description string

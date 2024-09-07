@@ -2,7 +2,7 @@ package api_vo
 
 import "time"
 
-type Link struct {
+type LinkVO struct {
 	Id         int
 	Title      string
 	Url        string
