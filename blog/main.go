@@ -5,21 +5,28 @@ import (
 	"blog/controller"
 	"blog/controller/api"
 	"blog/controller/html"
-	"blog/database"
+	"blog/logger"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
+var htmlIndexController = &html.IndexController{}
+
 func main() {
-	database.Init()
+	conf := config.Config().Server
+	if conf.Release {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	engine := gin.Default()
+	engine.Use(htmlIndexController.OnRecovery)
 
-	config.Init(engine)
-
-	controller.AddController(engine, "", &html.IndexController{})
+	controller.AddController(engine, "", htmlIndexController)
 	controller.AddController(engine, "api", &api.IndexController{})
 
-	port := config.Config().Server.Port
-	_ = engine.Run(fmt.Sprintf(":%d", port))
+	port := conf.Port
+	err := engine.Run(fmt.Sprintf(":%d", port))
+	if err != nil {
+		logger.Panicf("Run server error:%s\n", err)
+	}
 }

@@ -1,0 +1,21 @@
+{{template "header" .}}
+
+{{with .PageData}}
+<body>
+<div class="content archive">
+    <div class="post-block">
+        <div class="posts-collapse">
+            <div class="collection-title">
+                <span class="collection-header">很好! 目前共计 {{.Total}} 篇日志。 继续努力。</span>
+            </div>
+            {{template "timeline.gohtml" .}}
+        </div>
+    </div>
+
+    {{template "pagination.gohtml" .}}
+
+</div>
+</body>
+{{end}}
+
+{{template "footer" .}}

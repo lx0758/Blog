@@ -16,3 +16,8 @@ type Url struct {
 
 	Author User `gorm:"foreignKey:AuthorId;references:Id"`
 }
+
+const (
+	URL_STATUS_UNPUBLISHED = 0
+	URL_STATUS_PUBLISHED   = 1
+)

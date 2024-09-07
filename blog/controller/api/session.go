@@ -15,9 +15,9 @@ func (c *SessionController) OnInitController() {
 }
 
 func (c *SessionController) postSession(context *gin.Context) {
-	c.Succeed(context, nil)
+	c.RestSucceed(context, nil)
 }
 
 func (c *SessionController) deleteSession(context *gin.Context) {
-	c.Failed(context, 1, "Not support!", nil)
+	c.RestFailed(context, 1, "Not support!", nil)
 }

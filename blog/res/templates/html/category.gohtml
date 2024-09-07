@@ -1,0 +1,23 @@
+{{template "header" .}}
+
+{{with .PageData}}
+<body>
+<div class="content category">
+    <div class="post-block">
+        <div class="posts-collapse">
+            <div class="collection-title">
+                <h2 class="collection-header">
+                    分类 - {{.Name}}
+                </h2>
+            </div>
+            {{template "timeline.gohtml" .}}
+        </div>
+    </div>
+
+    {{template "pagination.gohtml" .}}
+
+</div>
+</body>
+{{end}}
+
+{{template "footer" .}}

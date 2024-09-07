@@ -10,9 +10,11 @@
         </header>
         <div class="post-body">
             <div class="tag-cloud">
-                <div class="tag-cloud-title" th:text="${'目前共计 ' + tags.size + ' 个标签'}"></div>
+                <div class="tag-cloud-title">目前共计 {{len .}} 个标签</div>
                 <div class="tag-cloud-tags">
-                    <a th:each="tag : ${tags}" th:href="${'/tag/' + tag.name}" th:style="${'font-size: ' + (tag.articleCount + 10) + 'px; color: black; opacity:' + (tag.articleCount / 20.0 + 0.5)}" th:text="${tag.name}"></a>
+                    {{range .}}
+                    <a href="/tag/{{.Name}}" style="font-size: {{addInt .ArticleCount 10}}px; color: black; opacity: {{tagOpacity .ArticleCount}}">{{.Name}}</a>
+                    {{end}}
                 </div>
             </div>
         </div>

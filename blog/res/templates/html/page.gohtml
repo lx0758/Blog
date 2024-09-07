@@ -1,0 +1,78 @@
+{{template "header" .}}
+
+{{with .PageData}}
+<body>
+<div class="content index posts-expand">
+    {{range .List}}
+    <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+        <link itemprop="mainEntityOfPage" href="/article/{{.Url}}">
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <meta itemprop="image" content="{{$.Blog.OwnerAvatar}}">
+            <meta itemprop="name" content="{{$.Blog.OwnerNickname}}">
+            <meta itemprop="description" content="{{$.Blog.OwnerDescription}}">
+        </span>
+        <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+            <meta itemprop="name" content="{{$.Blog.SiteTitle}}">
+        </span>
+        <header class="post-header">
+            <h2 class="post-title" itemprop="name headline">
+                {{if .Top}}
+                <span class="post-sticky-flag" title="置顶" style="font-size: 20px;">
+                    <i class="fa fa-thumb-tack"></i>
+                </span>
+                {{end}}
+                <a href="/article/{{.Url}}" class="post-title-link" itemprop="url">{{.Title}}</a>
+            </h2>
+            <div class="post-meta">
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-calendar-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">发表于</span>
+                    <time title="创建时间：{{formatDateTime .CreateTime}}"
+                          itemprop="dateCreated datePublished">{{formatDate .CreateTime}}</time>
+                </span>
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">更新于</span>
+                    <time title="更新时间：{{formatDateTime .UpdateTime}}"
+                          itemprop="dateCreated datePublished">{{formatDate .UpdateTime}}</time>
+                </span>
+                <span class="post-meta-item">
+                    <span class="post-meta-item-icon">
+                        <i class="fa fa-folder-o"></i>
+                    </span>
+                    <span class="post-meta-item-text">分类于</span>
+                    <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                        <a href="/category/{{.CategoryName}}" itemprop="url" rel="index">
+                            <span itemprop="name">{{.CategoryName}}</span>
+                        </a>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <div class="post-body" itemprop="articleBody">
+            {{rawHtml .Content}}
+            <!--noindex-->
+            {{if .Preview}}
+            <div class="post-button">
+                <a class="btn" href="/article/{{.Url}}#more" rel="contents">阅读全文 »</a>
+            </div>
+            {{end}}
+            <!--/noindex-->
+        </div>
+        <footer class="post-footer">
+            <div class="post-eof"></div>
+        </footer>
+    </article>
+    {{end}}
+
+    {{template "pagination.gohtml" .}}
+
+</div>
+</body>
+{{end}}
+
+{{template "footer" .}}

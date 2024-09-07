@@ -10,13 +10,15 @@
         </header>
         <div class="post-body">
             <div class="category-all-page">
-                <div class="category-all-title" th:text="${'目前共计 ' + categorys.size + ' 个分类'}"></div>
+                <div class="category-all-title">目前共计 {{len .}} 个分类</div>
                 <div class="category-all">
                     <ul class="category-list">
-                        <li class="category-list-item" th:each="category : ${categorys}">
-                            <a class="category-list-link" th:href="${'/category/' + category.name}" th:text="${category.name}"></a>
-                            <span class="category-list-count" th:text="${category.articleCount}"></span>
+                        {{range .}}
+                        <li class="category-list-item">
+                            <a class="category-list-link" href="/category/{{.Name}}">{{.Name}}</a>
+                            <span class="category-list-count">{{.ArticleCount}}</span>
                         </li>
+                        {{end}}
                     </ul>
                 </div>
             </div>

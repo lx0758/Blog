@@ -1,23 +1,11 @@
 package logger
 
 import (
-	"io"
 	"log"
 	"os"
 )
 
-var logger = log.New(Writer(), "", log.LstdFlags)
-
-type loggerWriter struct{}
-
-func (_ loggerWriter) Write(bytes []byte) (n int, err error) {
-	logger.Print(bytes)
-	return 0, err
-}
-
-func Writer() io.Writer {
-	return os.Stdout
-}
+var logger = log.New(os.Stdout, "", log.LstdFlags)
 
 func Logger() *log.Logger {
 	return logger
@@ -45,4 +33,16 @@ func Panicf(format string, args ...any) {
 
 func Panicln(args ...any) {
 	logger.Panicln(args)
+}
+
+func Fatal(args ...any) {
+	logger.Fatal(args)
+}
+
+func Fatalf(format string, args ...any) {
+	logger.Fatalf(format, args)
+}
+
+func Fatalln(args ...any) {
+	logger.Fatalln(args)
 }

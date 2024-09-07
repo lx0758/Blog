@@ -1,4 +1,3 @@
-{{if .Childs}}
 {{range $Index, $Catalogue := .Childs}}
 <li class="nav-item nav-level-{{$Index}}">
     <a class="nav-link" href="#{{$Catalogue.Anchor}}">
@@ -7,9 +6,8 @@
     </a>
     {{if $Catalogue.Childs}}
     <ol class="nav-child">
-        {{template "catalogue.html" $Catalogue.Childs}}
+        {{template "catalogue.gohtml" $Catalogue.Childs}}
     </ol>
     {{end}}
 </li>
-{{end}}
 {{end}}

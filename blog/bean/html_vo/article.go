@@ -4,7 +4,6 @@ import (
 	"blog/bean/po"
 	"blog/markdown"
 	"blog/util"
-	"strconv"
 	"time"
 )
 
@@ -22,45 +21,42 @@ type ArticleVO struct {
 	EnableComment  bool
 	Tags           []string
 	Catalogues     []CatalogueVO
+	Prev           *ArticleItemVO
+	Next           *ArticleItemVO
 }
 
-func (a *ArticleVO) From(article po.Article) {
-	url := ""
-	for _, u := range article.Urls {
-		if u.Status == po.ARTICLE_URL_STATUS_LAST {
-			url = u.Url
-			break
-		}
+type CatalogueVO struct {
+	Title  string
+	Anchor string
+	Childs []CatalogueVO
+}
+
+func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Article) {
+	html, text, catalogues := markdown.Render(article.Content, false)
+	var prevArticleItemVO, nextArticleItemVO *ArticleItemVO
+	if prevArticle != nil {
+		prevArticleItemVO = &ArticleItemVO{}
+		prevArticleItemVO.FromItem(*prevArticle)
 	}
-	description := markdown.RenderDescription(article.Content)
-	content, catalogues := markdown.RenderContent(article.Content)
-	tags := make([]string, 0)
-	for _, tag := range article.Tags {
-		tags = append(tags, tag.Name)
+	if nextArticle != nil {
+		nextArticleItemVO = &ArticleItemVO{}
+		nextArticleItemVO.FromItem(*nextArticle)
 	}
-	categoryName := util.If(article.Category.Name != "", article.Category.Name, "")
-	authorNickname := util.If(article.Author.Nickname != "", article.Author.Nickname, "")
 	a.Id = article.Id
-	a.Url = url
+	a.Url = article.GetSafeUrl()
 	a.Title = article.Title
-	a.Description = description
-	a.Content = content
+	a.Description = text
+	a.Content = html
 	a.CreateTime = article.CreateTime
-	a.UpdateTime = article.UpdateTime
-	a.CategoryName = categoryName
-	a.AuthorNickname = authorNickname
+	a.UpdateTime = util.IfNotNil(article.UpdateTime, article.CreateTime)
+	a.CategoryName = article.Category.Name
+	a.AuthorNickname = article.Author.Nickname
 	a.Views = article.Views
 	a.EnableComment = article.CommentStatus == po.ARTICLE_COMMENT_ENABLE
-	a.Tags = tags
+	a.Tags = article.GetSafeTags()
 	a.Catalogues = convertCatalog(catalogues)
-}
-
-func (a *ArticleVO) GetSafeUrl() string {
-	return util.If(a.Url != "", a.Url, strconv.Itoa(a.Id))
-}
-
-func (a *ArticleVO) GetSafeDate() time.Time {
-	return util.If(!a.UpdateTime.IsZero(), a.UpdateTime, a.CreateTime)
+	a.Prev = prevArticleItemVO
+	a.Next = nextArticleItemVO
 }
 
 func convertCatalog(catalogues []markdown.Catalogue) []CatalogueVO {

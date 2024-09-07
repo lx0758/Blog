@@ -1,3 +1,4 @@
+{{- /*gotype: blog/bean/html_vo.ThemeVO*/ -}}
 {{define "header"}}
 <html lang="zh-CN">
 
@@ -76,7 +77,7 @@
     {{else}}
     <meta name="keywords" content=".Blog.SiteKeywords}}">
     {{end}}
-    {{if eq .Page "article.html"}}
+    {{if eq .Page "article.gohtml"}}
     <meta property="og:type" content="article">
     {{else}}
     <meta property="og:type" content="website">
@@ -165,7 +166,7 @@
                 </div>
 
                 <div class="site-meta">
-                    <a href="/asset/static" class="brand" rel="start">
+                    <a href="/" class="brand" rel="start">
                         <span class="logo-line-before"><i></i></span>
                         <h1 class="site-title" >{{.Blog.SiteTitle}}</h1>
                         <span class="logo-line-after"><i></i></span>
@@ -341,7 +342,7 @@
                         {{if .Catalogues}}
                         <div class="post-toc motion-element">
                             <ol class="nav">
-                                {{template "catalogue.html" .Catalogues}}
+                                {{template "catalogue.gohtml" .Catalogues}}
                             </ol>
                         </div>
                         {{end}}
@@ -513,6 +514,8 @@
             <div class="powered-by">
                 由
                 <a href="https://gin-gonic.com/" class="theme-link" rel="noopener" target="_blank">Gin</a>
+                &amp;
+                <a href="https://gorm.io/" class="theme-link" rel="noopener" target="_blank">Gorm</a>
                 &amp;
                 <a href="https://github.com/theme-next/hexo-theme-next" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
                 强力驱动

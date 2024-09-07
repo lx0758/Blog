@@ -4,6 +4,7 @@ import (
 	"blog/bean/po"
 	"blog/config"
 	bloglogger "blog/logger"
+	"blog/util"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -14,23 +15,19 @@ import (
 
 var gDb *gorm.DB
 
-func Init() {
-	GetDB()
-}
-
 func GetDB() *gorm.DB {
 	if gDb == nil {
-		dataSource := config.Config().DataSource
+		conf := config.Config().DataSource
 		var driver gorm.Dialector
-		switch dataSource.Type {
+		switch conf.Type {
 		case "sqlite":
-			driver = sqlite.Open(dataSource.Dsn)
+			driver = sqlite.Open(conf.Dsn)
 			break
 		case "postgres":
-			driver = postgres.Open(dataSource.Dsn)
+			driver = postgres.Open(conf.Dsn)
 			break
 		default:
-			panic("Unsupported database types")
+			bloglogger.Panic("Unsupported database types\n")
 		}
 		db, err := gorm.Open(driver, &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
@@ -43,7 +40,7 @@ func GetDB() *gorm.DB {
 				bloglogger.Logger(),
 				gormlogger.Config{
 					SlowThreshold:             time.Second,
-					LogLevel:                  gormlogger.Info,
+					LogLevel:                  util.If(conf.Debug, gormlogger.Info, gormlogger.Warn),
 					IgnoreRecordNotFoundError: false,
 					ParameterizedQueries:      false,
 					Colorful:                  true,
@@ -51,10 +48,10 @@ func GetDB() *gorm.DB {
 			),
 		})
 		if err != nil {
-			panic("Failed to connect to database")
+			bloglogger.Panicf("Failed to connect to database:%s\n", err)
 		}
 
-		if config.Config().DataSource.Debug {
+		if conf.Debug {
 			db.Debug()
 		}
 
@@ -76,7 +73,7 @@ func GetDB() *gorm.DB {
 			&po.Comment{},
 		)
 		if err != nil {
-			panic("Failed auto migrate database")
+			bloglogger.Panicf("Failed auto migrate database:%s\n", err)
 		}
 
 		gDb = db
@@ -84,13 +81,16 @@ func GetDB() *gorm.DB {
 	return gDb
 }
 
-func Pagination(db *gorm.DB, pageNum int, pageSize int) po.Pagination {
+func Pagination[PO interface{}](db *gorm.DB, pageNum int, pageSize int) po.Pagination[PO] {
 	var total int64
-	db.Count(&total)
-	return po.Pagination{
+	var pos = make([]PO, 0)
+	db.Count(&total).Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&pos)
+	lastCount := util.If(int(total)%pageSize > 0, 1, 0)
+	return po.Pagination[PO]{
 		PageNum:  pageNum,
 		PageSize: pageSize,
-		Size:     int(total) / pageSize,
+		Size:     int(total)/pageSize + lastCount,
 		Total:    int(total),
+		List:     pos,
 	}
 }

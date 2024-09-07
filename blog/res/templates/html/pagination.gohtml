@@ -1,0 +1,42 @@
+{{if gt .Size 1}}
+<nav class="pagination">
+    <!-- 上一页按钮 -->
+    {{if gt .PageNum 1}}
+    <a class="extend prev" rel="prev" href="/{{.Path}}/{{addInt .PageNum -1}}">
+        <i class="fa fa-angle-left" aria-label="上一页"></i>
+    </a>
+    {{end}}
+    <!-- 首页 -->
+    {{if gt .PageNum 2}}
+    <a class="page-number" href="/{{.Path}}/1">1</a>
+    {{end}}
+    <!-- 首页间隔 -->
+    {{if gt .PageNum 3}}
+    <span class="space">&hellip;</span>
+    {{end}}
+    <!-- 上一页 -->
+    {{if gt .PageNum 1}}
+    <a class="page-number" href="/{{.Path}}/{{addInt .PageNum -1}}">{{addInt .PageNum -1}}</a>
+    {{end}}
+    <!-- 当前页 -->
+    <span class="page-number current">{{.PageNum}}</span>
+    <!-- 下一页 -->
+    {{if le .PageNum (addInt .Size -1)}}
+    <a class="page-number" href="/{{.Path}}/{{addInt .PageNum 1}}">{{addInt .PageNum 1}}</a>
+    {{end}}
+    <!-- 尾页间隔 -->
+    {{if le .PageNum (addInt .Size -3)}}
+    <span class="space">&hellip;</span>
+    {{end}}
+    <!-- 页尾 -->
+    {{if le .PageNum (addInt .Size -2)}}
+    <a class="page-number" href="/{{.Path}}/{{.Size}}">{{.Size}}</a>
+    {{end}}
+    <!-- 下一页按钮 -->
+    {{if lt .PageNum .Size}}
+    <a class="extend next" rel="next" href="/{{.Path}}/{{addInt .PageNum 1}}">
+        <i class="fa fa-angle-right" aria-label="下一页"></i>
+    </a>
+    {{end}}
+</nav>
+{{end}}

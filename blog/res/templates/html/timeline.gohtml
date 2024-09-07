@@ -1,0 +1,23 @@
+{{$LastYear := 0}}
+{{$NowYear := 0}}
+{{range .List}}
+{{$NowYear = (getYear .CreateTime)}}
+{{if ne $LastYear $NowYear}}
+{{$LastYear = $NowYear}}
+<div class="collection-year">
+    <span class="collection-header">{{$LastYear}}</span>
+</div>
+{{end}}
+<article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <div class="post-meta">
+            <time itemprop="dateCreated" content="{{formatDateTime .CreateTime}}">{{formatMMdd .CreateTime}}</time>
+        </div>
+        <div class="post-title">
+            <a class="post-title-link" href="/article/{{.Url}}" itemprop="url">
+                <span itemprop="name">{{.Title}}</span>
+            </a>
+        </div>
+    </header>
+</article>
+{{end}}
