@@ -2,11 +2,15 @@ package html
 
 import (
 	"blog/bean/html_vo"
+	"blog/config"
 	"blog/controller"
 	"blog/logger"
 	"blog/res"
 	"blog/service"
 	"blog/util"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
@@ -22,18 +26,6 @@ type IndexController struct {
 	articleService *service.ArticleService
 
 	pageController *PageController
-}
-
-func (c *IndexController) OnRecovery(context *gin.Context) {
-	defer func() {
-		if context.Writer.Status() == http.StatusNotFound {
-			c.RenderError(context)
-		} else if err := recover(); err != nil {
-			c.RenderError(context)
-			panic(err)
-		}
-	}()
-	context.Next()
 }
 
 func (c *IndexController) OnInitController() {
@@ -82,9 +74,16 @@ func (c *IndexController) OnInitController() {
 		logger.Panicf("Failed initialize template:%s\n", err)
 	}
 	c.Engine.SetHTMLTemplate(templateInstance)
+	storeKey := config.Config().Session.StoreKey
+	if storeKey == "" {
+		storeKey = strconv.FormatInt(time.Now().UnixMilli(), 10)
+	}
+	store := memstore.NewStore([]byte(storeKey))
+	c.Engine.Use(sessions.Sessions("session", store))
+	c.Engine.Use(cors.Default())
 
-	c.Group.StaticFS("/admin", http.FS(res.AdminStaticFS))
 	c.Group.StaticFS("/blog", http.FS(res.BlogStaticFS))
+	c.Group.StaticFS("/admin", http.FS(res.AdminStaticFS))
 	c.Group.GET("/", c.getIndex)
 	c.Group.GET("/admin", c.getAdmin)
 	c.Group.GET("/search.json", c.getSearchJson)

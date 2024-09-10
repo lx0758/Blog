@@ -7,13 +7,16 @@ import (
 )
 
 var (
-	//go:embed static/admin/*
-	adminStaticFS embed.FS
-	AdminStaticFS = createSafeFS(adminStaticFS, "static/admin/", false)
+	//go:embed comic.ttf
+	FontFile []byte
 
 	//go:embed static/blog/*
 	blogStaticFS embed.FS
 	BlogStaticFS = createSafeFS(blogStaticFS, "static/blog/", false)
+
+	//go:embed static/admin/*
+	adminStaticFS embed.FS
+	AdminStaticFS = createSafeFS(adminStaticFS, "static/admin/", false)
 
 	//go:embed templates/*
 	templatesFS embed.FS

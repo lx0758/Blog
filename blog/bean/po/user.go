@@ -28,3 +28,8 @@ type UserAccounts struct {
 	Instagram     string `json:"instagram"`
 	Skype         string `json:"skype"`
 }
+
+const (
+	USER_STATUS_DISABLED = 0
+	USER_STATUS_ENABLED  = 1
+)

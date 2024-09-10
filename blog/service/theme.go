@@ -63,24 +63,23 @@ func (s *ThemeService) RenderArticle(context *gin.Context, code int, page string
 	})
 }
 
-func (s *ThemeService) RenderError(context *gin.Context) {
+func (s *ThemeService) RenderError(context *gin.Context, err error) {
 	status := context.Writer.Status()
-	if status == 404 {
-		s.Render(context, http.StatusNotFound, "404.gohtml", map[string]any{
-			"Url": context.Request.RequestURI,
-		})
-	} else {
-		errs := context.Errors
-		errStr := "Server internal error"
-		if errs != nil {
-			errStr = errs.Last().Error()
-		}
-		if status == http.StatusOK {
-			status = http.StatusInternalServerError
-		}
-		s.Render(context, status, "error.gohtml", map[string]any{
-			"Status": status,
-			"Error":  errStr,
-		})
+	if status == http.StatusOK {
+		status = http.StatusInternalServerError
 	}
+	page := "error.gohtml"
+	if status == http.StatusNotFound {
+		page = "404.gohtml"
+	}
+	errStr := err.Error()
+	errs := context.Errors
+	if errs != nil {
+		errStr = errs.Last().Error()
+	}
+	s.Render(context, status, page, map[string]any{
+		"Status": status,
+		"Url":    context.Request.RequestURI,
+		"Error":  errStr,
+	})
 }

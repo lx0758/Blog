@@ -5,9 +5,11 @@ import (
 	"blog/bean/po"
 	"blog/controller"
 	"blog/service"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type ArticleController struct {
@@ -16,6 +18,7 @@ type ArticleController struct {
 
 	articleService    *service.ArticleService
 	articleUrlService *service.ArticleUrlService
+	captchaService    *service.CaptchaService
 	commentService    *service.CommentService
 }
 
@@ -23,11 +26,13 @@ func (c *ArticleController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
 	c.articleUrlService = service.GetService[*service.ArticleUrlService](c.articleUrlService)
+	c.captchaService = service.GetService[*service.CaptchaService](c.captchaService)
 	c.commentService = service.GetService[*service.CommentService](c.commentService)
 
 	c.Group.GET("/:url", c.getArticle)
 	c.Group.GET("/:url/comment", c.getArticleComment)
 	c.Group.POST("/:url/comment", c.postArticleComment)
+	c.Engine.GET("/captcha", c.getArticleCommentCaptcha)
 }
 
 func (c *ArticleController) getArticle(context *gin.Context) {
@@ -65,6 +70,19 @@ func (c *ArticleController) postArticleComment(context *gin.Context) {
 	if err != nil || id == 0 {
 		c.ErrorNotFound(context)
 	}
+}
+
+// @Summary		comment captcha
+// @Description	comment captcha
+// @Tags		captcha
+// @Accept		*/*
+// @Produce		image/png
+// @Router		/captcha [get]
+func (c *ArticleController) getArticleCommentCaptcha(context *gin.Context) {
+	session := sessions.Default(context)
+	captcha := c.captchaService.Generate(session, service.CAPTCHA_TYPE_COMMENT, 30*time.Minute)
+	context.Header("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
+	context.Data(http.StatusOK, "image/png", captcha.Bytes())
 }
 
 func (c *ArticleController) getKeyArticle(url string) (*po.ArticleUrl, *po.Article) {
