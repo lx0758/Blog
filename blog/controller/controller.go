@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"strconv"
 )
@@ -73,22 +74,27 @@ func (c *Controller) GetPathBool(context *gin.Context, key string, def bool) (bo
 func (c *Controller) Forward(context *gin.Context, url string) {
 	context.Request.URL.Path = url
 	c.Engine.HandleContext(context)
-	context.Abort()
+}
+
+func (c *Controller) Error(context *gin.Context, status int, format string, args ...any) {
+	var err error
+	if len(args) != 0 {
+		err = errors.New(fmt.Sprintf(format, args))
+	} else {
+		err = errors.New(format)
+	}
+	context.Status(status)
+	panic(err)
 }
 
 func (c *Controller) ErrorNotFound(context *gin.Context) {
 	c.Error(context, http.StatusNotFound, "Not found "+context.Request.RequestURI)
 }
 
-func (c *Controller) Error(context *gin.Context, status int, format string, args ...any) {
-	err := errors.New(fmt.Sprintf(format, args))
-	context.AbortWithError(status, err)
-	panic(err)
-}
-
 const (
-	API_STATUS_SUCCEED = 0
-	API_STATUS_ERROR   = 1
+	API_STATUS_SUCCEED      = http.StatusOK
+	API_STATUS_UNAUTHORIZED = http.StatusUnauthorized
+	API_STATUS_ERROR        = http.StatusInternalServerError
 )
 
 type RestController struct {
@@ -103,10 +109,30 @@ func (c *RestController) RestSucceed(context *gin.Context, data any) {
 	})
 }
 
-func (c *RestController) RestFailed(context *gin.Context, code int, message string, data any) {
+func (c *RestController) RestFailed(context *gin.Context, code int, message string) {
 	context.JSON(http.StatusOK, api_vo.RespVO[any]{
 		Status:  code,
 		Message: message,
-		Data:    data,
+		Data:    nil,
 	})
+}
+
+func (c *RestController) RestError(_ *gin.Context, format string, args ...any) {
+	var err error
+	if len(args) != 0 {
+		err = errors.New(fmt.Sprintf(format, args))
+	} else {
+		err = errors.New(format)
+	}
+	panic(err)
+}
+
+func (c *RestController) RestValidationError(context *gin.Context, err error) {
+	msg := err.Error()
+	var validationErrors validator.ValidationErrors
+	if errors.As(err, &validationErrors) {
+		validationError := validationErrors[0]
+		msg = validationError.Tag()
+	}
+	panic(errors.New(fmt.Sprintf("参数验证失败: %s", msg)))
 }
