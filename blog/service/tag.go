@@ -4,6 +4,7 @@ import (
 	"blog/bean/po"
 	"blog/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type TagService struct {
@@ -25,15 +26,19 @@ func (s *TagService) Count() int {
 func (s *TagService) ListTag() []po.Tag {
 	var tags []po.Tag
 	s.db.Model(&po.Tag{}).
-		Preload("Articles", s.db.Where("status = ?", po.ARTICLE_STATUS_PUBLISHED)).
-		Order("id ASC").Find(&tags)
+		Preload("Articles", s.db.Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED)).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   false,
+		}).
+		Find(&tags)
 	return tags
 }
 
 func (s *TagService) QueryTag(name string) *po.Tag {
 	var tag po.Tag
 	s.db.
-		Where("name = ?", name).
+		Where("? = ?", clause.Column{Name: "name"}, name).
 		Take(&tag)
 	if tag.Id == 0 {
 		return nil

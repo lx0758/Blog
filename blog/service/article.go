@@ -3,7 +3,6 @@ package service
 import (
 	"blog/bean/po"
 	"blog/database"
-	"blog/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -23,7 +22,7 @@ func (s *ArticleService) OnInitService() {
 func (s *ArticleService) Count() int {
 	var count int64
 	s.db.Model(&po.Article{}).
-		Where("status = ?", po.ARTICLE_STATUS_PUBLISHED).
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
 		Count(&count)
 	return int(count)
 }
@@ -32,7 +31,7 @@ func (s *ArticleService) QueryArticle(id int) *po.Article {
 	var article po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
-		Where("status = ? AND id = ?", po.ARTICLE_STATUS_PUBLISHED, id).
+		Where("? = ? AND ? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
 		Take(&article)
 	if article.Id == 0 {
 		return nil
@@ -45,7 +44,7 @@ func (s *ArticleService) QueryArticleByAdmin(id int) *po.Article {
 	var article po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
-		Where("id = ?", id).
+		Where("? = ?", clause.Column{Name: "id"}, id).
 		Take(&article)
 	if article.Id == 0 {
 		return nil
@@ -57,9 +56,8 @@ func (s *ArticleService) QueryPrevArticle(id int) *po.Article {
 	var article po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Urls").
-		Where("status = ? AND id < ?", po.ARTICLE_STATUS_PUBLISHED, id).
-		Order("id DESC").
-		First(&article)
+		Where("? = ? AND ? < ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
+		Last(&article)
 	if article.Id == 0 {
 		return nil
 	}
@@ -70,8 +68,7 @@ func (s *ArticleService) QueryNextArticle(id int) *po.Article {
 	var article po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Urls").
-		Where("status = ? AND id > ?", po.ARTICLE_STATUS_PUBLISHED, id).
-		Order("id DESC").
+		Where("? = ? AND ? > ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
 		First(&article)
 	if article.Id == 0 {
 		return nil
@@ -83,8 +80,11 @@ func (s *ArticleService) ListArticle() []po.Article {
 	var articles []po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Urls").
-		Where("status = ?", po.ARTICLE_STATUS_PUBLISHED).
-		Order("id DESC").
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		}).
 		Find(&articles)
 	return articles
 }
@@ -101,55 +101,54 @@ func (s *ArticleService) PaginationArticleByAdmin(
 	orderMethod *string,
 ) po.Pagination[po.Article] {
 	db := s.db.Model(&po.Article{}).
-		Joins("left join t_article_url on t_article.id = t_article_url.article_id").
+		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_url"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_url.article_id"}).
+		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
 		Distinct().
 		Preload("Category").Preload("Urls")
 	if title != nil {
-		db = db.Where("upper(t_article.title) LIKE upper(?)", "%"+*title+"%")
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "t_article.title"}, "%"+*title+"%")
 	}
 	if categoryId != nil {
-		db = db.Where("t_article.category_id = ?", *categoryId)
+		db = db.Where("? = ?", clause.Column{Name: "t_article.category_id"}, *categoryId)
 	}
-	if url != nil {
-		db = db.Where("upper(t_article.url) LIKE upper(?)", "%"+*url+"%")
+	if url != nil && *url != "" {
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "t_article_url.url"}, "%"+*url+"%")
 	}
 	if comment != nil {
+		var commentStatus int
 		if *comment {
-			db = db.Where("t_article.comment_status = ?", po.ARTICLE_COMMENT_ENABLE)
+			commentStatus = po.ARTICLE_COMMENT_ENABLE
 		} else {
-			db = db.Where("t_article.comment_status = ?", po.ARTICLE_COMMENT_DISABLE)
+			commentStatus = po.ARTICLE_COMMENT_DISABLE
 		}
+		db = db.Where("? = ?", clause.Column{Name: "t_article.comment_status"}, commentStatus)
 	}
 	if status != nil {
-		db = db.Where("t_article.status = ?", *status)
+		db = db.Where("? = ?", clause.Column{Name: "t_article.status"}, *status)
 	}
-	if orderName != nil && orderMethod != nil {
-		db = db.Order(clause.OrderBy{Columns: []clause.OrderByColumn{
-			{Column: clause.Column{
-				Name: util.ToSnakeCase(*orderName)},
-				Desc: util.If(*orderMethod == "descending", true, false),
-			},
-			{Column: clause.Column{Name: "id"}, Desc: true},
-		}})
-	} else {
-		db = db.Order("id DESC")
-	}
+	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
 	return database.Pagination[po.Article](db, pageNum, pageSize)
 }
 
 func (s *ArticleService) PaginationArticleByPage(pageNum int) po.Pagination[po.Article] {
 	db := s.db.Model(&po.Article{}).
 		Preload("Category").Preload("Author").Preload("Urls").
-		Where("status = ?", po.ARTICLE_STATUS_PUBLISHED).
-		Order("id DESC")
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
 
 func (s *ArticleService) PaginationArticleByArchive(pageNum int) po.Pagination[po.Article] {
 	db := s.db.Model(&po.Article{}).
 		Preload("Urls").
-		Where("status = ?", po.ARTICLE_STATUS_PUBLISHED).
-		Order("id DESC")
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
 
@@ -158,15 +157,21 @@ func (s *ArticleService) PaginationArticleByCategory(categoryId int, pageNum int
 		Preload("Urls").
 		InnerJoins("Category", s.db.Where(&po.Category{Id: categoryId})).
 		Where(&po.Article{Status: po.ARTICLE_STATUS_PUBLISHED}).
-		Order("id DESC")
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
 
 func (s *ArticleService) PaginationArticleByTag(tagId int, pageNum int) po.Pagination[po.Article] {
 	db := s.db.Model(&po.Article{}).
-		Joins("LEFT JOIN t_article_tag ON t_article.id = t_article_tag.article_id").
-		Where("t_article.status = ? AND t_article_tag.tag_id = ?", po.ARTICLE_STATUS_PUBLISHED, tagId).
-		Order("id DESC")
+		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
+		Where("? = ? AND ? = ?", clause.Column{Name: "t_article.status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "t_article_tag.tag_id"}, tagId).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
 
@@ -210,7 +215,7 @@ func (s *ArticleService) UpdateArticleByAdmin(
 ) int {
 	db := s.db.Begin()
 	db = db.Model(&po.Article{}).
-		Where("id = ?", id).
+		Where("? = ?", clause.Column{Name: "id"}, id).
 		Updates(map[string]interface{}{
 			"title":          title,
 			"content":        content,
@@ -227,7 +232,7 @@ func (s *ArticleService) UpdateArticleByAdmin(
 
 func (s *ArticleService) UpdateArticleStatusByAdmin(id int, status int) int {
 	db := s.db.Model(&po.Article{}).
-		Where("id = ?", id).
+		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("status", status)
 	return int(db.RowsAffected)
 }

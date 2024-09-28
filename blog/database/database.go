@@ -8,6 +8,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	gormlogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"time"
@@ -92,5 +93,40 @@ func Pagination[PO interface{}](db *gorm.DB, pageNum int, pageSize int) po.Pagin
 		Size:     int(total)/pageSize + lastCount,
 		Total:    int(total),
 		List:     pos,
+	}
+}
+
+func TableOrderBy(orderName *string, orderMethod *string, defaultColumnName string, defaultColumnDesc bool) clause.OrderBy {
+	return clause.OrderBy{
+		Expression: tableOrderBy{
+			OrderName:         orderName,
+			OrderMethod:       orderMethod,
+			DefaultColumnName: defaultColumnName,
+			DefaultColumnDesc: defaultColumnDesc,
+		},
+	}
+}
+
+type tableOrderBy struct {
+	OrderName         *string
+	OrderMethod       *string
+	DefaultColumnName string
+	DefaultColumnDesc bool
+}
+
+func (orderBy tableOrderBy) Build(builder clause.Builder) {
+	if orderBy.OrderName != nil && orderBy.OrderMethod != nil {
+		builder.WriteQuoted(clause.Column{Name: util.ToSnakeCase(*orderBy.OrderName)})
+		desc := *orderBy.OrderMethod == "descending"
+		if desc {
+			builder.WriteString(" DESC NULLS LAST")
+		} else {
+			builder.WriteString(" NULLS FIRST")
+		}
+		builder.WriteByte(',')
+	}
+	builder.WriteQuoted(clause.Column{Name: orderBy.DefaultColumnName})
+	if orderBy.DefaultColumnDesc {
+		builder.WriteString(" DESC")
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"blog/bean/po"
 	"blog/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ConfigService struct {
@@ -29,7 +30,7 @@ func (s *ConfigService) QueryConfigMap() map[string]string {
 func (s *ConfigService) QueryConfig(key string) *po.Config {
 	var config po.Config
 	s.db.Model(&po.Config{}).
-		Where("key = ?", key).
+		Where("? = ?", clause.Column{Name: "key"}, key).
 		Take(&config)
 	if config.Key == "" {
 		return nil
@@ -40,7 +41,10 @@ func (s *ConfigService) QueryConfig(key string) *po.Config {
 func (s *ConfigService) ListConfig() []po.Config {
 	var configs []po.Config
 	s.db.Model(&po.Config{}).
-		Order("key AES").
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "key"},
+			Desc:   false,
+		}).
 		Find(&configs)
 	return configs
 }

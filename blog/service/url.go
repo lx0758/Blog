@@ -4,6 +4,7 @@ import (
 	"blog/bean/po"
 	"blog/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UrlService struct {
@@ -18,7 +19,7 @@ func (s *UrlService) OnInitService() {
 func (s *UrlService) QueryUrl(key string) *po.Url {
 	var url po.Url
 	s.db.Model(&po.Url{}).
-		Where("status = ? AND key = ?", po.URL_STATUS_PUBLISHED, key).
+		Where("? = ? AND ? = ?", clause.Column{Name: "status"}, po.URL_STATUS_PUBLISHED, clause.Column{Name: "key"}, key).
 		Take(&url)
 	if url.Id == 0 {
 		return nil

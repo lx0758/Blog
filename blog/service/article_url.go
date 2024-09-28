@@ -4,6 +4,7 @@ import (
 	"blog/bean/po"
 	"blog/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ArticleUrlService struct {
@@ -18,7 +19,7 @@ func (s *ArticleUrlService) OnInitService() {
 func (s *ArticleUrlService) QueryArticleUrlByUrl(url string) *po.ArticleUrl {
 	var articleUrl po.ArticleUrl
 	s.db.Model(&po.ArticleUrl{}).
-		Where("url = ?", url).
+		Where("? = ?", clause.Column{Name: "url"}, url).
 		Take(&articleUrl)
 	if articleUrl.Url == "" {
 		return nil
@@ -29,7 +30,7 @@ func (s *ArticleUrlService) QueryArticleUrlByUrl(url string) *po.ArticleUrl {
 func (s *ArticleUrlService) QueryArticleUrlById(id int) *po.ArticleUrl {
 	var articleUrl po.ArticleUrl
 	s.db.Model(&po.ArticleUrl{}).
-		Where("status = ? AND article_id = ?", po.ARTICLE_URL_STATUS_LAST, id).
+		Where("? = ? AND ? = ?", clause.Column{Name: "status"}, po.ARTICLE_URL_STATUS_LAST, clause.Column{Name: "article_id"}, id).
 		Take(&articleUrl)
 	if articleUrl.Url == "" {
 		return nil

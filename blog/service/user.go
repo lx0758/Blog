@@ -5,6 +5,7 @@ import (
 	"blog/database"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -24,7 +25,7 @@ func (s *UserService) QueryOwner() *po.User {
 func (s *UserService) QueryUserById(id int) *po.User {
 	var user po.User
 	s.db.Model(&po.User{}).
-		Where("id = ?", id).
+		Where("? = ?", clause.Column{Name: "id"}, id).
 		Take(&user)
 	if user.Id == 0 {
 		return nil
@@ -35,7 +36,7 @@ func (s *UserService) QueryUserById(id int) *po.User {
 func (s *UserService) QueryUserByUsername(username string) *po.User {
 	var user po.User
 	s.db.Model(&po.User{}).
-		Where("username = ?", username).
+		Where("? = ?", clause.Column{Name: "username"}, username).
 		Take(&user)
 	if user.Id == 0 {
 		return nil
@@ -45,7 +46,7 @@ func (s *UserService) QueryUserByUsername(username string) *po.User {
 
 func (s *UserService) UpdateUserLoginTime(user *po.User) {
 	s.db.Model(&po.User{}).
-		Where("id = ?", user.Id).
+		Where("? = ?", clause.Column{Name: "id"}, user.Id).
 		Update("last_login_time", time.Now())
 }
 
