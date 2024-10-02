@@ -16,6 +16,7 @@ var htmlIndexController = &html.IndexController{}
 var apiIndexController = &api.IndexController{}
 
 // go install github.com/swaggo/swag/cmd/swag@latest
+// https://github.com/swaggo/swag/blob/master/operation.go
 // swag init
 //
 // @title			个人博客

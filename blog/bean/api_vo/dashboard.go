@@ -1,13 +1,13 @@
 package api_vo
 
 type DashboardVO struct {
-	ArticleCount  int
-	CategoryCount int
-	TagCount      int
-	UploadCount   int
-	CommentCount  int
-	BrowseCount   int
-	NewArticles   []ArticleVO
-	NewComments   []CommentVO
-	NewUploads    []FileVO
+	ArticleCount  int         `json:"articleCount"`
+	CategoryCount int         `json:"categoryCount"`
+	TagCount      int         `json:"tagCount"`
+	UploadCount   int         `json:"uploadCount"`
+	CommentCount  int         `json:"commentCount"`
+	BrowseCount   int         `json:"browseCount"`
+	NewArticles   []ArticleVO `json:"newArticles"`
+	NewComments   []CommentVO `json:"newComments"`
+	NewUploads    []FileVO    `json:"newUploads"`
 }

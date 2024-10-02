@@ -38,13 +38,30 @@ type listArticle struct {
 	OrderMethod *string `form:"orderMethod"`
 }
 
+// @Summary		list article
+// @Description	list article
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		title			body	string	false	"title"
+// @Param		categoryId		body	string	false	"categoryId"
+// @Param		url				body	string	false	"url"
+// @Param		enableComment	body	string	false	"enableComment"
+// @Param		status			body	string	false	"status"
+// @Param		pageNum			body	int		true	"pageNum"
+// @Param		pageSize		body	int		true	"pageSize"
+// @Param		orderName		body	string	false	"orderName"
+// @Param		orderMethod		body	string	false	"orderMethod"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article [GET]
 func (c *ArticleController) listArticle(context *gin.Context) {
 	var listArticle listArticle
 	if err := context.ShouldBind(&listArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
 
-	pagination := c.articleService.PaginationArticleByAdmin(
+	pagination := c.articleService.PaginationByAdmin(
 		listArticle.Title,
 		listArticle.CategoryId,
 		listArticle.Url,
@@ -71,13 +88,26 @@ func (c *ArticleController) listArticle(context *gin.Context) {
 	c.RestSucceed(context, paginationVO)
 }
 
+type pathArticleId struct {
+	Id int `uri:"id" binding:"required"`
+}
+
+// @Summary		query article
+// @Description	query article
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		id			path	int	true	"id"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article/{id} [GET]
 func (c *ArticleController) queryArticle(context *gin.Context) {
-	id, err := c.GetPathInt(context, "id", 0)
-	if err != nil {
-		c.RestError(context, "文章ID无效")
+	var pathArticleId pathArticleId
+	if err := context.ShouldBindUri(&pathArticleId); err != nil {
+		c.RestValidationError(context, err)
 	}
 
-	article := c.articleService.QueryArticleByAdmin(id)
+	article := c.articleService.QueryByAdmin(pathArticleId.Id)
 	if article == nil {
 		c.RestError(context, "文章不存在")
 	}
@@ -98,36 +128,69 @@ type addUpdateArticle struct {
 	Tags          *[]string `form:"tags"`
 }
 
+// @Summary		add article
+// @Description	add article
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		id				path	int		true	"id"
+// @Param		title			body	string	true	"title"
+// @Param		categoryId		body	int		true	"categoryId"
+// @Param		content			body	string	true	"content"
+// @Param		url				body	string	false	"url"
+// @Param		weight			body	int		false	"weight"
+// @Param		enableComment	body	bool	true	"enableComment"
+// @Param		status			body	int		true	"status"
+// @Param		tags			body	string	false	"tags"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article [POST]
 func (c *ArticleController) addArticle(context *gin.Context) {
-	var updateArticle addUpdateArticle
-	if err := context.ShouldBind(&updateArticle); err != nil {
+	var addArticle addUpdateArticle
+	if err := context.ShouldBind(&addArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.AddArticleByAdmin(
-		updateArticle.Title,
-		updateArticle.CategoryId,
-		updateArticle.Content,
-		updateArticle.Url,
-		updateArticle.Weight,
-		util.If(updateArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
-		updateArticle.Status,
-		updateArticle.Tags,
+	c.articleService.AddByAdmin(
+		addArticle.Title,
+		addArticle.CategoryId,
+		addArticle.Content,
+		addArticle.Url,
+		addArticle.Weight,
+		util.If(addArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
+		addArticle.Status,
+		addArticle.Tags,
 	)
 	c.RestSucceed(context, nil)
-
 }
 
+// @Summary		update article
+// @Description	update article
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		id				path	int		true	"id"
+// @Param		title			body	string	true	"title"
+// @Param		categoryId		body	int		true	"categoryId"
+// @Param		content			body	string	true	"content"
+// @Param		url				body	string	false	"url"
+// @Param		weight			body	int		false	"weight"
+// @Param		enableComment	body	bool	true	"enableComment"
+// @Param		status			body	int		true	"status"
+// @Param		tags			body	string	false	"tags"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article [PUT]
 func (c *ArticleController) updateArticle(context *gin.Context) {
-	id, err := c.GetPathInt(context, "id", 0)
-	if err != nil {
-		c.RestError(context, "文章ID无效")
+	var pathArticleId pathArticleId
+	if err := context.ShouldBindUri(&pathArticleId); err != nil {
+		c.RestValidationError(context, err)
 	}
 	var updateArticle addUpdateArticle
 	if err := context.ShouldBind(&updateArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.UpdateArticleByAdmin(
-		id,
+	c.articleService.UpdateByAdmin(
+		pathArticleId.Id,
 		updateArticle.Title,
 		updateArticle.CategoryId,
 		updateArticle.Content,
@@ -140,27 +203,50 @@ func (c *ArticleController) updateArticle(context *gin.Context) {
 	c.RestSucceed(context, nil)
 }
 
+type updateArticleStatus struct {
+	Status int `form:"status" binding:"required"`
+}
+
+// @Summary		update article status
+// @Description	update article status
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		id				path	int		true	"id"
+// @Param		status			body	string	true	"status"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article/{id}/status [PUT]
 func (c *ArticleController) updateArticleStatus(context *gin.Context) {
-	id, err := c.GetPathInt(context, "id", 0)
-	if err != nil {
-		c.RestError(context, "文章ID无效")
-	}
-	var updateArticle addUpdateArticle
-	if err := context.ShouldBind(&updateArticle); err != nil {
+	var pathArticleId pathArticleId
+	if err := context.ShouldBindUri(&pathArticleId); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.UpdateArticleStatusByAdmin(
-		id,
-		util.If(updateArticle.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
+	var updateArticleStatus updateArticleStatus
+	if err := context.ShouldBind(&updateArticleStatus); err != nil {
+		c.RestValidationError(context, err)
+	}
+	c.articleService.UpdateStatusByAdmin(
+		pathArticleId.Id,
+		util.If(updateArticleStatus.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
 	)
 	c.RestSucceed(context, nil)
 }
 
+// @Summary		delete article
+// @Description	delete article
+// @Tags		article
+// @Accept		json
+// @Produce		json
+// @Param		id				path	int		true	"id"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/article/{id} [DELETE]
 func (c *ArticleController) deleteArticle(context *gin.Context) {
-	id, err := c.GetPathInt(context, "id", 0)
-	if err != nil {
-		c.RestError(context, "文章ID无效")
+	var pathArticleId pathArticleId
+	if err := context.ShouldBindUri(&pathArticleId); err != nil {
+		c.RestValidationError(context, err)
 	}
-	c.articleService.DeleteArticleByAdmin(id)
+	c.articleService.DeleteByAdmin(pathArticleId.Id)
 	c.RestSucceed(context, nil)
 }

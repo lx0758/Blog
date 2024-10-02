@@ -1,7 +1,7 @@
 <template>
   <el-container class="full-page" direction="vertical">
     <el-space wrap>
-      <el-input placeholder="请输入文章ID" v-model="state.filter.article" clearable />
+      <el-input placeholder="请输入文章ID" v-model="state.filter.articleId" type="number" clearable />
       <el-input placeholder="请输入作者" v-model="state.filter.author" clearable />
       <el-input placeholder="请输入内容" v-model="state.filter.content" clearable />
       <el-input placeholder="请输入邮箱" v-model="state.filter.email" clearable />
@@ -183,7 +183,7 @@ import { ListState, DialogState } from '@/bean'
 import { addCommentByReplay, queryComment, updateCommentToVerify, deleteComment } from '@/api'
 
 interface CommentFilter {
-  article: string | null
+  articleId: number | null
   author: string | null
   content: string | null
   email: string | null
@@ -227,7 +227,7 @@ const replayCommentDialogState = ref(new DialogState<OptionCommentState>(
 
 function onRefresh() {
   queryComment(
-    state.value.filter.article,
+    state.value.filter.articleId,
     state.value.filter.author,
     state.value.filter.content,
     state.value.filter.email,

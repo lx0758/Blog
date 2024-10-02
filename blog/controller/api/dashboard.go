@@ -26,6 +26,14 @@ func (c *DashboardController) OnInitController() {
 	c.Group.GET("", c.queryDashboard)
 }
 
+// @Summary		query dashboard
+// @Description	query dashboard
+// @Tags		dashboard
+// @Accept		json
+// @Produce		json
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/api/dashboard [GET]
 func (c *DashboardController) queryDashboard(context *gin.Context) {
 
 }

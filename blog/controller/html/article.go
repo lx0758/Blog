@@ -58,6 +58,15 @@ func (c *ArticleController) getArticle(context *gin.Context) {
 	c.Render(context, http.StatusOK, "article.gohtml", articleVO)
 }
 
+// @Summary		query comment
+// @Description	query comment
+// @Tags		html
+// @Accept		json
+// @Produce		json
+// @Param		url			path	int		false	"url"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/{url}/comment [GET]
 func (c *ArticleController) getArticleComment(context *gin.Context) {
 	id, err := c.GetPathInt(context, "url", 0)
 	if err != nil || id == 0 {
@@ -65,6 +74,15 @@ func (c *ArticleController) getArticleComment(context *gin.Context) {
 	}
 }
 
+// @Summary		add comment
+// @Description	add comment
+// @Tags		html
+// @Accept		json
+// @Produce		json
+// @Param		url			path	int		false	"url"
+// @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
+// @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
+// @Router		/{url}/comment [POST]
 func (c *ArticleController) postArticleComment(context *gin.Context) {
 	id, err := c.GetPathInt(context, "url", 0)
 	if err != nil || id == 0 {
@@ -74,7 +92,7 @@ func (c *ArticleController) postArticleComment(context *gin.Context) {
 
 // @Summary		comment captcha
 // @Description	comment captcha
-// @Tags		captcha
+// @Tags		html
 // @Accept		*/*
 // @Produce		image/png
 // @Router		/captcha [get]

@@ -27,7 +27,7 @@ func (c *CategoryController) OnInitController() {
 }
 
 func (c *CategoryController) getCategories(context *gin.Context) {
-	categories := c.categoryService.ListCategory()
+	categories := c.categoryService.ListByHtml()
 	categoryVOs := make([]html_vo.CategoryVO, 0)
 	for _, article := range categories {
 		articleVO := html_vo.CategoryVO{}

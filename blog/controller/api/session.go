@@ -22,6 +22,12 @@ func (c *SessionController) OnInitController() {
 	c.Group.DELETE("", c.deleteSession)
 }
 
+type postSession struct {
+	Username string `form:"username" binding:"required"`
+	Password string `form:"password" binding:"required"`
+	Captcha  string `form:"captcha" binding:"required"`
+}
+
 // @Summary		login
 // @Description	login admin
 // @Tags		session
@@ -34,22 +40,20 @@ func (c *SessionController) OnInitController() {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/session [post]
 func (c *SessionController) postSession(context *gin.Context) {
-	username := context.PostForm("username")
-	password := context.PostForm("password")
-	captcha := context.PostForm("captcha")
+	var postSession postSession
+	if err := context.ShouldBind(&postSession); err != nil {
+		c.RestValidationError(context, err)
+	}
 
 	session := sessions.Default(context)
-	if !c.captchaService.Verify(session, service.CAPTCHA_TYPE_LOGIN, captcha) {
+	if !c.captchaService.Verify(session, service.CAPTCHA_TYPE_LOGIN, postSession.Captcha) {
 		c.RestError(context, "验证码错误")
 	}
-	if username == "" || password == "" {
+	if postSession.Username == "" || postSession.Password == "" {
 		c.RestError(context, "用户名或密码为空")
 	}
-	if captcha == "" {
-		c.RestError(context, "验证码为空")
-	}
 
-	err := c.sessionService.Login(session, username, password)
+	err := c.sessionService.Login(session, postSession.Username, postSession.Password)
 	if err != nil {
 		c.RestError(context, err.Error())
 	}

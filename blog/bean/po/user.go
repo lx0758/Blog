@@ -18,15 +18,15 @@ type User struct {
 }
 
 type UserAccounts struct {
-	Github        string `json:"github"`
-	Weibo         string `json:"weibo"`
-	Google        string `json:"google"`
-	Twitter       string `json:"twitter"`
-	Facebook      string `json:"facebook"`
-	StackOverflow string `json:"stackOverflow"`
-	Youtube       string `json:"youtube"`
-	Instagram     string `json:"instagram"`
-	Skype         string `json:"skype"`
+	Github        *string `json:"github"`
+	Weibo         *string `json:"weibo"`
+	Google        *string `json:"google"`
+	Twitter       *string `json:"twitter"`
+	Facebook      *string `json:"facebook"`
+	StackOverflow *string `json:"stackOverflow"`
+	Youtube       *string `json:"youtube"`
+	Instagram     *string `json:"instagram"`
+	Skype         *string `json:"skype"`
 }
 
 const (

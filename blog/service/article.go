@@ -40,7 +40,7 @@ func (s *ArticleService) QueryArticle(id int) *po.Article {
 	return &article
 }
 
-func (s *ArticleService) QueryArticleByAdmin(id int) *po.Article {
+func (s *ArticleService) QueryByAdmin(id int) *po.Article {
 	var article po.Article
 	s.db.Model(&po.Article{}).
 		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
@@ -89,7 +89,7 @@ func (s *ArticleService) ListArticle() []po.Article {
 	return articles
 }
 
-func (s *ArticleService) PaginationArticleByAdmin(
+func (s *ArticleService) PaginationByAdmin(
 	title *string,
 	categoryId *int,
 	url *string,
@@ -175,7 +175,7 @@ func (s *ArticleService) PaginationArticleByTag(tagId int, pageNum int) po.Pagin
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
 
-func (s *ArticleService) AddArticleByAdmin(
+func (s *ArticleService) AddByAdmin(
 	title string,
 	categoryId int,
 	content string,
@@ -202,7 +202,7 @@ func (s *ArticleService) AddArticleByAdmin(
 	return &article
 }
 
-func (s *ArticleService) UpdateArticleByAdmin(
+func (s *ArticleService) UpdateByAdmin(
 	id int,
 	title string,
 	categoryId int,
@@ -230,14 +230,20 @@ func (s *ArticleService) UpdateArticleByAdmin(
 	return int(db.RowsAffected)
 }
 
-func (s *ArticleService) UpdateArticleStatusByAdmin(id int, status int) int {
+func (s *ArticleService) UpdateStatusByAdmin(id int, status int) int {
 	db := s.db.Model(&po.Article{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("status", status)
 	return int(db.RowsAffected)
 }
 
-func (s *ArticleService) DeleteArticleByAdmin(id int) int {
+func (s *ArticleService) UpdateCategoryByAdminDeleteCategory(deleteCategoryId int, defaultCategory int) {
+	s.db.Model(&po.Article{}).
+		Where("? = ?", clause.Column{Name: "category_id"}, deleteCategoryId).
+		Update("category_id", defaultCategory)
+}
+
+func (s *ArticleService) DeleteByAdmin(id int) int {
 	db := s.db.Delete(&po.Article{Id: id})
 	return int(db.RowsAffected)
 }

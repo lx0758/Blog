@@ -40,6 +40,15 @@ func (s *SessionService) Logout(session sessions.Session) {
 	_ = session.Save()
 }
 
+func (s *SessionService) GetLoginUserId(context *gin.Context) int {
+	session := sessions.Default(context)
+	userId := session.Get(SESSION_KEY_USER_ID)
+	if userId == nil {
+		return 0
+	}
+	return userId.(int)
+}
+
 func (s *SessionService) GetLoginUser(context *gin.Context) *po.User {
 	session := sessions.Default(context)
 	userId := session.Get(SESSION_KEY_USER_ID)

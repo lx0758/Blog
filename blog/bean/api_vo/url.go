@@ -3,15 +3,15 @@ package api_vo
 import "time"
 
 type UrlVO struct {
-	Id          int
-	Key         string
-	Url         string
-	Description string
-	AuthorId    int
-	Views       int
-	TotalViews  int
-	AuthorName  string
-	CreateTime  time.Time
-	UpdateTime  time.Time
-	Status      int
+	Id          int       `json:"id"`
+	Key         string    `json:"key"`
+	Url         string    `json:"url"`
+	Description string    `json:"description"`
+	AuthorId    int       `json:"authorId"`
+	Views       int       `json:"views"`
+	TotalViews  int       `json:"totalViews"`
+	AuthorName  string    `json:"authorName"`
+	CreateTime  time.Time `json:"createTime"`
+	UpdateTime  time.Time `json:"updateTime"`
+	Status      int       `json:"status"`
 }

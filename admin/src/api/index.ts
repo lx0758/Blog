@@ -212,7 +212,7 @@ export const deleteFragment = (
 
 // 查询评论
 export const queryComment = (
-    article: string | null,
+    articleId: number | null,
     author: string | null,
     content: string | null,
     email: string | null,
@@ -226,7 +226,7 @@ export const queryComment = (
     '/api/comment',
     'GET',
     {
-        article: article,
+        articleId: articleId,
         author: author,
         content: content,
         email: email,

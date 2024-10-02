@@ -3,9 +3,9 @@ package api_vo
 import "time"
 
 type TagVO struct {
-	Id           int
-	Name         string
-	CreateTime   time.Time
-	UpdateTime   time.Time
-	ArticleCount int
+	Id           int       `json:"id"`
+	Name         string    `json:"name"`
+	CreateTime   time.Time `json:"createTime"`
+	UpdateTime   time.Time `json:"updateTime"`
+	ArticleCount int       `json:"articleCount"`
 }
