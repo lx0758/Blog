@@ -18,5 +18,5 @@ func (c *CategoryVO) From(category po.Category) {
 	c.Name = category.Name
 	c.CreateTime = category.CreateTime
 	c.UpdateTime = category.UpdateTime
-	c.ArticleCount = len(category.Articles)
+	c.ArticleCount = category.ArticleCount
 }

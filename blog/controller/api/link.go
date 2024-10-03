@@ -53,8 +53,8 @@ func (c *LinkController) listLink(context *gin.Context) {
 type addLink struct {
 	Title  string `form:"title" binding:"required"`
 	Url    string `form:"url" binding:"required"`
-	Weight int    `form:"weight" binding:"required"`
-	Status int    `form:"status" binding:"required"`
+	Weight *int   `form:"weight" binding:"required"`
+	Status *int   `form:"status" binding:"required"`
 }
 
 // @Summary		add link
@@ -80,8 +80,8 @@ type pathLinkId struct {
 type updateLink struct {
 	Title  string `form:"title" binding:"required"`
 	Url    string `form:"url" binding:"required"`
-	Weight int    `form:"weight" binding:"required"`
-	Status int    `form:"status" binding:"required"`
+	Weight *int   `form:"weight" binding:"required"`
+	Status *int   `form:"status" binding:"required"`
 }
 
 // @Summary		update link

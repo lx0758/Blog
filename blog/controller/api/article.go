@@ -123,8 +123,8 @@ type addUpdateArticle struct {
 	Content       string    `form:"content" binding:"required"`
 	Url           *string   `form:"url"`
 	Weight        *int      `form:"weight"`
-	EnableComment bool      `form:"enableComment" binding:"required"`
-	Status        int       `form:"status" binding:"required"`
+	EnableComment *bool     `form:"enableComment" binding:"required"`
+	Status        *int      `form:"status" binding:"required"`
 	Tags          *[]string `form:"tags"`
 }
 
@@ -150,17 +150,24 @@ func (c *ArticleController) addArticle(context *gin.Context) {
 	if err := context.ShouldBind(&addArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.AddByAdmin(
+	article := c.articleService.AddByAdmin(
 		addArticle.Title,
 		addArticle.CategoryId,
 		addArticle.Content,
 		addArticle.Url,
 		addArticle.Weight,
-		util.If(addArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
-		addArticle.Status,
+		util.If(*addArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
+		*addArticle.Status,
 		addArticle.Tags,
 	)
-	c.RestSucceed(context, nil)
+	if article != nil {
+		article = c.articleService.QueryArticle(article.Id)
+		var articleVO api_vo.ArticleVO
+		articleVO.From(*article)
+		c.RestSucceed(context, articleVO)
+	} else {
+		c.RestError(context, "增加失败")
+	}
 }
 
 // @Summary		update article
@@ -189,22 +196,26 @@ func (c *ArticleController) updateArticle(context *gin.Context) {
 	if err := context.ShouldBind(&updateArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.UpdateByAdmin(
+	result := c.articleService.UpdateByAdmin(
 		pathArticleId.Id,
 		updateArticle.Title,
 		updateArticle.CategoryId,
 		updateArticle.Content,
 		updateArticle.Url,
 		updateArticle.Weight,
-		util.If(updateArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
-		util.If(updateArticle.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
+		util.If(*updateArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
+		util.If(*updateArticle.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
 		updateArticle.Tags,
 	)
-	c.RestSucceed(context, nil)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "更新失败")
+	}
 }
 
 type updateArticleStatus struct {
-	Status int `form:"status" binding:"required"`
+	Status *int `form:"status" binding:"required"`
 }
 
 // @Summary		update article status
@@ -226,11 +237,15 @@ func (c *ArticleController) updateArticleStatus(context *gin.Context) {
 	if err := context.ShouldBind(&updateArticleStatus); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.UpdateStatusByAdmin(
+	result := c.articleService.UpdateStatusByAdmin(
 		pathArticleId.Id,
-		util.If(updateArticleStatus.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
+		util.If(*updateArticleStatus.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
 	)
-	c.RestSucceed(context, nil)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "更新失败")
+	}
 }
 
 // @Summary		delete article
@@ -247,6 +262,10 @@ func (c *ArticleController) deleteArticle(context *gin.Context) {
 	if err := context.ShouldBindUri(&pathArticleId); err != nil {
 		c.RestValidationError(context, err)
 	}
-	c.articleService.DeleteByAdmin(pathArticleId.Id)
-	c.RestSucceed(context, nil)
+	result := c.articleService.DeleteByAdmin(pathArticleId.Id)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "更新失败")
+	}
 }

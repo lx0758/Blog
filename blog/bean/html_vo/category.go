@@ -11,5 +11,5 @@ type CategoryVO struct {
 
 func (c *CategoryVO) From(category po.Category) {
 	c.Name = category.Name
-	c.ArticleCount = len(category.Articles)
+	c.ArticleCount = category.ArticleCount
 }

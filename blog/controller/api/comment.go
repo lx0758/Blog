@@ -84,7 +84,7 @@ type pathCommentId struct {
 }
 
 type updateCommentStatus struct {
-	Status int `form:"status" binding:"required"`
+	Status *int `form:"status" binding:"required"`
 }
 
 // @Summary		update comment status

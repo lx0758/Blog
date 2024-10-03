@@ -71,7 +71,7 @@ func (c *FragmentController) queryFragment(context *gin.Context) {
 type addFragment struct {
 	Key     string `form:"key" binding:"required"`
 	Content string `form:"content" binding:"required"`
-	Status  int    `form:"status" binding:"required"`
+	Status  *int   `form:"status" binding:"required"`
 }
 
 // @Summary		add fragment
@@ -92,7 +92,7 @@ func (c *FragmentController) addFragment(context *gin.Context) {
 type updateFragment struct {
 	Key     string `form:"key" binding:"required"`
 	Content string `form:"content" binding:"required"`
-	Status  int    `form:"status" binding:"required"`
+	Status  *int   `form:"status" binding:"required"`
 }
 
 // @Summary		update fragment

@@ -187,7 +187,7 @@ func (s *ArticleService) AddByAdmin(
 ) *po.Article {
 	article := po.Article{}
 	db := s.db.Begin()
-	db = db.Model(&po.Article{}).
+	db = db.Model(&article).
 		Create(map[string]interface{}{
 			"title":          title,
 			"content":        content,
@@ -199,6 +199,9 @@ func (s *ArticleService) AddByAdmin(
 			"update_time":    time.Now(),
 		})
 	db.Commit()
+	if article.Id == 0 {
+		return nil
+	}
 	return &article
 }
 
@@ -212,7 +215,7 @@ func (s *ArticleService) UpdateByAdmin(
 	commentStatus int,
 	status int,
 	tags *[]string,
-) int {
+) bool {
 	db := s.db.Begin()
 	db = db.Model(&po.Article{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
@@ -227,14 +230,14 @@ func (s *ArticleService) UpdateByAdmin(
 			"update_time":    time.Now(),
 		})
 	db.Commit()
-	return int(db.RowsAffected)
+	return db.RowsAffected > 0
 }
 
-func (s *ArticleService) UpdateStatusByAdmin(id int, status int) int {
+func (s *ArticleService) UpdateStatusByAdmin(id int, status int) bool {
 	db := s.db.Model(&po.Article{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("status", status)
-	return int(db.RowsAffected)
+	return db.RowsAffected > 0
 }
 
 func (s *ArticleService) UpdateCategoryByAdminDeleteCategory(deleteCategoryId int, defaultCategory int) {
@@ -243,9 +246,9 @@ func (s *ArticleService) UpdateCategoryByAdminDeleteCategory(deleteCategoryId in
 		Update("category_id", defaultCategory)
 }
 
-func (s *ArticleService) DeleteByAdmin(id int) int {
+func (s *ArticleService) DeleteByAdmin(id int) bool {
 	db := s.db.Delete(&po.Article{Id: id})
-	return int(db.RowsAffected)
+	return db.RowsAffected > 0
 }
 
 func (s *ArticleService) incrementViews(article *po.Article) {

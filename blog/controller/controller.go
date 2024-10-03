@@ -133,7 +133,7 @@ func (c *RestController) RestValidationError(context *gin.Context, err error) {
 	var validationErrors validator.ValidationErrors
 	if errors.As(err, &validationErrors) {
 		validationError := validationErrors[0]
-		msg = validationError.Tag()
+		msg = validationError.StructField() + " " + validationError.Tag()
 	}
 	panic(errors.New(fmt.Sprintf("参数验证失败: %s", msg)))
 }

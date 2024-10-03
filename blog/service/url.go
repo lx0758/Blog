@@ -5,6 +5,7 @@ import (
 	"blog/database"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 type UrlService struct {
@@ -14,6 +15,30 @@ type UrlService struct {
 
 func (s *UrlService) OnInitService() {
 	s.db = database.GetDB()
+}
+
+func (s *UrlService) PaginationByAdmin(
+	key *string,
+	url *string,
+	description *string,
+	pageNum int,
+	pageSize int,
+	orderName *string,
+	orderMethod *string,
+) po.Pagination[po.Url] {
+	db := s.db.Model(&po.Url{}).
+		Preload("Author")
+	if key != nil && *key != "" {
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "key"}, "%"+*key+"%")
+	}
+	if url != nil && *url != "" {
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "url"}, "%"+*key+"%")
+	}
+	if description != nil && *description != "" {
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "description"}, "%"+*description+"%")
+	}
+	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
+	return database.Pagination[po.Url](db, pageNum, pageSize)
 }
 
 func (s *UrlService) QueryUrl(key string) *po.Url {
@@ -26,6 +51,40 @@ func (s *UrlService) QueryUrl(key string) *po.Url {
 	}
 	s.incrementViews(&url)
 	return &url
+}
+
+func (s *UrlService) AddByAdmin(userId int, key string, url string, description string, status int) bool {
+	db := s.db.Model(&po.Url{}).
+		Create(&po.Url{
+			Key:         key,
+			Url:         url,
+			Description: description,
+			AuthorId:    userId,
+			Status:      status,
+			CreateTime:  time.Now(),
+		})
+	return db.RowsAffected > 0
+}
+
+func (s *UrlService) UpdateByAdmin(id int, key string, url string, description string, status int) bool {
+	updateTime := time.Now()
+	db := s.db.Model(&po.Url{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Select("key", "url", "description", "status", "views", "update_time").
+		Updates(&po.Url{
+			Key:         key,
+			Url:         url,
+			Description: description,
+			Status:      status,
+			Views:       0,
+			UpdateTime:  &updateTime,
+		})
+	return db.RowsAffected > 0
+}
+
+func (s *UrlService) DeleteByAdmin(id int) bool {
+	db := s.db.Model(&po.Url{}).Delete(&po.Url{Id: id})
+	return db.RowsAffected > 0
 }
 
 func (s *UrlService) incrementViews(url *po.Url) {

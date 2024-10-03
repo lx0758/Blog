@@ -28,31 +28,35 @@ func (s *CategoryService) Count() int {
 	return int(count)
 }
 
+func (s *CategoryService) PaginationByAdmin(
+	pageNum int,
+	pageSize int,
+	orderName *string,
+	orderMethod *string,
+) po.Pagination[po.Category] {
+	articleDb := s.db.Model(&po.Article{}).
+		Select("COUNT(?)", clause.Column{Name: "id"}).
+		Where("? = ?", clause.Column{Name: "t_article.category_id"}, clause.Column{Name: "t_category.id"})
+	db := s.db.Model(&po.Category{}).
+		Select("*, (?) AS ?", articleDb, clause.Column{Name: "article_count"})
+	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
+	return database.Pagination[po.Category](db, pageNum, pageSize)
+}
+
 func (s *CategoryService) ListByHtml() []po.Category {
 	var categories []po.Category
+	articleDb := s.db.Model(&po.Article{}).
+		Select("COUNT(?)", clause.Column{Name: "id"}).
+		Where("? = ?", clause.Column{Name: "t_article.status"}, po.ARTICLE_STATUS_PUBLISHED).
+		Where("? = ?", clause.Column{Name: "t_article.category_id"}, clause.Column{Name: "t_category.id"})
 	s.db.Model(&po.Category{}).
-		Preload("Articles", s.db.Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED)).
+		Select("*, (?) AS ?", articleDb, clause.Column{Name: "article_count"}).
 		Order(clause.OrderByColumn{
 			Column: clause.Column{Name: "id"},
 			Desc:   false,
 		}).
 		Find(&categories)
 	return categories
-}
-
-func (s *CategoryService) PaginationByAdmin(
-	pageNum int,
-	pageSize int,
-	_ *string,
-	_ *string,
-) po.Pagination[po.Category] {
-	db := s.db.Model(&po.Category{}).
-		Preload("Articles", s.db.Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED)).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   false,
-		})
-	return database.Pagination[po.Category](db, pageNum, pageSize)
 }
 
 func (s *CategoryService) QueryCategory(name string) *po.Category {
@@ -92,8 +96,9 @@ func (s *CategoryService) DeleteByAdmin(id int) bool {
 		return false
 	}
 
-	s.articleService.UpdateCategoryByAdminDeleteCategory(id, category.Id)
-
 	db := s.db.Delete(&po.Category{Id: id})
+	if db.RowsAffected > 0 {
+		s.articleService.UpdateCategoryByAdminDeleteCategory(id, category.Id)
+	}
 	return db.RowsAffected > 0
 }

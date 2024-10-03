@@ -50,12 +50,11 @@ func (s *SessionService) GetLoginUserId(context *gin.Context) int {
 }
 
 func (s *SessionService) GetLoginUser(context *gin.Context) *po.User {
-	session := sessions.Default(context)
-	userId := session.Get(SESSION_KEY_USER_ID)
-	if userId == nil {
+	userId := s.GetLoginUserId(context)
+	if userId == 0 {
 		return nil
 	}
-	user := s.userService.QueryUserById(userId.(int))
+	user := s.userService.QueryUserById(userId)
 	if user == nil || user.Status != po.USER_STATUS_ENABLED {
 		return nil
 	}

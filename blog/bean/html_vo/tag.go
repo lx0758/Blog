@@ -9,5 +9,5 @@ type TagVO struct {
 
 func (c *TagVO) From(tag po.Tag) {
 	c.Name = tag.Name
-	c.ArticleCount = len(tag.Articles)
+	c.ArticleCount = tag.ArticleCount
 }
