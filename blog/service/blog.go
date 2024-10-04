@@ -3,6 +3,7 @@ package service
 import (
 	"blog/bean/html_vo"
 	"blog/bean/po"
+	"blog/util"
 )
 
 type BlogService struct {
@@ -37,7 +38,14 @@ func (s *BlogService) refreshCacheInfo() {
 	articleCount := s.articleService.Count()
 	categoryCount := s.categoryService.Count()
 	tagCount := s.tagService.Count()
+
 	user := s.userService.QueryOwner()
+	if user == nil {
+		user = &po.User{
+			Accounts: &po.UserAccounts{},
+		}
+	}
+
 	links := s.linkService.ListLink()
 	linkVOs := make([]html_vo.LinkVO, 0)
 	for _, link := range links {
@@ -58,19 +66,19 @@ func (s *BlogService) refreshCacheInfo() {
 		SiteArticleCount:   articleCount,
 		SiteCategoryCount:  categoryCount,
 		SiteTagCount:       tagCount,
-		OwnerAvatar:        *user.Avatar,
+		OwnerAvatar:        util.IfNotNil(user.Avatar, ""),
 		OwnerNickname:      user.Nickname,
-		OwnerDescription:   *user.Description,
-		OwnerEmail:         *user.Email,
-		OwnerGithub:        *user.Accounts.Github,
-		OwnerWeibo:         *user.Accounts.Weibo,
-		OwnerGoogle:        *user.Accounts.Google,
-		OwnerTwitter:       *user.Accounts.Twitter,
-		OwnerFacebook:      *user.Accounts.Facebook,
-		OwnerStackOverflow: *user.Accounts.StackOverflow,
-		OwnerYoutube:       *user.Accounts.Youtube,
-		OwnerInstagram:     *user.Accounts.Instagram,
-		OwnerSkype:         *user.Accounts.Skype,
+		OwnerDescription:   util.IfNotNil(user.Description, ""),
+		OwnerEmail:         util.IfNotNil(user.Email, ""),
+		OwnerGithub:        util.IfNotNil(user.Accounts.Github, ""),
+		OwnerWeibo:         util.IfNotNil(user.Accounts.Weibo, ""),
+		OwnerGoogle:        util.IfNotNil(user.Accounts.Google, ""),
+		OwnerTwitter:       util.IfNotNil(user.Accounts.Twitter, ""),
+		OwnerFacebook:      util.IfNotNil(user.Accounts.Facebook, ""),
+		OwnerStackOverflow: util.IfNotNil(user.Accounts.StackOverflow, ""),
+		OwnerYoutube:       util.IfNotNil(user.Accounts.Youtube, ""),
+		OwnerInstagram:     util.IfNotNil(user.Accounts.Instagram, ""),
+		OwnerSkype:         util.IfNotNil(user.Accounts.Skype, ""),
 		Links:              linkVOs,
 	}
 }

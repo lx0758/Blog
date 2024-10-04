@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
 	Id            int           `gorm:"column:id;comment:ID;not null;index;primaryKey;autoIncrement"`
-	Username      string        `gorm:"column:username;comment:用户名;not null;index"`
+	Username      string        `gorm:"column:username;comment:用户名;not null;unique;index"`
 	Password      string        `gorm:"column:password;comment:用户密码;not null"`
 	Avatar        *string       `gorm:"column:avatar;comment:头像"`
 	Nickname      string        `gorm:"column:nickname;comment:昵称;not null"`

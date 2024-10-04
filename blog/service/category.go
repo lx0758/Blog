@@ -29,6 +29,7 @@ func (s *CategoryService) Count() int {
 }
 
 func (s *CategoryService) PaginationByAdmin(
+	name *string,
 	pageNum int,
 	pageSize int,
 	orderName *string,
@@ -39,6 +40,9 @@ func (s *CategoryService) PaginationByAdmin(
 		Where("? = ?", clause.Column{Name: "t_article.category_id"}, clause.Column{Name: "t_category.id"})
 	db := s.db.Model(&po.Category{}).
 		Select("*, (?) AS ?", articleDb, clause.Column{Name: "article_count"})
+	if name != nil && *name != "" {
+		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "name"}, "%"+*name+"%")
+	}
 	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
 	return database.Pagination[po.Category](db, pageNum, pageSize)
 }

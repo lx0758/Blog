@@ -23,6 +23,7 @@ func (c *CategoryController) OnInitController() {
 }
 
 type listCategory struct {
+	Name        *string `form:"name"`
 	PageNum     int     `form:"pageNum" binding:"required"`
 	PageSize    int     `form:"pageSize" binding:"required"`
 	OrderName   *string `form:"orderName"`
@@ -34,6 +35,7 @@ type listCategory struct {
 // @Tags		category
 // @Accept		json
 // @Produce		json
+// @Param		name			body	string		false	"name"
 // @Param		pageNum			body	int		true	"pageNum"
 // @Param		pageSize		body	int		true	"pageSize"
 // @Param		orderName		body	string	false	"orderName"
@@ -48,6 +50,7 @@ func (c *CategoryController) listCategory(context *gin.Context) {
 	}
 
 	pagination := c.categoryService.PaginationByAdmin(
+		listCategory.Name,
 		listCategory.PageNum,
 		listCategory.PageSize,
 		listCategory.OrderName,

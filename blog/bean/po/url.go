@@ -4,7 +4,7 @@ import "time"
 
 type Url struct {
 	Id          int        `gorm:"column:id;comment:ID;not null;index;primaryKey;autoIncrement"`
-	Key         string     `gorm:"column:key;comment:键;not null;index"`
+	Key         string     `gorm:"column:key;comment:键;not null;unique;index"`
 	Url         string     `gorm:"column:url;comment:链接地址;not null"`
 	Description string     `gorm:"column:description;comment:描述信息;not null"`
 	AuthorId    int        `gorm:"column:author_id;comment:作者ID;not null"`
