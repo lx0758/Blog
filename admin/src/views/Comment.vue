@@ -126,7 +126,8 @@
       ">
       <span>{{ verifyCommentDialogState.formModel.content }}</span>
     </div>
-    <el-button type="primary" @click="onVerifyComment">通过</el-button>
+    <el-button type="primary" @click="onVerifyComment(true)">通过并邮件通知</el-button>
+    <el-button type="primary" @click="onVerifyComment(false)">通过</el-button>
     <el-button @click="verifyCommentDialogState.hide()">取消</el-button>
   </el-dialog>
 
@@ -192,8 +193,9 @@ interface CommentFilter {
 }
 
 interface OptionCommentState {
-  parentId: number
+  id: number
   articleId: number
+  parentId: number
   articleTitle: string
   articleUrl: string
   time: string
@@ -304,7 +306,8 @@ function onReplyComment(emailNotify: boolean) {
 
 function onShowVerifyComment(row: any) {
   verifyCommentDialogState.value.formModel = {
-    articleId: row.id,
+    id: row.id,
+    articleId: row.articleId,
     articleTitle: row.articleTitle,
     nickname: row.nickname,
     email: row.email,
@@ -319,9 +322,12 @@ function onShowVerifyComment(row: any) {
   verifyCommentDialogState.value.show()
 }
 
-function onVerifyComment() {
+function onVerifyComment(emailNotify: boolean) {
   const verifyData = verifyCommentDialogState.value.formModel
-  updateCommentToVerify(verifyData.articleId).then(() => {
+  updateCommentToVerify(
+    verifyData.id,
+    emailNotify
+  ).then(() => {
     ElMessage.success('审核成功')
     verifyCommentDialogState.value.hide()
     onRefresh()

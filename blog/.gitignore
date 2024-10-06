@@ -1,4 +1,5 @@
-/database.db
-/application.yaml
-/files/
 /docs/
+/files/
+/application.yaml
+/database.db
+/ip2region.xdb

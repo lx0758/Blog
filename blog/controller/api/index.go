@@ -69,9 +69,14 @@ p, gAdmin, /api/*, *
 `)
 var cEnforcer, _ = casbin.NewEnforcer(cModel, cAdapter)
 
+const (
+	KEY_USER_ID = "userId"
+	KEY_USER    = "user"
+)
+
 func (c *IndexController) Authorize(context *gin.Context) {
 	userId := -1
-	user := c.sessionService.GetLoginUser(context)
+	user := c.sessionService.GetLoggedUser(context)
 	if user != nil {
 		userId = user.Id
 	}
@@ -81,6 +86,8 @@ func (c *IndexController) Authorize(context *gin.Context) {
 		context.Request.Method,
 	)
 	if allow {
+		context.Set(KEY_USER_ID, userId)
+		context.Set(KEY_USER, user)
 		context.Next()
 	} else {
 		c.RestFailed(context, controller.API_STATUS_UNAUTHORIZED, "无访问权限")

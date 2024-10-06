@@ -1,13 +1,22 @@
 package po
 
-import "time"
+import (
+	"github.com/medama-io/go-useragent"
+	"time"
+)
+
+var userAgentParser *useragent.Parser
+
+func init() {
+	userAgentParser = useragent.NewParser()
+}
 
 type Comment struct {
 	Id         int        `gorm:"column:id;comment:ID;not null;index;primaryKey;autoIncrement"`
 	ArticleId  int        `gorm:"column:article_id;comment:文章ID;not null"`
 	ParentId   *int       `gorm:"column:parent_id;comment:父评论ID"`
 	Author     string     `gorm:"column:author;comment:作者;not null"`
-	AuthorId   *string    `gorm:"column:author_id;comment:作者ID"`
+	AuthorId   *int       `gorm:"column:author_id;comment:作者ID"`
 	Email      string     `gorm:"column:email;comment:电子邮箱;not null"`
 	Url        *string    `gorm:"column:url;comment:链接地址"`
 	Content    string     `gorm:"column:content;comment:内容;not null"`
@@ -21,3 +30,28 @@ type Comment struct {
 	Article Article   `gorm:"foreignKey:ArticleId;references:Id"`
 	Childs  []Comment `gorm:"foreignKey:ParentId;references:Id"`
 }
+
+func (c *Comment) GetBrowser() string {
+	if c.Ua == nil {
+		return "Unknown Browser"
+	}
+	ua := userAgentParser.Parse(*c.Ua)
+	if ua.GetVersion() != "" {
+		return ua.GetBrowser() + " " + ua.GetVersion()
+	} else {
+		return ua.GetBrowser()
+	}
+}
+
+func (c *Comment) GetSystem() string {
+	if c.Ua == nil {
+		return "Unknown OS"
+	}
+	ua := userAgentParser.Parse(*c.Ua)
+	return ua.GetOS()
+}
+
+const (
+	COMMENT_STATUS_UNPUBLISHED = 0
+	COMMENT_STATUS_PUBLISHED   = 1
+)

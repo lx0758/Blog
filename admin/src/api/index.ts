@@ -258,13 +258,15 @@ export const addCommentByReplay = (
 )
 // 更新评论(审核通过)
 export const updateCommentToVerify = (
-    id: number
+    id: number,
+    emailNotify: boolean
 ) => request(
     '/api/comment/' + id,
     'PUT',
     null,
     {
-        status: 1
+        status: 1,
+        emailNotify: emailNotify
     }
 )
 // 删除文章

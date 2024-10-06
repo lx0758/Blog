@@ -169,8 +169,8 @@ function Comment(options) {
         let _submit = utils.find(element, '.vsubmit');
         let infoTimer = null;
         Comment.panel = {
-            replyAt(newCard, comment) {
-                let _wrapper = utils.find(newCard, '.vreply-wrapper')
+            replyAt(card, comment) {
+                let _wrapper = utils.find(card, '.vreply-wrapper')
                 if (_wrapper) {
                     utils.attr(_wrap, 'parent-id', comment.id);
                     utils.attr(_wrap, 'parent-name', comment.nickname);
@@ -281,9 +281,10 @@ function Comment(options) {
                     let comments = data.comments
 
                     if (comments && comments.length > 0) {
-                        utils.find(element, '.vcards').innerHTML = ''
+                        let _vcard = utils.find(element, '.vcards')
+                        _vcard.innerHTML = ''
                         comments.forEach(comment => {
-                            insertComment(comment)
+                            insertComment(_vcard, comment)
                         })
                         Comment.page.refreshFinish(total, hasMore)
                     } else {
@@ -315,8 +316,9 @@ function Comment(options) {
 
                     Comment.page.loadMoreFinish(hasMore)
                     if (comments && comments.length > 0) {
+                        let _vcard = utils.find(element, '.vcards')
                         comments.forEach(comment => {
-                            insertComment(comment)
+                            insertComment(_vcard, comment)
                         })
                     }
                 }).catch(function (error) {
@@ -337,10 +339,10 @@ function Comment(options) {
         });
     }
 
-    let insertComment = function (comment) {
-        let newCard = utils.create('div', {'class': 'vcard'})
+    let insertComment = function (card, comment) {
+        let childCard = utils.create('div', {'class': 'vcard', 'id': comment.id})
 
-        newCard.innerHTML = `
+        childCard.innerHTML = `
 <img class="vimg" src="${comment.avatar}">
 <div class="vh">
     <div class="vhead">
@@ -353,41 +355,21 @@ function Comment(options) {
         <span class="vat" data-vm-id="${comment.id}" data-self-id="${comment.id}">回复</span>
     </div>
     <pre class="vcontent" data-expand="查看更多...">${comment.content}</pre>
-    <div class="vquote" data-self-id="${comment.id}"></div>
     <div class="vreply-wrapper" data-self-id="${comment.id}"></div>
+    <div class="vquote" data-self-id="${comment.id}"></div>
 </div>`
 
+        let _quote = utils.find(childCard, '.vquote')
         comment.children.forEach(childComment => {
-            let newChildCard = utils.create('div', {'class': 'vcard', 'id': childComment.id})
-            newChildCard.innerHTML = `
-<img class="vimg" src="${comment.avatar}">
-<div class="vh">
-    <div class="vhead">
-        <span class="vnick">${childComment.nickname}</span>
-        <span class="vsys">${childComment.browser}</span>
-        <span class="vsys">${childComment.system}</span>
-    </div>
-    <div class="vmeta">
-        <span class="vtime">${childComment.time}</span>
-        <span class="vat" data-vm-id="${childComment.id}" data-self-id="${childComment.id}">回复</span>
-    </div>
-    <pre class="vcontent" data-expand="查看更多...">${childComment.content}</pre>
-</div>`
-            utils.find(newCard, '.vquote').appendChild(newChildCard)
-
-            let _replay = utils.find(newChildCard, '.vat')
-            utils.on('click', _replay, (e) => {
-                Comment.panel.replyAt(newCard, childComment)
-            })
+            insertComment(_quote, childComment)
         })
 
-        let _replay = utils.find(newCard, '.vat')
+        let _replay = utils.find(childCard, '.vat')
         utils.on('click', _replay, (e) => {
-            Comment.panel.replyAt(newCard, comment)
+            Comment.panel.replyAt(childCard, comment)
         })
 
-        let _list = utils.find(element, '.vcards')
-        _list.appendChild(newCard)
+        card.appendChild(childCard)
     }
 
     init()

@@ -40,22 +40,18 @@ func (s *SessionService) Logout(session sessions.Session) {
 	_ = session.Save()
 }
 
-func (s *SessionService) GetLoginUserId(context *gin.Context) int {
+func (s *SessionService) GetLoggedUser(context *gin.Context) *po.User {
 	session := sessions.Default(context)
 	userId := session.Get(SESSION_KEY_USER_ID)
-	if userId == nil {
-		return 0
-	}
-	return userId.(int)
-}
-
-func (s *SessionService) GetLoginUser(context *gin.Context) *po.User {
-	userId := s.GetLoginUserId(context)
-	if userId == 0 {
+	userIdValue, ok := userId.(int)
+	if !ok {
 		return nil
 	}
-	user := s.userService.QueryUserById(userId)
-	if user == nil || user.Status != po.USER_STATUS_ENABLED {
+	user := s.userService.QueryUserById(userIdValue)
+	if user == nil {
+		return nil
+	}
+	if user.Status != po.USER_STATUS_ENABLED {
 		return nil
 	}
 	return user

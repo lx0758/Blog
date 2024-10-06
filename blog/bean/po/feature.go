@@ -10,6 +10,10 @@ type Feature struct {
 	UpdateTime  *time.Time `gorm:"column:update_time;comment:更新时间"`
 }
 
+const (
+	FEATURE_KEY_SMTP = "SMTP"
+)
+
 type SMTPFeature struct {
 	Enable    bool   `json:"enable"`
 	Hostname  string `json:"hostname"`
@@ -20,5 +24,3 @@ type SMTPFeature struct {
 	FromName  string `json:"fromName"`
 	FromEmail string `json:"fromEmail"`
 }
-
-const KEY_SMTP = "SMTP"

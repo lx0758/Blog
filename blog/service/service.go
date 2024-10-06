@@ -14,13 +14,15 @@ func GetService[S interface{ ServiceInterface }](obj interface{ ServiceInterface
 		serviceType := reflect.TypeOf(obj)
 		serviceRealType := serviceType.Elem()
 		serviceValue := reflect.New(serviceRealType)
+
+		// 提前存储, 避免循环依赖栈溢出
+		service = serviceValue.Interface()
+		services[obj] = service
+
 		serviceRealValue := serviceValue.Elem()
 		serviceRealValueAddr := serviceRealValue.Addr()
 		serviceInitMethod, _ := serviceType.MethodByName("OnInitService")
 		serviceInitMethod.Func.Call([]reflect.Value{serviceRealValueAddr})
-
-		service = serviceValue.Interface()
-		services[obj] = service
 	}
 	return service.(S)
 }

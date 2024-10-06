@@ -10,13 +10,11 @@ import (
 type UserController struct {
 	controller.RestController
 
-	userService    *service.UserService
-	sessionService *service.SessionService
+	userService *service.UserService
 }
 
 func (c *UserController) OnInitController() {
 	c.userService = service.GetService[*service.UserService](c.userService)
-	c.sessionService = service.GetService[*service.SessionService](c.sessionService)
 
 	c.Group.GET("", c.listUser)
 	c.Group.GET("profile", c.queryProfile)
@@ -78,7 +76,7 @@ func (c *UserController) listUser(context *gin.Context) {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/user/profile [GET]
 func (c *UserController) queryProfile(context *gin.Context) {
-	userId := c.sessionService.GetLoginUserId(context)
+	userId := context.GetInt(KEY_USER_ID)
 	user := c.userService.QueryUserById(userId)
 	userVO := api_vo.UserVO{}
 	userVO.From(*user)
@@ -129,7 +127,7 @@ func (c *UserController) updateProfile(context *gin.Context) {
 		c.RestValidationError(context, err)
 	}
 
-	userId := c.sessionService.GetLoginUserId(context)
+	userId := context.GetInt(KEY_USER_ID)
 	result := c.userService.UpdateUserProfile(
 		userId,
 		updateProfile.Avatar,
@@ -174,7 +172,7 @@ func (c *UserController) updatePassword(context *gin.Context) {
 		c.RestValidationError(context, err)
 	}
 
-	userId := c.sessionService.GetLoginUserId(context)
+	userId := context.GetInt(KEY_USER_ID)
 	result := c.userService.UpdateUserPassword(
 		userId,
 		updatePassword.OldPassword,

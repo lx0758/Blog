@@ -126,7 +126,7 @@ func (c *FragmentController) addFragment(context *gin.Context) {
 	if err := context.ShouldBind(&addFragment); err != nil {
 		c.RestValidationError(context, err)
 	}
-	userId := c.sessionService.GetLoginUserId(context)
+	userId := context.GetInt(KEY_USER_ID)
 	fragment := c.fragmentService.AddByAdmin(
 		userId,
 		addFragment.Key,

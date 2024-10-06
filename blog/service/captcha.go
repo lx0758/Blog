@@ -20,8 +20,8 @@ import (
 )
 
 var (
-	random = rand.New(rand.NewSource(time.Now().UnixNano()))
-	chars  = []byte{
+	captchaRandom = rand.New(rand.NewSource(time.Now().UnixNano()))
+	captchaChars  = []byte{
 		'a', 'b', 'c', 'd', 'e', 'f', 'g',
 		'h', 'j', 'k', 'm', 'n',
 		'p', 'q', 'r', 's', 't',
@@ -96,11 +96,11 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 	c.SetHinting(font.HintingFull)
 	fontWidth := width / len(text)
 	for i, ch := range text {
-		fontSize := float64(height) * (0.8 + 0.15*random.Float64())
+		fontSize := float64(height) * (0.9 + 0.05*captchaRandom.Float64())
 		c.SetSrc(image.NewUniform(s.generateRandomColor()))
 		c.SetFontSize(fontSize)
 		x = fontWidth*i + fontWidth/int(fontSize)
-		y = 5 + random.Intn(height/2) + int(fontSize/2)
+		y = 5 + captchaRandom.Intn(height/2) + int(fontSize/2)
 		pt := freetype.Pt(x, y)
 		_, _ = c.DrawString(string(ch), pt)
 	}
@@ -108,11 +108,11 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 	var x1, x2, y1, y2, dx, dy int
 	var flag bool
 	var lineColor color.RGBA
-	for range len(text) * 2 {
-		x1 = random.Intn(width)
-		y1 = random.Intn(height)
-		x2 = random.Intn(width)
-		y2 = random.Intn(height)
+	for range len(text) * 1 {
+		x1 = captchaRandom.Intn(width)
+		y1 = captchaRandom.Intn(height)
+		x2 = captchaRandom.Intn(width)
+		y2 = captchaRandom.Intn(height)
 		lineColor = s.generateRandomColor()
 		dx, dy, flag = int(math.Abs(float64(x2-x1))),
 			int(math.Abs(float64(y2-y1))),
@@ -148,9 +148,9 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 	}
 	// 画噪点
 	var pointColor color.RGBA
-	for range len(text) * 10 {
-		x = random.Intn(width)
-		y = random.Intn(height)
+	for range len(text) * 5 {
+		x = captchaRandom.Intn(width)
+		y = captchaRandom.Intn(height)
 		pointColor = s.generateRandomColor()
 		nRgba.Set(x, y, pointColor)
 		nRgba.Set(x+1, y, pointColor)
@@ -166,16 +166,16 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 func (s *CaptchaService) generateRandomText(length int) string {
 	var builder strings.Builder
 	for range length {
-		index := random.Intn(len(chars))
-		builder.WriteByte(chars[index])
+		index := captchaRandom.Intn(len(captchaChars))
+		builder.WriteByte(captchaChars[index])
 	}
 	return builder.String()
 }
 
 func (s *CaptchaService) generateRandomColor() color.RGBA {
-	red := random.Intn(255)
-	green := random.Intn(255)
-	blue := random.Intn(255)
+	red := captchaRandom.Intn(255)
+	green := captchaRandom.Intn(255)
+	blue := captchaRandom.Intn(255)
 	if (red + green) > 400 {
 		blue = 0
 	} else {

@@ -2,20 +2,13 @@ package html
 
 import (
 	"blog/bean/html_vo"
-	"blog/config"
 	"blog/controller"
-	"blog/logger"
 	"blog/res"
 	"blog/service"
 	"blog/util"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -31,56 +24,6 @@ type IndexController struct {
 func (c *IndexController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
-
-	// 使用 engine.SetHTMLTemplate 自定义模板引擎时, 通过 engine.SetFuncMap 设置自定义函数无效
-	funcMap := template.FuncMap{
-		"filterChinese": func(param string) (string, error) {
-			re := regexp.MustCompile("[\u4e00-\u9fa5]")
-			return re.ReplaceAllString(param, ""), nil
-		},
-		"nowYear": func() (string, error) {
-			return strconv.Itoa(time.Now().Year()), nil
-		},
-		"getYear": func(t time.Time) (int, error) {
-			return t.Year(), nil
-		},
-		"formatDate": func(t time.Time) (string, error) {
-			return t.Format(time.DateOnly), nil
-		},
-		"formatTime": func(t time.Time) (string, error) {
-			return t.Format(time.TimeOnly), nil
-		},
-		"formatMMdd": func(t time.Time) (string, error) {
-			return t.Format("01-02"), nil
-		},
-		"formatDateTime": func(t time.Time) (string, error) {
-			return t.Format(time.DateTime), nil
-		},
-		"rawHtml": func(content string) template.HTML {
-			return template.HTML(content)
-		},
-		"addInt": func(param1 int, param2 int) (int, error) {
-			return param1 + param2, nil
-		},
-		"addFloat": func(param1 float32, param2 float32) (float32, error) {
-			return param1 + param2, nil
-		},
-		"tagOpacity": func(count int) (float32, error) {
-			return float32(count)/20 + 0.5, nil
-		},
-	}
-	templateInstance, err := template.New("").Funcs(funcMap).ParseFS(res.TemplatesFS, "html/*.gohtml")
-	if err != nil {
-		logger.Panicf("Failed initialize template:%s\n", err)
-	}
-	c.Engine.SetHTMLTemplate(templateInstance)
-	storeKey := config.Config().Session.StoreKey
-	if storeKey == "" {
-		storeKey = strconv.FormatInt(time.Now().UnixMilli(), 10)
-	}
-	store := memstore.NewStore([]byte(storeKey))
-	c.Engine.Use(sessions.Sessions("session", store))
-	c.Engine.Use(cors.Default())
 
 	c.Group.StaticFS("/blog", http.FS(res.BlogStaticFS))
 	c.Group.StaticFS("/admin", http.FS(res.AdminStaticFS))

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>评论回复通知</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        .annotation {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .comment-block {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .comment-author {
+            font-weight: bold;
+        }
+        .comment-content {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>评论回复通知</h1>
+<p>{{.ParentCommentAuthor}}:</p>
+
+<p>您在文章《{{.ArticleTitle}}》发出的评论收到了来自 {{.ReplayAuthor}} 的回复。内容如下：<br>
+    <span class="annotation">Your comment on the "{{.ArticleTitle}}" received a reply from the "{{.ReplayAuthor}}". The contents are as follows:</span>
+</p>
+<div class="comment-block">
+    <p class="comment-author">{{.ParentCommentAuthor}}</p>
+    <p class="comment-content">{{.ParentCommentContent}}</p>
+    <hr>
+    <p class="comment-author">{{.ReplayAuthor}}</p>
+    <p class="comment-content">{{.ReplayContent}}</p>
+</div>
+
+<p>文章链接如下：<br>
+    <span class="annotation">The article is linked below:</span>
+</p>
+<p><a href="{{.ArticleUrl}}">{{.ArticleUrl}}</a></p>
+</body>
+</html>

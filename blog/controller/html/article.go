@@ -5,6 +5,7 @@ import (
 	"blog/bean/po"
 	"blog/controller"
 	"blog/service"
+	"blog/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -29,14 +30,14 @@ func (c *ArticleController) OnInitController() {
 	c.captchaService = service.GetService[*service.CaptchaService](c.captchaService)
 	c.commentService = service.GetService[*service.CommentService](c.commentService)
 
-	c.Group.GET("/:url", c.getArticle)
-	c.Group.GET("/:url/comment", c.getArticleComment)
-	c.Group.POST("/:url/comment", c.postArticleComment)
+	c.Group.GET("/:article", c.getArticle)
+	c.Group.GET("/:article/comment", c.getArticleComment)
+	c.Group.POST("/:article/comment", c.addArticleComment)
 	c.Engine.GET("/captcha", c.getArticleCommentCaptcha)
 }
 
 func (c *ArticleController) getArticle(context *gin.Context) {
-	url := c.GetPathString(context, "url", "")
+	url := c.GetPathString(context, "article", "")
 	if url == "" {
 		c.ErrorNotFound(context)
 	}
@@ -58,6 +59,15 @@ func (c *ArticleController) getArticle(context *gin.Context) {
 	c.Render(context, http.StatusOK, "article.gohtml", articleVO)
 }
 
+type commentArticleId struct {
+	Id int `uri:"article" binding:"required"`
+}
+
+type getArticleComment struct {
+	SubjectId *int `form:"subjectId"`
+	PageNum   int  `form:"page" binding:"required"`
+}
+
 // @Summary		query comment
 // @Description	query comment
 // @Tags		html
@@ -68,10 +78,48 @@ func (c *ArticleController) getArticle(context *gin.Context) {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/{url}/comment [GET]
 func (c *ArticleController) getArticleComment(context *gin.Context) {
-	id, err := c.GetPathInt(context, "url", 0)
-	if err != nil || id == 0 {
+	var commentArticleId commentArticleId
+	if err := context.ShouldBindUri(&commentArticleId); err != nil {
 		c.ErrorNotFound(context)
 	}
+	var getArticleComment getArticleComment
+	if err := context.ShouldBindQuery(&getArticleComment); err != nil {
+		context.JSON(http.StatusOK, map[string]any{
+			"status":  http.StatusBadRequest,
+			"message": "参数错误",
+		})
+		return
+	}
+	pagination := c.commentService.PaginationByHtml(
+		commentArticleId.Id,
+		getArticleComment.PageNum,
+	)
+	commentVOs := make([]html_vo.CommentVO, 0)
+	for _, comment := range pagination.List {
+		commentVO := html_vo.CommentVO{}
+		commentVO.From(comment)
+		commentVOs = append(commentVOs, commentVO)
+	}
+	paginationVO := html_vo.CommentPaginationVO{
+		Total:    pagination.Total,
+		HasMore:  pagination.PageNum < pagination.Size,
+		Comments: commentVOs,
+	}
+	context.JSON(http.StatusOK, map[string]any{
+		"status":  http.StatusOK,
+		"message": "获取成功",
+		"data":    paginationVO,
+	})
+}
+
+type addArticleComment struct {
+	SubjectId *int    `form:"subjectId"`
+	ParentId  *int    `form:"parentId"`
+	Nickname  string  `form:"nickname" binding:"required"`
+	Email     string  `form:"email" binding:"required"`
+	Link      *string `form:"link"`
+	Content   string  `form:"content" binding:"required"`
+	Captcha   string  `form:"captcha" binding:"required"`
 }
 
 // @Summary		add comment
@@ -83,10 +131,53 @@ func (c *ArticleController) getArticleComment(context *gin.Context) {
 // @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/{url}/comment [POST]
-func (c *ArticleController) postArticleComment(context *gin.Context) {
-	id, err := c.GetPathInt(context, "url", 0)
-	if err != nil || id == 0 {
+func (c *ArticleController) addArticleComment(context *gin.Context) {
+	var commentArticleId commentArticleId
+	if err := context.ShouldBindUri(&commentArticleId); err != nil {
 		c.ErrorNotFound(context)
+	}
+	var addArticleComment addArticleComment
+	if err := context.ShouldBind(&addArticleComment); err != nil {
+		context.JSON(http.StatusOK, map[string]any{
+			"status":  http.StatusBadRequest,
+			"message": "参数错误",
+		})
+		return
+	}
+
+	session := sessions.Default(context)
+	captcha := c.captchaService.Verify(
+		session,
+		service.CAPTCHA_TYPE_COMMENT,
+		addArticleComment.Captcha,
+	)
+	if !captcha {
+		context.JSON(http.StatusOK, map[string]any{
+			"status":  http.StatusBadRequest,
+			"message": "验证码错误",
+		})
+		return
+	}
+
+	result := c.commentService.AddByHtml(
+		commentArticleId.Id,
+		addArticleComment.ParentId,
+		addArticleComment.Nickname,
+		addArticleComment.Email,
+		util.GetRequestIp(context),
+		util.GetRequestUa(context),
+		addArticleComment.Content,
+	)
+	if result {
+		context.JSON(http.StatusOK, map[string]any{
+			"status":  http.StatusOK,
+			"message": "评论成功",
+		})
+	} else {
+		context.JSON(http.StatusOK, map[string]any{
+			"status":  http.StatusBadRequest,
+			"message": "评论失败",
+		})
 	}
 }
 

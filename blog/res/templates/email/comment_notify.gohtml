@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>文章评论通知</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        .annotation {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .comment-block {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .comment-author {
+            font-weight: bold;
+        }
+        .comment-content {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>文章评论通知</h1>
+<p>{{.ArticleOwner}}:</p>
+
+{{if .ParentCommentContent}}
+    <p>您的文章《{{.ArticleTitle}}》收到了来自 {{.CommentAuthor}} 对 {{.ParentCommentAuthor}} 的回复评论。内容如下：<br>
+        <span class="annotation">Your article "{{.ArticleTitle}}" received comments in response to {{.ParentCommentAuthor}} from {{.CommentAuthor}}. The contents are as follows:</span>
+    </p>
+    <div class="comment-block">
+        <p class="comment-author">{{.ParentCommentAuthor}}</p>
+        <p class="comment-content">{{.ParentCommentContent}}</p>
+        <hr>
+        <p class="comment-author">{{.CommentAuthor}}</p>
+        <p class="comment-content">{{.CommentContent}}</p>
+    </div>
+{{else}}
+    <p>您的文章《{{.ArticleTitle}}》收到了来自 {{.CommentAuthor}} 的评论。内容如下：<br>
+        <span class="annotation">Your article "{{.ArticleTitle}}" received a comment from "{{.CommentAuthor}}". The contents are as follows:</span>
+    </p>
+    <div class="comment-block">
+        <p class="comment-author">{{.CommentAuthor}}</p>
+        <p class="comment-content">{{.CommentContent}}</p>
+    </div>
+{{end}}
+
+<p>文章链接如下：<br>
+    <span class="annotation">The article is linked below:</span>
+</p>
+<p><a href="{{.ArticleUrl}}">{{.ArticleUrl}}</a></p>
+</body>
+</html>
+`

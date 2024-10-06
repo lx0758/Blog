@@ -15,7 +15,7 @@ type BlogService struct {
 	userService     *UserService
 	linkService     *LinkService
 
-	*html_vo.BlogVO
+	blogVO *html_vo.BlogVO
 }
 
 func (s *BlogService) OnInitService() {
@@ -30,7 +30,7 @@ func (s *BlogService) OnInitService() {
 }
 
 func (s *BlogService) GetCacheBlog() *html_vo.BlogVO {
-	return s.BlogVO
+	return s.blogVO
 }
 
 func (s *BlogService) refreshCacheInfo() {
@@ -54,15 +54,15 @@ func (s *BlogService) refreshCacheInfo() {
 			Url:   link.Url,
 		})
 	}
-	s.BlogVO = &html_vo.BlogVO{
-		SiteDomain:         configMap[po.CONFIG_KEY_SITE_DOMAIN],
-		SiteTitle:          configMap[po.CONFIG_KEY_SITE_TITLE],
-		SiteDescription:    configMap[po.CONFIG_KEY_SITE_DESCRIPTION],
-		SiteKeywords:       configMap[po.CONFIG_KEY_SITE_KEYWORDS],
-		SiteBeianIcp:       configMap[po.CONFIG_KEY_SITE_BEIAN_ICP],
-		SiteBeianPs:        configMap[po.CONFIG_KEY_SITE_BEIAN_PS],
-		SiteBaidu:          configMap[po.CONFIG_KEY_SITE_BAIDU],
-		SiteCreateYear:     configMap[po.CONFIG_KEY_SITE_CREATE_YEAR],
+	s.blogVO = &html_vo.BlogVO{
+		SiteDomain:         util.IfNotNil(configMap[po.CONFIG_KEY_SITE_DOMAIN], ""),
+		SiteTitle:          util.IfNotNil(configMap[po.CONFIG_KEY_SITE_TITLE], ""),
+		SiteDescription:    util.IfNotNil(configMap[po.CONFIG_KEY_SITE_DESCRIPTION], ""),
+		SiteKeywords:       util.IfNotNil(configMap[po.CONFIG_KEY_SITE_KEYWORDS], ""),
+		SiteBeianIcp:       util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BEIAN_ICP], ""),
+		SiteBeianPs:        util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BEIAN_PS], ""),
+		SiteBaidu:          util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BAIDU], ""),
+		SiteCreateYear:     util.IfNotNil(configMap[po.CONFIG_KEY_SITE_CREATE_YEAR], ""),
 		SiteArticleCount:   articleCount,
 		SiteCategoryCount:  categoryCount,
 		SiteTagCount:       tagCount,

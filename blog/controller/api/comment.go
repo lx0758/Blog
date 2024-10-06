@@ -1,8 +1,11 @@
 package api
 
 import (
+	"blog/bean/api_vo"
+	"blog/bean/po"
 	"blog/controller"
 	"blog/service"
+	"blog/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,14 +56,43 @@ type listComment struct {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/comment [GET]
 func (c *CommentController) listComment(context *gin.Context) {
-
+	var listComment listComment
+	if err := context.ShouldBind(&listComment); err != nil {
+		c.RestValidationError(context, err)
+	}
+	pagination := c.commentService.PaginationByAdmin(
+		listComment.ArticleId,
+		listComment.Author,
+		listComment.Email,
+		listComment.Ip,
+		listComment.Content,
+		listComment.Status,
+		listComment.PageNum,
+		listComment.PageSize,
+		listComment.OrderName,
+		listComment.OrderMethod,
+	)
+	commentVOs := make([]api_vo.CommentVO, 0)
+	for _, comment := range pagination.List {
+		commentVO := api_vo.CommentVO{}
+		commentVO.From(comment)
+		commentVOs = append(commentVOs, commentVO)
+	}
+	paginationVO := api_vo.PaginationVO[api_vo.CommentVO]{
+		PageNum:  pagination.PageNum,
+		PageSize: pagination.PageSize,
+		Size:     pagination.Size,
+		Total:    pagination.Total,
+		List:     commentVOs,
+	}
+	c.RestSucceed(context, paginationVO)
 }
 
 type addComment struct {
 	ArticleId   int    `form:"articleId" binding:"required"`
 	ParentId    int    `form:"parentId" binding:"required"`
 	Content     string `form:"content" binding:"required"`
-	EmailNotify string `form:"emailNotify" binding:"required"`
+	EmailNotify *bool  `form:"emailNotify" binding:"required"`
 }
 
 // @Summary		add comment
@@ -76,7 +108,32 @@ type addComment struct {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/comment [POST]
 func (c *CommentController) addComment(context *gin.Context) {
-
+	var addComment addComment
+	if err := context.ShouldBind(&addComment); err != nil {
+		c.RestValidationError(context, err)
+	}
+	user := context.MustGet(KEY_USER).(po.User)
+	userId := user.Id
+	nickName := user.Nickname
+	email := user.Email
+	ip := util.GetRequestIp(context)
+	ua := util.GetRequestUa(context)
+	result := c.commentService.AddByAdmin(
+		addComment.ArticleId,
+		addComment.ParentId,
+		nickName,
+		userId,
+		*email,
+		ip,
+		ua,
+		addComment.Content,
+		*addComment.EmailNotify,
+	)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "添加失败")
+	}
 }
 
 type pathCommentId struct {
@@ -84,7 +141,8 @@ type pathCommentId struct {
 }
 
 type updateCommentStatus struct {
-	Status *int `form:"status" binding:"required"`
+	Status      *int  `form:"status" binding:"required"`
+	EmailNotify *bool `form:"emailNotify" binding:"required"`
 }
 
 // @Summary		update comment status
@@ -94,11 +152,29 @@ type updateCommentStatus struct {
 // @Produce		json
 // @Param		id			path	int		true	"id"
 // @Param		status		path	int		true	"status"
+// @Param		emailNotify	body	bool	true	"emailNotify"
 // @Success		200			{object}	string	"{"status": 0, "message": "", “data”: null}"
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/comment/{id} [PUT]
 func (c *CommentController) updateCommentStatus(context *gin.Context) {
-
+	var pathCommentId pathCommentId
+	if err := context.ShouldBindUri(&pathCommentId); err != nil {
+		c.RestValidationError(context, err)
+	}
+	var updateCommentStatus updateCommentStatus
+	if err := context.ShouldBind(&updateCommentStatus); err != nil {
+		c.RestValidationError(context, err)
+	}
+	result := c.commentService.UpdateStatusByAdmin(
+		pathCommentId.Id,
+		*updateCommentStatus.Status,
+		*updateCommentStatus.EmailNotify,
+	)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "更新失败")
+	}
 }
 
 // @Summary		delete comment status
@@ -111,5 +187,14 @@ func (c *CommentController) updateCommentStatus(context *gin.Context) {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/comment/{id} [DELETE]
 func (c *CommentController) deleteComment(context *gin.Context) {
-
+	var pathCommentId pathCommentId
+	if err := context.ShouldBindUri(&pathCommentId); err != nil {
+		c.RestValidationError(context, err)
+	}
+	result := c.commentService.DeleteByAdmin(pathCommentId.Id)
+	if result {
+		c.RestSucceed(context, nil)
+	} else {
+		c.RestError(context, "删除失败")
+	}
 }

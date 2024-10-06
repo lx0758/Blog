@@ -10,13 +10,11 @@ import (
 type UrlController struct {
 	controller.RestController
 
-	urlService     *service.UrlService
-	sessionService *service.SessionService
+	urlService *service.UrlService
 }
 
 func (c *UrlController) OnInitController() {
 	c.urlService = service.GetService[*service.UrlService](c.urlService)
-	c.sessionService = service.GetService[*service.SessionService](c.sessionService)
 
 	c.Group.GET("", c.listUrl)
 	c.Group.POST("", c.addUrl)
@@ -104,7 +102,7 @@ func (c *UrlController) addUrl(context *gin.Context) {
 	if err := context.ShouldBind(&addUrl); err != nil {
 		c.RestValidationError(context, err)
 	}
-	userId := c.sessionService.GetLoginUserId(context)
+	userId := context.GetInt(KEY_USER_ID)
 	result := c.urlService.AddByAdmin(userId, addUrl.Key, addUrl.Url, addUrl.Description, *addUrl.Status)
 	if result {
 		c.RestSucceed(context, nil)
