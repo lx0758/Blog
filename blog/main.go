@@ -44,10 +44,10 @@ func main() {
 	engine := gin.Default()
 	engine.With(
 		InstallRecovery,
-		InstallCors,
-		InstallStatic,
 		InstallTemplate,
 		InstallSession,
+		InstallStatic,
+		InstallCors,
 	)
 
 	controller.AddController(engine, "", htmlIndexController)
@@ -72,16 +72,6 @@ func InstallRecovery(engine *gin.Engine) {
 		}()
 		context.Next()
 	})
-}
-
-func InstallCors(engine *gin.Engine) {
-	engine.Use(cors.Default())
-}
-
-func InstallStatic(engine *gin.Engine) {
-	engine.StaticFS("/blog", http.FS(res.BlogStaticFS))
-	engine.StaticFS("/admin", http.FS(res.AdminStaticFS))
-	engine.StaticFS("/files", gin.Dir("files", false))
 }
 
 func InstallTemplate(engine *gin.Engine) {
@@ -136,4 +126,14 @@ func InstallSession(engine *gin.Engine) {
 	}
 	store := memstore.NewStore([]byte(storeKey))
 	engine.Use(sessions.Sessions("session", store))
+}
+
+func InstallStatic(engine *gin.Engine) {
+	engine.StaticFS("/blog", http.FS(res.BlogStaticFS))
+	engine.StaticFS("/admin", http.FS(res.AdminStaticFS))
+	engine.StaticFS("/files", gin.Dir("files", false))
+}
+
+func InstallCors(engine *gin.Engine) {
+	engine.Use(cors.Default())
 }

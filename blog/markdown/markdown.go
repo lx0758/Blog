@@ -3,8 +3,17 @@ package markdown
 import (
 	"bytes"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/renderer/html"
 	"regexp"
 	"strings"
+)
+
+var blogMarkdown = goldmark.New(
+	goldmark.WithParserOptions(),
+	goldmark.WithRendererOptions(
+		html.WithUnsafe(),
+	),
+	goldmark.WithExtensions(),
 )
 
 type Catalogue struct {
@@ -13,18 +22,37 @@ type Catalogue struct {
 	Childs []Catalogue
 }
 
-func Render(markdown string, preview bool) (html string, text string, catalogues []Catalogue) {
+func RenderByArticle(markdown string) (html string, description string, catalogues []Catalogue) {
 	catalogues = []Catalogue{}
 	var buffer bytes.Buffer
-	if err := goldmark.Convert([]byte(markdown), &buffer); err != nil {
+	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
 		panic(err)
 	}
 	html = buffer.String()
-	text = TrimHtml(html)
+	description = trimHtml(html)
 	return
 }
 
-func TrimHtml(src string) string {
+func RenderByPage(markdown string) (html string, hasPreview bool) {
+	var buffer bytes.Buffer
+	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
+		panic(err)
+	}
+	html = buffer.String()
+	hasPreview = strings.Contains(html, "<!--more-->")
+	return
+}
+
+func RenderBySearch(markdown string) (text string) {
+	var buffer bytes.Buffer
+	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
+		panic(err)
+	}
+	text = trimHtml(buffer.String())
+	return
+}
+
+func trimHtml(src string) string {
 	//将HTML标签全转换成小写
 	re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 	src = re.ReplaceAllStringFunc(src, strings.ToLower)

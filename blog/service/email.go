@@ -62,11 +62,6 @@ func (s *EmailService) SendCommentedEmail(
 	ua string,
 	content string,
 ) {
-	owner := s.userService.QueryOwner()
-	if owner == nil || owner.Email == nil {
-		return
-	}
-
 	article := s.articleService.QueryByAdmin(articleId)
 	if article == nil {
 		return
@@ -77,13 +72,14 @@ func (s *EmailService) SendCommentedEmail(
 		parentComment = s.commentService.QueryByAdmin(*parentId)
 	}
 
+	siteDomain := util.IfNotNil(s.blogService.GetCacheConfigMap()[po.CONFIG_KEY_SITE_DOMAIN], "")
 	to := []recipient{
-		{Name: &owner.Nickname, Email: *owner.Email},
+		{Name: &article.Author.Nickname, Email: *article.Author.Email},
 	}
 	data := map[string]any{
-		"ArticleOwner":         util.If(owner.Nickname != "", owner.Nickname, "博客管理员"),
+		"ArticleOwner":         util.If(article.Author.Nickname != "", article.Author.Nickname, "博客作者"),
 		"ArticleTitle":         article.Title,
-		"ArticleUrl":           "https://" + s.blogService.GetCacheBlog().SiteDomain + "/article/" + article.GetSafeUrl(),
+		"ArticleUrl":           "https://" + siteDomain + "/article/" + article.GetSafeUrl(),
 		"ParentCommentAuthor":  nil,
 		"ParentCommentEmail":   nil,
 		"ParentCommentContent": nil,
@@ -134,13 +130,14 @@ func (s *EmailService) SendCommentReplayEmail(
 	// 抄收自己
 	recipients = append(recipients, recipient{Name: &author, Email: email})
 
+	siteDomain := util.IfNotNil(s.blogService.GetCacheConfigMap()[po.CONFIG_KEY_SITE_DOMAIN], "")
 	to := recipients[0:1]
 	cc := recipients[1:]
 	data := map[string]any{
 		"ReplayAuthor":         author,
 		"ReplayContent":        content,
 		"ArticleTitle":         article.Title,
-		"ArticleUrl":           "https://" + s.blogService.GetCacheBlog().SiteDomain + "/article/" + article.GetSafeUrl(),
+		"ArticleUrl":           "https://" + siteDomain + "/article/" + article.GetSafeUrl(),
 		"ParentCommentAuthor":  parentComment.Author,
 		"ParentCommentEmail":   parentComment.Email,
 		"ParentCommentContent": parentComment.Content,

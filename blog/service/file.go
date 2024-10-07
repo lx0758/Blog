@@ -34,6 +34,13 @@ func (s *FileService) OnInitService() {
 	s.db = database.GetDB()
 }
 
+func (s *FileService) Count() int {
+	var count int64
+	s.db.Model(&po.File{}).
+		Count(&count)
+	return int(count)
+}
+
 func (s *FileService) GetFileUrl(file po.File) string {
 	return gFileUrlPrefix + strings.ReplaceAll(file.Path, string(filepath.Separator), "/")
 }
@@ -56,6 +63,18 @@ func (s *FileService) PaginationByAdmin(
 	}
 	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
 	return database.Pagination[po.File](db, pageNum, pageSize)
+}
+
+func (s *FileService) ListNewFile(count int) []po.File {
+	var files []po.File
+	s.db.Model(&po.File{}).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		}).
+		Limit(count).
+		Find(&files)
+	return files
 }
 
 func (s *FileService) AddByAdmin(userId int, file multipart.FileHeader) *po.File {
@@ -102,6 +121,7 @@ func (s *FileService) AddByAdmin(userId int, file multipart.FileHeader) *po.File
 	if filePO.Id == 0 {
 		return nil
 	}
+	refreshBlogCacheInfo()
 	return filePO
 }
 
@@ -153,6 +173,9 @@ func (s *FileService) UpdateByAdmin(id int, file multipart.FileHeader) error {
 			Length:     fileSize,
 			UpdateTime: &updateTime,
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.Error
 }
 
@@ -164,6 +187,7 @@ func (s *FileService) DeleteByAdmin(id int) bool {
 		Delete(&file)
 	if db.RowsAffected > 0 {
 		s.cleanFile(file.Path)
+		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
 }

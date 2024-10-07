@@ -23,6 +23,14 @@ func (s *CommentService) OnInitService() {
 	s.locationService = GetService[*LocationService](s.locationService)
 }
 
+func (s *CommentService) Count() int {
+	var count int64
+	s.db.Model(&po.Comment{}).
+		Where("? = ?", clause.Column{Name: "status"}, po.COMMENT_STATUS_PUBLISHED).
+		Count(&count)
+	return int(count)
+}
+
 func (s *CommentService) PaginationByAdmin(
 	id *int,
 	author *string,
@@ -52,7 +60,7 @@ func (s *CommentService) PaginationByAdmin(
 	if content != nil && *content != "" {
 		db = db.Where("? LIKE ?", clause.Column{Name: "content"}, "%"+*content+"%")
 	}
-	if status != nil && *status != 0 {
+	if status != nil {
 		db = db.Where("? = ?", clause.Column{Name: "status"}, *status)
 	}
 	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
@@ -87,6 +95,19 @@ func (s *CommentService) childsPreload(db *gorm.DB) *gorm.DB {
 			Column: clause.Column{Name: "id"},
 			Desc:   true,
 		})
+}
+
+func (s *CommentService) ListNewComment(count int) []po.Comment {
+	var comments []po.Comment
+	s.db.Model(&po.Comment{}).
+		Where("? = ?", clause.Column{Name: "status"}, po.COMMENT_STATUS_PUBLISHED).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		}).
+		Limit(count).
+		Find(&comments)
+	return comments
 }
 
 func (s *CommentService) QueryByAdmin(id int) *po.Comment {
@@ -130,6 +151,9 @@ func (s *CommentService) AddByAdmin(
 		// 评论回复完成, 发送评论通知邮件
 		s.emailService.SendCommentReplayEmail(author, email, content, articleId, parentId)
 	}
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -163,6 +187,9 @@ func (s *CommentService) AddByHtml(
 		// 文章被评论, 向管理员发送评论通知邮件
 		s.emailService.SendCommentedEmail(articleId, parentId, author, email, ip, location, ua, content)
 	}
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -187,6 +214,9 @@ func (s *CommentService) UpdateStatusByAdmin(
 		// 文章评论审核完成, 发送评论通知邮件
 		s.emailService.SendCommentReplayEmail(comment.Author, comment.Email, comment.Content, comment.ArticleId, *comment.ParentId)
 	}
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -194,5 +224,8 @@ func (s *CommentService) DeleteByAdmin(id int) bool {
 	db := s.db.Model(&po.Comment{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Delete(&po.Comment{})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }

@@ -8,7 +8,7 @@ interface ListOrder {
 interface ListData {
     pageNum: number
     pageSize: number
-    pages: number
+    size: number
     total: number
     list: Array<any>
 }
@@ -23,7 +23,7 @@ export class ListState<T extends Object> {
     data = ref<ListData>({
         pageNum: 1,
         pageSize: 20,
-        pages: 0,
+        size: 0,
         total: 0,
         list: [],
     })

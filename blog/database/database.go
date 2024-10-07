@@ -56,25 +56,27 @@ func GetDB() *gorm.DB {
 			db.Debug()
 		}
 
-		err = db.AutoMigrate(
-			&po.User{},
-			&po.Config{},
-			&po.Feature{},
-			&po.Link{},
+		if conf.AutoMigrate {
+			err = db.AutoMigrate(
+				&po.User{},
+				&po.Config{},
+				&po.Feature{},
+				&po.Link{},
 
-			&po.Url{},
-			&po.File{},
+				&po.Url{},
+				&po.File{},
 
-			&po.Fragment{},
-			&po.Article{},
-			&po.ArticleUrl{},
-			&po.Category{},
-			&po.Tag{},
+				&po.Fragment{},
+				&po.Article{},
+				&po.ArticleUrl{},
+				&po.Category{},
+				&po.Tag{},
 
-			&po.Comment{},
-		)
-		if err != nil {
-			bloglogger.Panicf("Failed auto migrate database:%s\n", err)
+				&po.Comment{},
+			)
+			if err != nil {
+				bloglogger.Panicf("Failed auto migrate database:%s\n", err)
+			}
 		}
 
 		gDb = db
@@ -84,15 +86,18 @@ func GetDB() *gorm.DB {
 
 func Pagination[PO interface{}](db *gorm.DB, pageNum int, pageSize int) po.Pagination[PO] {
 	var total int64
-	var pos = make([]PO, 0)
-	db.Count(&total).Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&pos)
+	db.Count(&total)
 	lastCount := util.If(int(total)%pageSize > 0, 1, 0)
+
+	var list = make([]PO, 0)
+	db.Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&list)
+
 	return po.Pagination[PO]{
 		PageNum:  pageNum,
 		PageSize: pageSize,
 		Size:     int(total)/pageSize + lastCount,
 		Total:    int(total),
-		List:     pos,
+		List:     list,
 	}
 }
 

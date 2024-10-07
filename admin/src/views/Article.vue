@@ -91,8 +91,8 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination :page-count="state.data.pages" @current-change="onCurrentPageChange"
-      style="text-align: center; margin-top: 20px" background layout="prev, pager, next" />
+    <el-pagination :page-count="state.data.size" @current-change="onCurrentPageChange"
+      style="justify-content: center; margin-top: 20px" background layout="prev, pager, next" />
   </el-container>
 </template>
 

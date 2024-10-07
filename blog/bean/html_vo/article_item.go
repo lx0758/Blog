@@ -4,7 +4,6 @@ import (
 	"blog/bean/po"
 	"blog/markdown"
 	"blog/util"
-	"strings"
 	"time"
 )
 
@@ -20,8 +19,7 @@ type ArticleItemVO struct {
 }
 
 func (a *ArticleItemVO) FromPage(article po.Article) {
-	html, _, _ := markdown.Render(article.Content, true)
-	hasPreview := strings.Contains(html, "<!-- more -->")
+	html, hasPreview := markdown.RenderByPage(article.Content)
 	a.Url = article.GetSafeUrl()
 	a.Top = article.Weight > 0
 	a.Title = article.Title
@@ -40,7 +38,7 @@ func (a *ArticleItemVO) FromItem(article po.Article) {
 }
 
 func (a *ArticleItemVO) FromSearch(article po.Article) {
-	_, text, _ := markdown.Render(article.Content, false)
+	text := markdown.RenderBySearch(article.Content)
 	a.Url = article.GetSafeUrl()
 	a.Title = article.Title
 	a.Content = text

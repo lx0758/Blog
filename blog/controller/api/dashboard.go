@@ -1,6 +1,7 @@
 package api
 
 import (
+	"blog/bean/api_vo"
 	"blog/controller"
 	"blog/service"
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 type DashboardController struct {
 	controller.RestController
 
+	blogService     *service.BlogService
 	articleService  *service.ArticleService
 	categoryService *service.CategoryService
 	commentService  *service.CommentService
@@ -17,6 +19,7 @@ type DashboardController struct {
 }
 
 func (c *DashboardController) OnInitController() {
+	c.blogService = service.GetService[*service.BlogService](c.blogService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
 	c.categoryService = service.GetService[*service.CategoryService](c.categoryService)
 	c.commentService = service.GetService[*service.CommentService](c.commentService)
@@ -35,5 +38,38 @@ func (c *DashboardController) OnInitController() {
 // @Failure		200			{object}	string	"{"status": 500, "message": "", “data”: null}"
 // @Router		/api/dashboard [GET]
 func (c *DashboardController) queryDashboard(context *gin.Context) {
+	articleCount, categoryCount, tagCount, fileCount, commentCount := c.blogService.GetCacheCount()
+	browseCount := c.articleService.CountViews()
 
+	newArticleVOs := make([]api_vo.ArticleVO, 0)
+	for _, article := range c.articleService.ListNewArticle(10) {
+		articleVO := api_vo.ArticleVO{}
+		articleVO.From(article)
+		newArticleVOs = append(newArticleVOs, articleVO)
+	}
+	newCommentVOs := make([]api_vo.CommentVO, 0)
+	for _, comment := range c.commentService.ListNewComment(10) {
+		commentVO := api_vo.CommentVO{}
+		commentVO.From(comment)
+		newCommentVOs = append(newCommentVOs, commentVO)
+	}
+	newFileVOs := make([]api_vo.FileVO, 0)
+	for _, file := range c.fileService.ListNewFile(10) {
+		fileVO := api_vo.FileVO{}
+		fileVO.From(file, c.fileService.GetFileUrl(file))
+		newFileVOs = append(newFileVOs, fileVO)
+	}
+
+	dashboardVO := api_vo.DashboardVO{
+		ArticleCount:  articleCount,
+		CategoryCount: categoryCount,
+		TagCount:      tagCount,
+		UploadCount:   fileCount,
+		CommentCount:  commentCount,
+		BrowseCount:   browseCount,
+		NewArticles:   newArticleVOs,
+		NewComments:   newCommentVOs,
+		NewUploads:    newFileVOs,
+	}
+	c.RestSucceed(context, dashboardVO)
 }

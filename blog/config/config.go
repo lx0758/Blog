@@ -37,9 +37,10 @@ type Server struct {
 }
 
 type DataSource struct {
-	Debug bool   `yaml:"debug"`
-	Type  string `yaml:"type"`
-	Dsn   string `yaml:"dsn"`
+	Debug       bool   `yaml:"debug"`
+	AutoMigrate bool   `yaml:"auto_migrate"`
+	Type        string `yaml:"type"`
+	Dsn         string `yaml:"dsn"`
 }
 
 type Session struct {

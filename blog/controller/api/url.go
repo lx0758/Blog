@@ -26,6 +26,7 @@ type listUrl struct {
 	Key         *string `form:"key"`
 	Url         *string `form:"url"`
 	Description *string `form:"description"`
+	Status      *int    `form:"status"`
 	PageNum     int     `form:"pageNum" binding:"required"`
 	PageSize    int     `form:"pageSize" binding:"required"`
 	OrderName   *string `form:"orderName"`
@@ -40,6 +41,7 @@ type listUrl struct {
 // @Param		key				body	string	false	"key"
 // @Param		url				body	string	false	"url"
 // @Param		description		body	string	false	"description"
+// @Param		status			body	int		false	"description"
 // @Param		pageNum			body	int		true	"pageNum"
 // @Param		pageSize		body	int		true	"pageSize"
 // @Param		orderName		body	string	false	"orderName"
@@ -57,6 +59,7 @@ func (c *UrlController) listUrl(context *gin.Context) {
 		listUrl.Key,
 		listUrl.Url,
 		listUrl.Description,
+		listUrl.Status,
 		listUrl.PageNum,
 		listUrl.PageSize,
 		listUrl.OrderName,

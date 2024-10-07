@@ -44,9 +44,11 @@ func (s *LinkService) ListLink() []po.Link {
 	var urls []po.Link
 	s.db.Model(&po.Link{}).
 		Where("? = ?", clause.Column{Name: "status"}, po.LINK_STATUS_PUBLISHED).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   false,
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: false},
+			},
 		}).
 		Find(&urls)
 	return urls

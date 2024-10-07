@@ -1,10 +1,8 @@
 package service
 
 import (
-	"blog/bean/html_vo"
 	"blog/bean/po"
 	"blog/logger"
-	"blog/util"
 )
 
 const (
@@ -23,10 +21,19 @@ type BlogService struct {
 	articleService  *ArticleService
 	categoryService *CategoryService
 	tagService      *TagService
+	fileService     *FileService
+	commentService  *CommentService
 	userService     *UserService
 	linkService     *LinkService
 
-	blogVO *html_vo.BlogVO
+	configMap     map[string]*string
+	owner         po.User
+	links         []po.Link
+	articleCount  int
+	categoryCount int
+	tagCount      int
+	fileCount     int
+	commentCount  int
 }
 
 func (s *BlogService) OnInitService() {
@@ -34,6 +41,8 @@ func (s *BlogService) OnInitService() {
 	s.articleService = GetService[*ArticleService](s.articleService)
 	s.categoryService = GetService[*CategoryService](s.categoryService)
 	s.tagService = GetService[*TagService](s.tagService)
+	s.fileService = GetService[*FileService](s.fileService)
+	s.commentService = GetService[*CommentService](s.commentService)
 	s.userService = GetService[*UserService](s.userService)
 	s.linkService = GetService[*LinkService](s.linkService)
 
@@ -49,15 +58,24 @@ func (s *BlogService) OnInitService() {
 	}()
 }
 
-func (s *BlogService) GetCacheBlog() *html_vo.BlogVO {
-	return s.blogVO
+func (s *BlogService) GetCacheConfigMap() map[string]*string {
+	return s.configMap
+}
+
+func (s *BlogService) GetCacheCount() (articleCount, categoryCount, tagCount, fileCount, commentCount int) {
+	return s.articleCount, s.categoryCount, s.tagCount, s.fileCount, s.commentCount
+}
+
+func (s *BlogService) GetCacheOwner() po.User {
+	return s.owner
+}
+
+func (s *BlogService) GetCacheLinks() []po.Link {
+	return s.links
 }
 
 func (s *BlogService) refreshCacheInfo() {
-	configMap := s.configService.QueryConfigMap()
-	articleCount := s.articleService.Count()
-	categoryCount := s.categoryService.Count()
-	tagCount := s.tagService.Count()
+	s.configMap = s.configService.QueryConfigMap()
 
 	user := s.userService.QueryOwner()
 	if user == nil {
@@ -65,40 +83,13 @@ func (s *BlogService) refreshCacheInfo() {
 			Accounts: &po.UserAccounts{},
 		}
 	}
+	s.owner = *user
 
-	links := s.linkService.ListLink()
-	linkVOs := make([]html_vo.LinkVO, 0)
-	for _, link := range links {
-		linkVOs = append(linkVOs, html_vo.LinkVO{
-			Title: link.Title,
-			Url:   link.Url,
-		})
-	}
-	s.blogVO = &html_vo.BlogVO{
-		SiteDomain:         util.IfNotNil(configMap[po.CONFIG_KEY_SITE_DOMAIN], ""),
-		SiteTitle:          util.IfNotNil(configMap[po.CONFIG_KEY_SITE_TITLE], ""),
-		SiteDescription:    util.IfNotNil(configMap[po.CONFIG_KEY_SITE_DESCRIPTION], ""),
-		SiteKeywords:       util.IfNotNil(configMap[po.CONFIG_KEY_SITE_KEYWORDS], ""),
-		SiteBeianIcp:       util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BEIAN_ICP], ""),
-		SiteBeianPs:        util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BEIAN_PS], ""),
-		SiteBaidu:          util.IfNotNil(configMap[po.CONFIG_KEY_SITE_BAIDU], ""),
-		SiteCreateYear:     util.IfNotNil(configMap[po.CONFIG_KEY_SITE_CREATE_YEAR], ""),
-		SiteArticleCount:   articleCount,
-		SiteCategoryCount:  categoryCount,
-		SiteTagCount:       tagCount,
-		OwnerAvatar:        util.IfNotNil(user.Avatar, ""),
-		OwnerNickname:      user.Nickname,
-		OwnerDescription:   util.IfNotNil(user.Description, ""),
-		OwnerEmail:         util.IfNotNil(user.Email, ""),
-		OwnerGithub:        util.IfNotNil(user.Accounts.Github, ""),
-		OwnerWeibo:         util.IfNotNil(user.Accounts.Weibo, ""),
-		OwnerGoogle:        util.IfNotNil(user.Accounts.Google, ""),
-		OwnerTwitter:       util.IfNotNil(user.Accounts.Twitter, ""),
-		OwnerFacebook:      util.IfNotNil(user.Accounts.Facebook, ""),
-		OwnerStackOverflow: util.IfNotNil(user.Accounts.StackOverflow, ""),
-		OwnerYoutube:       util.IfNotNil(user.Accounts.Youtube, ""),
-		OwnerInstagram:     util.IfNotNil(user.Accounts.Instagram, ""),
-		OwnerSkype:         util.IfNotNil(user.Accounts.Skype, ""),
-		Links:              linkVOs,
-	}
+	s.links = s.linkService.ListLink()
+
+	s.articleCount = s.articleService.Count()
+	s.categoryCount = s.categoryService.Count()
+	s.tagCount = s.tagService.Count()
+	s.fileCount = s.fileService.Count()
+	s.commentCount = s.commentService.Count()
 }

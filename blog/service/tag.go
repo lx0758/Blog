@@ -19,8 +19,8 @@ func (s *TagService) OnInitService() {
 
 func (s *TagService) Count() int {
 	var count int64
-	db := s.db.Model(&po.Tag{})
-	db.Count(&count)
+	s.db.Model(&po.Tag{}).
+		Count(&count)
 	return int(count)
 }
 

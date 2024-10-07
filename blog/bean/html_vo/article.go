@@ -32,7 +32,7 @@ type CatalogueVO struct {
 }
 
 func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Article) {
-	html, text, catalogues := markdown.Render(article.Content, false)
+	html, description, catalogues := markdown.RenderByArticle(article.Content)
 	var prevArticleItemVO, nextArticleItemVO *ArticleItemVO
 	if prevArticle != nil {
 		prevArticleItemVO = &ArticleItemVO{}
@@ -45,7 +45,7 @@ func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Articl
 	a.Id = article.Id
 	a.Url = article.GetSafeUrl()
 	a.Title = article.Title
-	a.Description = text
+	a.Description = description
 	a.Content = html
 	a.CreateTime = article.CreateTime
 	a.UpdateTime = util.IfNotNil(article.UpdateTime, article.CreateTime)

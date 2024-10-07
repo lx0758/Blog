@@ -28,66 +28,13 @@ func (s *ArticleService) Count() int {
 	return int(count)
 }
 
-func (s *ArticleService) QueryArticle(id int) *po.Article {
-	var article po.Article
+func (s *ArticleService) CountViews() int {
+	var count int64
 	s.db.Model(&po.Article{}).
-		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
-		Where("? = ? AND ? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
-		Take(&article)
-	if article.Id == 0 {
-		return nil
-	}
-	s.incrementViews(&article)
-	return &article
-}
-
-func (s *ArticleService) QueryByAdmin(id int) *po.Article {
-	var article po.Article
-	s.db.Model(&po.Article{}).
-		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
-		Where("? = ?", clause.Column{Name: "id"}, id).
-		Take(&article)
-	if article.Id == 0 {
-		return nil
-	}
-	return &article
-}
-
-func (s *ArticleService) QueryPrevArticle(id int) *po.Article {
-	var article po.Article
-	s.db.Model(&po.Article{}).
-		Preload("Urls").
-		Where("? = ? AND ? < ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
-		Last(&article)
-	if article.Id == 0 {
-		return nil
-	}
-	return &article
-}
-
-func (s *ArticleService) QueryNextArticle(id int) *po.Article {
-	var article po.Article
-	s.db.Model(&po.Article{}).
-		Preload("Urls").
-		Where("? = ? AND ? > ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
-		First(&article)
-	if article.Id == 0 {
-		return nil
-	}
-	return &article
-}
-
-func (s *ArticleService) ListArticle() []po.Article {
-	var articles []po.Article
-	s.db.Model(&po.Article{}).
-		Preload("Urls").
+		Select("SUM(?)", clause.Column{Name: "views"}).
 		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   true,
-		}).
-		Find(&articles)
-	return articles
+		Take(&count)
+	return int(count)
 }
 
 func (s *ArticleService) PaginationByAdmin(
@@ -101,10 +48,13 @@ func (s *ArticleService) PaginationByAdmin(
 	orderName *string,
 	orderMethod *string,
 ) po.Pagination[po.Article] {
+	// 为了 Count 能够正确应用 DISTINCT 函数, 应该是 GORM 的一个 BUG
+	// SELECT COUNT(DISTINCT("t_article"."id")) FROM "t_article" LEFT JOIN "t_article_url" ON "t_article"."id" = "t_article_url"."article_id"
+	// SELECT DISTINCT t_article.* FROM "t_article" LEFT JOIN "t_article_url" ON "t_article"."id" = "t_article_url"."article_id" ORDER BY "id" DESC LIMIT 20
 	db := s.db.Model(&po.Article{}).
+		Select("t_article.id").
+		Distinct("?", clause.Column{Name: "t_article.*", Raw: true}).
 		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_url"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_url.article_id"}).
-		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
-		Distinct().
 		Preload("Category").Preload("Urls")
 	if title != nil {
 		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "t_article.title"}, "%"+*title+"%")
@@ -135,9 +85,11 @@ func (s *ArticleService) PaginationArticleByPage(pageNum int) po.Pagination[po.A
 	db := s.db.Model(&po.Article{}).
 		Preload("Category").Preload("Author").Preload("Urls").
 		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   true,
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: true},
+			},
 		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
@@ -146,9 +98,11 @@ func (s *ArticleService) PaginationArticleByArchive(pageNum int) po.Pagination[p
 	db := s.db.Model(&po.Article{}).
 		Preload("Urls").
 		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   true,
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "create_time"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: true},
+			},
 		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
@@ -158,9 +112,11 @@ func (s *ArticleService) PaginationArticleByCategory(categoryId int, pageNum int
 		Preload("Urls").
 		InnerJoins("Category", s.db.Where(&po.Category{Id: categoryId})).
 		Where(&po.Article{Status: po.ARTICLE_STATUS_PUBLISHED}).
-		Order(clause.OrderByColumn{
-			Column: clause.Column{Name: "id"},
-			Desc:   true,
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: true},
+			},
 		})
 	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
 }
@@ -169,11 +125,103 @@ func (s *ArticleService) PaginationArticleByTag(tagId int, pageNum int) po.Pagin
 	db := s.db.Model(&po.Article{}).
 		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
 		Where("? = ? AND ? = ?", clause.Column{Name: "t_article.status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "t_article_tag.tag_id"}, tagId).
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: true},
+			},
+		})
+	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
+}
+
+func (s *ArticleService) ListNewArticle(count int) []po.Article {
+	var articles []po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Urls").
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
 		Order(clause.OrderByColumn{
 			Column: clause.Column{Name: "id"},
 			Desc:   true,
-		})
-	return database.Pagination[po.Article](db, pageNum, ARTICLE_PAGE_SIZE)
+		}).
+		Limit(count).
+		Find(&articles)
+	return articles
+}
+
+func (s *ArticleService) ListArticle() []po.Article {
+	var articles []po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Urls").
+		Where("? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED).
+		Order(clause.OrderByColumn{
+			Column: clause.Column{Name: "id"},
+			Desc:   true,
+		}).
+		Find(&articles)
+	return articles
+}
+
+func (s *ArticleService) QueryArticle(id int) *po.Article {
+	var article po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
+		Where("? = ? AND ? = ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
+		Take(&article)
+	if article.Id == 0 {
+		return nil
+	}
+	s.incrementViews(&article)
+	return &article
+}
+
+func (s *ArticleService) QueryByAdmin(id int) *po.Article {
+	var article po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Category").Preload("Author").Preload("Urls").Preload("Tags").
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Take(&article)
+	if article.Id == 0 {
+		return nil
+	}
+	return &article
+}
+
+func (s *ArticleService) QueryPrevArticle(id int) *po.Article {
+	var article po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Urls").
+		Where("? = ? AND ? < ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: true},
+				{Column: clause.Column{Name: "id"}, Desc: true},
+			},
+		}).
+		Limit(1).
+		Take(&article)
+	if article.Id == 0 {
+		return nil
+	}
+	return &article
+}
+
+func (s *ArticleService) QueryNextArticle(id int) *po.Article {
+	var article po.Article
+	s.db.Model(&po.Article{}).
+		Preload("Urls").
+		Where("? = ? AND ? > ?", clause.Column{Name: "status"}, po.ARTICLE_STATUS_PUBLISHED, clause.Column{Name: "id"}, id).
+		Order(clause.OrderBy{
+			Columns: []clause.OrderByColumn{
+				{Column: clause.Column{Name: "weight"}, Desc: false},
+				{Column: clause.Column{Name: "id"}, Desc: false},
+			},
+		}).
+		Limit(1).
+		Take(&article)
+	if article.Id == 0 {
+		return nil
+	}
+	return &article
 }
 
 func (s *ArticleService) AddByAdmin(

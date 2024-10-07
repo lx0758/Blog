@@ -21,6 +21,7 @@ func (s *UrlService) PaginationByAdmin(
 	key *string,
 	url *string,
 	description *string,
+	status *int,
 	pageNum int,
 	pageSize int,
 	orderName *string,
@@ -36,6 +37,9 @@ func (s *UrlService) PaginationByAdmin(
 	}
 	if description != nil && *description != "" {
 		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Name: "description"}, "%"+*description+"%")
+	}
+	if status != nil {
+		db = db.Where("? = ?", clause.Column{Name: "status"}, *status)
 	}
 	db = db.Order(database.TableOrderBy(orderName, orderMethod, "id", true))
 	return database.Pagination[po.Url](db, pageNum, pageSize)
