@@ -3,8 +3,19 @@ package service
 import (
 	"blog/bean/html_vo"
 	"blog/bean/po"
+	"blog/logger"
 	"blog/util"
 )
+
+const (
+	EVENT_REFRESH_CACHE_INGO = 1
+)
+
+var blogChannel = make(chan int, 1)
+
+func refreshBlogCacheInfo() {
+	blogChannel <- EVENT_REFRESH_CACHE_INGO
+}
 
 type BlogService struct {
 	Service
@@ -26,7 +37,16 @@ func (s *BlogService) OnInitService() {
 	s.userService = GetService[*UserService](s.userService)
 	s.linkService = GetService[*LinkService](s.linkService)
 
-	s.refreshCacheInfo()
+	refreshBlogCacheInfo()
+	go func() {
+		for event := range blogChannel {
+			logger.Printf("received a blog event event: %d", event)
+			switch event {
+			case EVENT_REFRESH_CACHE_INGO:
+				s.refreshCacheInfo()
+			}
+		}
+	}()
 }
 
 func (s *BlogService) GetCacheBlog() *html_vo.BlogVO {

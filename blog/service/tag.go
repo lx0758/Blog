@@ -78,6 +78,9 @@ func (s *TagService) AddByAdmin(name string) bool {
 			Name:       name,
 			CreateTime: time.Now(),
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -90,6 +93,9 @@ func (s *TagService) UpdateByAdmin(id int, name string) bool {
 			Name:       name,
 			UpdateTime: &updateTime,
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -97,6 +103,7 @@ func (s *TagService) DeleteByAdmin(id int) bool {
 	db := s.db.Model(&po.Tag{}).Delete(&po.Tag{Id: id})
 	if db.RowsAffected > 0 {
 		s.db.Table("t_article_tag").Delete("? = ?", clause.Column{Name: "tag_id"}, id)
+		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
 }

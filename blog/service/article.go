@@ -252,6 +252,7 @@ func (s *ArticleService) AddByAdmin(
 	}
 
 	tdb.Commit()
+	refreshBlogCacheInfo()
 	return &article, nil
 }
 
@@ -400,6 +401,7 @@ func (s *ArticleService) UpdateByAdmin(
 	}
 
 	tdb.Commit()
+	refreshBlogCacheInfo()
 	return nil
 }
 
@@ -407,17 +409,17 @@ func (s *ArticleService) UpdateStatusByAdmin(id int, status int) bool {
 	db := s.db.Model(&po.Article{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("status", status)
+	if db.RowsAffected == 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
-}
-
-func (s *ArticleService) UpdateCategoryByAdminDeleteCategory(deleteCategoryId int, defaultCategory int) {
-	s.db.Model(&po.Article{}).
-		Where("? = ?", clause.Column{Name: "category_id"}, deleteCategoryId).
-		Update("category_id", defaultCategory)
 }
 
 func (s *ArticleService) DeleteByAdmin(id int) bool {
 	db := s.db.Delete(&po.Article{Id: id})
+	if db.RowsAffected == 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 

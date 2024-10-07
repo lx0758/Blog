@@ -103,6 +103,9 @@ func (s *UserService) UpdateUserProfile(
 			},
 			UpdateTime: &updateTime,
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 

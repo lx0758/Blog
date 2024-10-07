@@ -61,6 +61,9 @@ func (s *LinkService) AddByAdmin(title string, url string, weight int, status in
 			Status:     status,
 			CreateTime: time.Now(),
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -76,10 +79,16 @@ func (s *LinkService) UpdateByAdmin(id int, title string, url string, weight int
 			Status:     status,
 			UpdateTime: &updateTime,
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
 func (s *LinkService) DeleteByAdmin(id int) bool {
 	db := s.db.Model(&po.Link{}).Delete(&po.Link{Id: id})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }

@@ -81,6 +81,9 @@ func (s *ConfigService) AddByAdmin(key string, value *string, description string
 			Description: description,
 			CreateTime:  time.Now(),
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -94,6 +97,9 @@ func (s *ConfigService) UpdateByAdmin(key string, description string, value *str
 			Value:       value,
 			UpdateTime:  &updateTime,
 		})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
 
@@ -101,5 +107,8 @@ func (s *ConfigService) DeleteByAdmin(key string) bool {
 	db := s.db.Model(&po.Config{}).
 		Where("? = ?", clause.Column{Name: "key"}, key).
 		Delete(&po.Config{})
+	if db.RowsAffected > 0 {
+		refreshBlogCacheInfo()
+	}
 	return db.RowsAffected > 0
 }
