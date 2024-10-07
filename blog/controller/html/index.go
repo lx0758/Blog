@@ -25,8 +25,6 @@ func (c *IndexController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
 
-	c.Group.StaticFS("/blog", http.FS(res.BlogStaticFS))
-	c.Group.StaticFS("/admin", http.FS(res.AdminStaticFS))
 	c.Group.GET("/", c.getIndex)
 	c.Group.GET("/admin", c.getAdmin)
 	c.Group.GET("/search.json", c.getSearchJson)

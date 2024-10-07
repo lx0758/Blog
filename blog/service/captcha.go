@@ -22,9 +22,9 @@ import (
 var (
 	captchaRandom = rand.New(rand.NewSource(time.Now().UnixNano()))
 	captchaChars  = []byte{
-		'a', 'b', 'c', 'd', 'e', 'f', 'g',
+		'a', 'c', 'd', 'e', 'f', 'g',
 		'h', 'j', 'k', 'm', 'n',
-		'p', 'q', 'r', 's', 't',
+		'p', 'r', 's',
 		'u', 'v', 'w', 'x', 'y', 'z',
 		'A', 'B', 'C', 'D', 'E', 'F', 'G',
 		'H', 'J', 'K', 'M', 'N',
@@ -88,32 +88,32 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 	draw.Draw(nRgba, nRgba.Bounds(), &image.Uniform{C: captchaBgColor}, image.ZP, draw.Src)
 	// 画字符
 	var x, y int
-	c := freetype.NewContext()
-	c.SetDPI(72)
-	c.SetDst(nRgba)
-	c.SetClip(nRgba.Bounds())
-	c.SetFont(captchaFont)
-	c.SetHinting(font.HintingFull)
+	context := freetype.NewContext()
+	context.SetDPI(72)
+	context.SetDst(nRgba)
+	context.SetClip(nRgba.Bounds())
+	context.SetFont(captchaFont)
+	context.SetHinting(font.HintingFull)
 	fontWidth := width / len(text)
 	for i, ch := range text {
-		fontSize := float64(height) * (0.9 + 0.05*captchaRandom.Float64())
-		c.SetSrc(image.NewUniform(s.generateRandomColor()))
-		c.SetFontSize(fontSize)
-		x = fontWidth*i + fontWidth/int(fontSize)
-		y = 5 + captchaRandom.Intn(height/2) + int(fontSize/2)
+		fontSize := float64(height) * (0.85 + 0.15*captchaRandom.Float64())
+		context.SetSrc(image.NewUniform(s.generateRandomColor(true)))
+		context.SetFontSize(fontSize)
+		x = fontWidth*i + captchaRandom.Intn(fontWidth/5)
+		y = height/7*5 + captchaRandom.Intn(height/5)
 		pt := freetype.Pt(x, y)
-		_, _ = c.DrawString(string(ch), pt)
+		_, _ = context.DrawString(string(ch), pt)
 	}
 	// 画干扰线(Bresenham算法)
 	var x1, x2, y1, y2, dx, dy int
 	var flag bool
 	var lineColor color.RGBA
-	for range len(text) * 1 {
+	for range (int)((float64(len(text))) * 1.5) {
 		x1 = captchaRandom.Intn(width)
 		y1 = captchaRandom.Intn(height)
 		x2 = captchaRandom.Intn(width)
 		y2 = captchaRandom.Intn(height)
-		lineColor = s.generateRandomColor()
+		lineColor = s.generateRandomColor(false)
 		dx, dy, flag = int(math.Abs(float64(x2-x1))),
 			int(math.Abs(float64(y2-y1))),
 			false
@@ -148,10 +148,10 @@ func (s *CaptchaService) generateCaptchaImage(width int, height int, text string
 	}
 	// 画噪点
 	var pointColor color.RGBA
-	for range len(text) * 5 {
+	for range len(text) * 10 {
 		x = captchaRandom.Intn(width)
 		y = captchaRandom.Intn(height)
-		pointColor = s.generateRandomColor()
+		pointColor = s.generateRandomColor(false)
 		nRgba.Set(x, y, pointColor)
 		nRgba.Set(x+1, y, pointColor)
 		nRgba.Set(x, y+1, pointColor)
@@ -172,18 +172,14 @@ func (s *CaptchaService) generateRandomText(length int) string {
 	return builder.String()
 }
 
-func (s *CaptchaService) generateRandomColor() color.RGBA {
-	red := captchaRandom.Intn(255)
-	green := captchaRandom.Intn(255)
-	blue := captchaRandom.Intn(255)
-	if (red + green) > 400 {
-		blue = 0
-	} else {
-		blue = 400 - green - red
+func (s *CaptchaService) generateRandomColor(dark bool) color.RGBA {
+	threshold := 255
+	if dark {
+		threshold = 180
 	}
-	if blue > 255 {
-		blue = 255
-	}
+	red := captchaRandom.Intn(threshold)
+	green := captchaRandom.Intn(threshold)
+	blue := captchaRandom.Intn(threshold)
 	return color.RGBA{R: uint8(red), G: uint8(green), B: uint8(blue), A: uint8(255)}
 }
 

@@ -43,10 +43,11 @@ func main() {
 
 	engine := gin.Default()
 	engine.With(
-		InitRecovery,
-		InitTemplate,
-		InitSession,
-		InitCors,
+		InstallRecovery,
+		InstallCors,
+		InstallStatic,
+		InstallTemplate,
+		InstallSession,
 	)
 
 	controller.AddController(engine, "", htmlIndexController)
@@ -59,7 +60,7 @@ func main() {
 	}
 }
 
-func InitRecovery(engine *gin.Engine) {
+func InstallRecovery(engine *gin.Engine) {
 	engine.Use(func(context *gin.Context) {
 		defer func() {
 			if context.Writer.Status() == http.StatusNotFound {
@@ -73,7 +74,17 @@ func InitRecovery(engine *gin.Engine) {
 	})
 }
 
-func InitTemplate(engine *gin.Engine) {
+func InstallCors(engine *gin.Engine) {
+	engine.Use(cors.Default())
+}
+
+func InstallStatic(engine *gin.Engine) {
+	engine.StaticFS("/blog", http.FS(res.BlogStaticFS))
+	engine.StaticFS("/admin", http.FS(res.AdminStaticFS))
+	engine.StaticFS("/files", gin.Dir("files", false))
+}
+
+func InstallTemplate(engine *gin.Engine) {
 	// 使用 engine.SetHTMLTemplate 自定义模板引擎时, 通过 engine.SetFuncMap 设置自定义函数无效
 	funcMap := template.FuncMap{
 		"filterChinese": func(param string) (string, error) {
@@ -118,15 +129,11 @@ func InitTemplate(engine *gin.Engine) {
 	engine.SetHTMLTemplate(templateInstance)
 }
 
-func InitSession(engine *gin.Engine) {
+func InstallSession(engine *gin.Engine) {
 	storeKey := config.Config().Session.StoreKey
 	if storeKey == "" {
 		storeKey = strconv.FormatInt(time.Now().UnixMilli(), 10)
 	}
 	store := memstore.NewStore([]byte(storeKey))
 	engine.Use(sessions.Sessions("session", store))
-}
-
-func InitCors(engine *gin.Engine) {
-	engine.Use(cors.Default())
 }
