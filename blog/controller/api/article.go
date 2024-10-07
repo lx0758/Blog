@@ -150,23 +150,25 @@ func (c *ArticleController) addArticle(context *gin.Context) {
 	if err := context.ShouldBind(&addArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	article := c.articleService.AddByAdmin(
+	userId := context.GetInt(KEY_USER_ID)
+	article, err := c.articleService.AddByAdmin(
+		userId,
 		addArticle.Title,
 		addArticle.CategoryId,
 		addArticle.Content,
 		addArticle.Url,
-		addArticle.Weight,
+		util.IfNotNil(addArticle.Weight, 0),
 		util.If(*addArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
 		*addArticle.Status,
 		addArticle.Tags,
 	)
 	if article != nil {
-		article = c.articleService.QueryArticle(article.Id)
+		article = c.articleService.QueryByAdmin(article.Id)
 		var articleVO api_vo.ArticleVO
 		articleVO.From(*article)
 		c.RestSucceed(context, articleVO)
 	} else {
-		c.RestError(context, "增加失败")
+		c.RestError(context, err.Error())
 	}
 }
 
@@ -196,21 +198,21 @@ func (c *ArticleController) updateArticle(context *gin.Context) {
 	if err := context.ShouldBind(&updateArticle); err != nil {
 		c.RestValidationError(context, err)
 	}
-	result := c.articleService.UpdateByAdmin(
+	err := c.articleService.UpdateByAdmin(
 		pathArticleId.Id,
 		updateArticle.Title,
 		updateArticle.CategoryId,
 		updateArticle.Content,
 		updateArticle.Url,
-		updateArticle.Weight,
+		util.IfNotNil(updateArticle.Weight, 0),
 		util.If(*updateArticle.EnableComment, po.ARTICLE_COMMENT_ENABLE, po.ARTICLE_COMMENT_DISABLE),
 		util.If(*updateArticle.Status == po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_PUBLISHED, po.ARTICLE_STATUS_UNPUBLISHED),
 		updateArticle.Tags,
 	)
-	if result {
+	if err == nil {
 		c.RestSucceed(context, nil)
 	} else {
-		c.RestError(context, "更新失败")
+		c.RestError(context, err.Error())
 	}
 }
 

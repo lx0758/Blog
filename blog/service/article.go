@@ -3,6 +3,7 @@ package service
 import (
 	"blog/bean/po"
 	"blog/database"
+	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -176,33 +177,82 @@ func (s *ArticleService) PaginationArticleByTag(tagId int, pageNum int) po.Pagin
 }
 
 func (s *ArticleService) AddByAdmin(
+	userId int,
 	title string,
 	categoryId int,
 	content string,
 	url *string,
-	weight *int,
+	weight int,
 	commentStatus int,
 	status int,
 	tags *[]string,
-) *po.Article {
-	article := po.Article{}
-	db := s.db.Begin()
-	db = db.Model(&article).
-		Create(map[string]interface{}{
-			"title":          title,
-			"content":        content,
-			"category_id":    categoryId,
-			"author_id":      0,
-			"weight":         weight,
-			"comment_status": commentStatus,
-			"status":         status,
-			"update_time":    time.Now(),
-		})
-	db.Commit()
-	if article.Id == 0 {
-		return nil
+) (*po.Article, error) {
+	var db *gorm.DB
+	tdb := s.db.Begin()
+
+	article := po.Article{
+		Title:         title,
+		Content:       content,
+		CategoryId:    categoryId,
+		AuthorId:      userId,
+		Weight:        weight,
+		CommentStatus: commentStatus,
+		Status:        status,
+		CreateTime:    time.Now(),
 	}
-	return &article
+	tdb.Model(&article).
+		Create(&article)
+	if article.Id == 0 {
+		tdb.Rollback()
+		return nil, errors.New("添加文章失败")
+	}
+
+	if url != nil && *url != "" {
+		db = tdb.Model(&po.ArticleUrl{}).
+			Create(&po.ArticleUrl{
+				Url:        *url,
+				ArticleId:  article.Id,
+				Status:     po.ARTICLE_URL_STATUS_LAST,
+				CreateTime: time.Now(),
+			})
+		if db.RowsAffected == 0 {
+			tdb.Rollback()
+			return nil, errors.New("添加文章链接失败")
+		}
+	}
+
+	if tags != nil {
+		for _, tag := range *tags {
+			tagPO := po.Tag{}
+			tdb.Model(&po.Tag{}).
+				Where("? = ?", clause.Column{Name: "name"}, tag).
+				Take(&tag)
+			if tagPO.Id == 0 {
+				tagPO = po.Tag{
+					Name:       tag,
+					CreateTime: time.Now(),
+				}
+				db = tdb.Model(&tagPO).
+					Create(&tagPO)
+				if tagPO.Id == 0 {
+					tdb.Rollback()
+					return nil, errors.New("添加标签失败")
+				}
+			}
+			db = tdb.Table("t_article_tag").
+				Create(map[string]interface{}{
+					"article_id": article.Id,
+					"tag_id":     tagPO.Id,
+				})
+			if db.RowsAffected == 0 {
+				tdb.Rollback()
+				return nil, errors.New("关联文章标签失败")
+			}
+		}
+	}
+
+	tdb.Commit()
+	return &article, nil
 }
 
 func (s *ArticleService) UpdateByAdmin(
@@ -211,26 +261,146 @@ func (s *ArticleService) UpdateByAdmin(
 	categoryId int,
 	content string,
 	url *string,
-	weight *int,
+	weight int,
 	commentStatus int,
 	status int,
 	tags *[]string,
-) bool {
-	db := s.db.Begin()
-	db = db.Model(&po.Article{}).
+) error {
+	var db *gorm.DB
+	tdb := s.db.Begin()
+
+	updateTime := time.Now()
+	article := po.Article{
+		Title:         title,
+		Content:       content,
+		CategoryId:    categoryId,
+		Weight:        weight,
+		CommentStatus: commentStatus,
+		Status:        status,
+		UpdateTime:    &updateTime,
+	}
+	db = tdb.Model(&article).
 		Where("? = ?", clause.Column{Name: "id"}, id).
-		Updates(map[string]interface{}{
-			"title":          title,
-			"content":        content,
-			"category_id":    categoryId,
-			"author_id":      0,
-			"weight":         weight,
-			"comment_status": commentStatus,
-			"status":         status,
-			"update_time":    time.Now(),
-		})
-	db.Commit()
-	return db.RowsAffected > 0
+		Select("title", "content", "category_id", "weight", "comment_status", "status", "update_time").
+		Updates(&article)
+	if db.RowsAffected == 0 {
+		tdb.Rollback()
+		return errors.New("更新文章失败")
+	}
+
+	if url != nil && *url != "" {
+		articleUrl := po.ArticleUrl{}
+		db = tdb.Model(&articleUrl).
+			Where("? = ? AND ? = ?", clause.Column{Name: "url"}, url, clause.Column{Name: "article_id"}, id).
+			First(&articleUrl)
+		if articleUrl.Url == "" {
+			articleUrl = po.ArticleUrl{
+				Url:        *url,
+				ArticleId:  id,
+				Status:     po.ARTICLE_URL_STATUS_LAST,
+				CreateTime: time.Now(),
+			}
+			db = tdb.Model(&articleUrl).
+				Create(&articleUrl)
+			if db.RowsAffected == 0 {
+				tdb.Rollback()
+				return errors.New("添加文章链接失败")
+			}
+		}
+		if articleUrl.Status != po.ARTICLE_URL_STATUS_LAST {
+			tdb.Model(&articleUrl).
+				Where("? = ?", clause.Column{Name: "url"}, url).
+				Update("status", po.ARTICLE_URL_STATUS_LAST)
+			if db.RowsAffected == 0 {
+				tdb.Rollback()
+				return errors.New("刷新文章链接失败")
+			}
+		}
+		tdb.Model(&po.ArticleUrl{}).
+			Where("? = ? AND ? <> ?", clause.Column{Name: "article_id"}, id, clause.Column{Name: "url"}, *url).
+			Update("status", po.ARTICLE_URL_STATUS_OLD)
+	} else {
+		tdb.Model(&po.ArticleUrl{}).
+			Where("? = ?", clause.Column{Name: "article_id"}, id).
+			Update("status", po.ARTICLE_URL_STATUS_OLD)
+	}
+
+	tdb.Model(&article).
+		Preload("Tags").
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Take(&article)
+	articleTags := article.Tags
+	articleNewTags := make([]string, 0)
+	if tags != nil {
+		for _, tag := range *tags {
+			articleNewTags = append(articleNewTags, tag)
+		}
+	}
+	needLinkTags := make([]string, 0)
+	for _, tag := range articleNewTags {
+		found := false
+		for _, tagPO := range articleTags {
+			if tag == tagPO.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			needLinkTags = append(needLinkTags, tag)
+		}
+	}
+	for _, tag := range needLinkTags {
+		tagPO := po.Tag{}
+		tdb.Model(&po.Tag{}).
+			Where("? = ?", clause.Column{Name: "name"}, tag).
+			Take(&tagPO)
+		if tagPO.Id == 0 {
+			tagPO = po.Tag{
+				Name:       tag,
+				CreateTime: time.Now(),
+			}
+			tdb.Model(&tagPO).
+				Create(&tagPO)
+			if tagPO.Id == 0 {
+				tdb.Rollback()
+				return errors.New("添加标签失败")
+			}
+		}
+		db = tdb.Table("t_article_tag").
+			Create(map[string]interface{}{
+				"article_id": article.Id,
+				"tag_id":     tagPO.Id,
+			})
+		if db.RowsAffected == 0 {
+			tdb.Rollback()
+			return errors.New("关联文章标签失败")
+		}
+	}
+	needUnlinkTags := make([]po.Tag, 0)
+	for _, tagPO := range articleTags {
+		found := false
+		for _, newTag := range articleNewTags {
+			if tagPO.Name == newTag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			needUnlinkTags = append(needUnlinkTags, tagPO)
+		}
+	}
+	for _, tag := range needUnlinkTags {
+		db = tdb.Table("t_article_tag").
+			Where("? = ? AND ? = ?", clause.Column{Name: "article_id"}, id, clause.Column{Name: "tag_id"}, tag.Id).
+			Delete(nil)
+		if db.RowsAffected == 0 {
+			tdb.Rollback()
+			return errors.New("解除关联文章标签失败")
+		}
+	}
+
+	tdb.Commit()
+	return nil
 }
 
 func (s *ArticleService) UpdateStatusByAdmin(id int, status int) bool {
@@ -255,9 +425,6 @@ func (s *ArticleService) incrementViews(article *po.Article) {
 	if article == nil || article.Id == 0 {
 		return
 	}
-	article.Views++
 	s.db.Model(&po.Article{Id: article.Id}).
-		UpdateColumns(&po.Article{
-			Views: article.Views,
-		})
+		Update("views", gorm.Expr("views + 1"))
 }

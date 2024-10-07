@@ -31,12 +31,12 @@ func (s *TagService) PaginationByAdmin(
 	orderName *string,
 	orderMethod *string,
 ) po.Pagination[po.Tag] {
-	articleDb := s.db.Model(&po.Article{}).
+	articleCountDb := s.db.Model(&po.Article{}).
 		Select("COUNT(?)", clause.Column{Name: "id"}).
 		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
 		Where("? = ?", clause.Column{Name: "t_article_tag.tag_id"}, clause.Column{Name: "t_tag.id"})
 	db := s.db.Model(&po.Tag{}).
-		Select("*, (?) AS ?", articleDb, clause.Column{Name: "article_count"})
+		Select("*, (?) AS ?", articleCountDb, clause.Column{Name: "article_count"})
 	if name != nil && *name != "" {
 		db = db.Where("upper(?) LIKE upper(?)", clause.Column{Table: "t_tag", Name: "name"}, "%"+*name+"%")
 	}
@@ -46,13 +46,13 @@ func (s *TagService) PaginationByAdmin(
 
 func (s *TagService) ListTag() []po.Tag {
 	var tags []po.Tag
-	articleDb := s.db.Model(&po.Article{}).
+	articleCountDb := s.db.Model(&po.Article{}).
 		Select("COUNT(?)", clause.Column{Name: "id"}).
 		Joins("LEFT JOIN ? ON ? = ?", clause.Table{Name: "t_article_tag"}, clause.Column{Name: "t_article.id"}, clause.Column{Name: "t_article_tag.article_id"}).
 		Where("? = ?", clause.Column{Name: "t_article.status"}, po.ARTICLE_STATUS_PUBLISHED).
 		Where("? = ?", clause.Column{Name: "t_article_tag.tag_id"}, clause.Column{Name: "t_tag.id"})
 	s.db.Model(&po.Tag{}).
-		Select("*, (?) AS ?", articleDb, clause.Column{Name: "article_count"}).
+		Select("*, (?) AS ?", articleCountDb, clause.Column{Name: "article_count"}).
 		Order(clause.OrderByColumn{
 			Column: clause.Column{Name: "id"},
 			Desc:   false,

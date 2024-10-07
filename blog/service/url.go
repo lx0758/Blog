@@ -91,11 +91,7 @@ func (s *UrlService) incrementViews(url *po.Url) {
 	if url == nil || url.Id == 0 {
 		return
 	}
-	url.Views++
-	url.TotalViews++
 	s.db.Model(&po.Url{Id: url.Id}).
-		UpdateColumns(&po.Url{
-			Views:      url.Views,
-			TotalViews: url.TotalViews,
-		})
+		Update("views", gorm.Expr("views + 1")).
+		Update("total_views", gorm.Expr("total_views + 1"))
 }
