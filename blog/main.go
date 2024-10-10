@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -110,6 +111,14 @@ func InstallTemplate(engine *gin.Engine) {
 		},
 		"tagOpacity": func(count int) (float32, error) {
 			return float32(count)/20 + 0.5, nil
+		},
+		"navLink": func(index int, anchor string, title string) template.HTML {
+			builder := strings.Builder{}
+			builder.WriteString(fmt.Sprintf("<a class=\"nav-link\" href=\"#%s\">", anchor))
+			builder.WriteString(fmt.Sprintf("    <span class=\"nav-number\">%d.</span>", index))
+			builder.WriteString(fmt.Sprintf("    <span class=\"nav-text\">%s</span>", title))
+			builder.WriteString(fmt.Sprintf("</a>"))
+			return template.HTML(builder.String())
 		},
 	}
 	templateInstance, err := template.New("").Funcs(funcMap).ParseFS(res.TemplatesFS, "html/*.gohtml")

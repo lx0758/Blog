@@ -5,7 +5,6 @@ import (
 	"blog/controller"
 	"blog/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type ArchiveController struct {
@@ -35,7 +34,7 @@ func (c *ArchiveController) getArchive(context *gin.Context) {
 		articleItemVO.FromItem(article)
 		articleItemVOs = append(articleItemVOs, articleItemVO)
 	}
-	c.Render(context, http.StatusOK, "archive.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
+	c.Render(context, "archive.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
 		Path:     "archive",
 		PageNum:  pagination.PageNum,
 		PageSize: pagination.PageSize,

@@ -38,7 +38,7 @@ func (c *TagController) getTags(context *gin.Context) {
 	sort.Slice(tagVOs, func(i, j int) bool {
 		return tagVOs[i].Name < tagVOs[j].Name
 	})
-	c.Render(context, http.StatusOK, "tags.gohtml", tagVOs)
+	c.Render(context, "tags.gohtml", tagVOs)
 }
 
 func (c *TagController) getTag(context *gin.Context) {
@@ -59,7 +59,7 @@ func (c *TagController) getTag(context *gin.Context) {
 		archiveItemVO.FromItem(article)
 		articleItemVOs = append(articleItemVOs, archiveItemVO)
 	}
-	c.Render(context, http.StatusOK, "tag.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
+	c.Render(context, "tag.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
 		Name:     tag.Name,
 		Path:     "tag/" + tagName,
 		PageNum:  pagination.PageNum,

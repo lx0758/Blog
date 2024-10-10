@@ -34,7 +34,7 @@ func (c *CategoryController) getCategories(context *gin.Context) {
 		articleVO.From(article)
 		categoryVOs = append(categoryVOs, articleVO)
 	}
-	c.Render(context, http.StatusOK, "categories.gohtml", categoryVOs)
+	c.Render(context, "categories.gohtml", categoryVOs)
 }
 
 func (c *CategoryController) getCategory(context *gin.Context) {
@@ -55,7 +55,7 @@ func (c *CategoryController) getCategory(context *gin.Context) {
 		archiveItemVO.FromItem(article)
 		articleItemVOs = append(articleItemVOs, archiveItemVO)
 	}
-	c.Render(context, http.StatusOK, "category.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
+	c.Render(context, "category.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
 		Name:     category.Name,
 		Path:     "category/" + categoryName,
 		PageNum:  pagination.PageNum,

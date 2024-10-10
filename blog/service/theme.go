@@ -6,6 +6,7 @@ import (
 	"blog/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -18,7 +19,7 @@ func (s *ThemeService) OnInitService() {
 	s.blogService = GetService[*BlogService](s.blogService)
 }
 
-func (s *ThemeService) Render(context *gin.Context, code int, page string, data interface{}) {
+func (s *ThemeService) Render(context *gin.Context, page string, data interface{}) {
 	var pageTitle string
 	switch page {
 	case "archive.gohtml":
@@ -38,7 +39,7 @@ func (s *ThemeService) Render(context *gin.Context, code int, page string, data 
 		pageTitle = ""
 	}
 	pageUrl := context.Request.RequestURI
-	context.HTML(code, page, html_vo.ThemeVO{
+	context.HTML(http.StatusOK, page, html_vo.ThemeVO{
 		Blog:            s.getBlogVO(),
 		Page:            page,
 		PageTitle:       pageTitle,
@@ -46,15 +47,17 @@ func (s *ThemeService) Render(context *gin.Context, code int, page string, data 
 		PageKeywords:    "",
 		PageUrl:         pageUrl,
 		PageData:        data,
+		Catalogues:      nil,
 	})
 }
 
-func (s *ThemeService) RenderArticle(context *gin.Context, code int, page string, article *html_vo.ArticleVO) {
+func (s *ThemeService) RenderArticle(context *gin.Context, article *html_vo.ArticleVO) {
+	page := "article.gohtml"
 	pageDescription := article.Description
 	pageKeywords := strings.Join(article.Tags, ",")
 	pageUrl := article.Url
 	pageData := article
-	context.HTML(code, page, html_vo.ThemeVO{
+	context.HTML(http.StatusOK, page, html_vo.ThemeVO{
 		Blog:            s.getBlogVO(),
 		Page:            page,
 		PageTitle:       article.Title,
@@ -62,6 +65,7 @@ func (s *ThemeService) RenderArticle(context *gin.Context, code int, page string
 		PageKeywords:    pageKeywords,
 		PageUrl:         pageUrl,
 		PageData:        pageData,
+		Catalogues:      article.Catalogues,
 	})
 }
 
@@ -79,10 +83,21 @@ func (s *ThemeService) RenderError(context *gin.Context, err error) {
 	if errs != nil {
 		errStr = errs.Last().Error()
 	}
-	s.Render(context, status, page, map[string]any{
+	pageUrl := context.Request.RequestURI
+	pageData := map[string]any{
 		"Status": status,
 		"Url":    context.Request.RequestURI,
 		"Error":  errStr,
+	}
+	context.HTML(status, page, html_vo.ThemeVO{
+		Blog:            s.getBlogVO(),
+		Page:            page,
+		PageTitle:       strconv.Itoa(status),
+		PageDescription: "",
+		PageKeywords:    "",
+		PageUrl:         pageUrl,
+		PageData:        pageData,
+		Catalogues:      nil,
 	})
 }
 

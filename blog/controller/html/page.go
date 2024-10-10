@@ -37,7 +37,7 @@ func (c *PageController) getPage(context *gin.Context) {
 		articleVO.FromPage(article, c.fragmentService)
 		articleItemVOs = append(articleItemVOs, articleVO)
 	}
-	c.Render(context, http.StatusOK, "page.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
+	c.Render(context, "page.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{
 		Path:     "page",
 		PageNum:  pagination.PageNum,
 		PageSize: pagination.PageSize,

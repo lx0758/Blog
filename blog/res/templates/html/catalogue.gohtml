@@ -1,9 +1,13 @@
-{{range $Index, $Catalogue := .Childs}}
+{{range $Index, $Catalogue := .}}
 <li class="nav-item nav-level-{{$Index}}">
+    {{navLink $Index $Catalogue.Anchor $Catalogue.Title}}
+    <!-- 锚点会被自动转义, 改为自定义函数输出 -->
+    <!--
     <a class="nav-link" href="#{{$Catalogue.Anchor}}">
         <span class="nav-number">{{$Index}}.</span>
         <span class="nav-text">{{$Catalogue.Title}}</span>
     </a>
+    -->
     {{if $Catalogue.Childs}}
     <ol class="nav-child">
         {{template "catalogue.gohtml" $Catalogue.Childs}}
