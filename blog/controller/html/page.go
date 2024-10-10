@@ -12,12 +12,14 @@ type PageController struct {
 	controller.Controller
 	*service.ThemeService
 
-	articleService *service.ArticleService
+	articleService  *service.ArticleService
+	fragmentService *service.FragmentService
 }
 
 func (c *PageController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
+	c.fragmentService = service.GetService[*service.FragmentService](c.fragmentService)
 
 	c.Group.GET("/", c.getPage)
 	c.Group.GET("/:pageNum", c.getPage)
@@ -32,7 +34,7 @@ func (c *PageController) getPage(context *gin.Context) {
 	articleItemVOs := make([]html_vo.ArticleItemVO, 0)
 	for _, article := range pagination.List {
 		articleVO := html_vo.ArticleItemVO{}
-		articleVO.FromPage(article)
+		articleVO.FromPage(article, c.fragmentService)
 		articleItemVOs = append(articleItemVOs, articleVO)
 	}
 	c.Render(context, http.StatusOK, "page.gohtml", html_vo.PaginationVO[html_vo.ArticleItemVO]{

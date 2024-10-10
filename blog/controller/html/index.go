@@ -16,7 +16,8 @@ import (
 type IndexController struct {
 	controller.Controller
 	*service.ThemeService
-	articleService *service.ArticleService
+	articleService  *service.ArticleService
+	fragmentService *service.FragmentService
 
 	pageController *PageController
 }
@@ -24,6 +25,7 @@ type IndexController struct {
 func (c *IndexController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
+	c.fragmentService = service.GetService[*service.FragmentService](c.fragmentService)
 
 	c.Group.GET("/", c.getIndex)
 	c.Group.GET("/admin", c.getAdmin)
@@ -53,7 +55,7 @@ func (c *IndexController) getSearchJson(context *gin.Context) {
 	searchArray := make([]map[string]any, 0)
 	for _, article := range articles {
 		articleItemVO := html_vo.ArticleItemVO{}
-		articleItemVO.FromSearch(article)
+		articleItemVO.FromSearch(article, c.fragmentService)
 		searchArray = append(searchArray, map[string]any{
 			"title":   articleItemVO.Title,
 			"content": articleItemVO.Content,

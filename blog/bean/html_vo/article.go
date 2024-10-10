@@ -3,6 +3,7 @@ package html_vo
 import (
 	"blog/bean/po"
 	"blog/markdown"
+	"blog/markdown/next"
 	"blog/util"
 	"time"
 )
@@ -31,8 +32,8 @@ type CatalogueVO struct {
 	Childs []CatalogueVO
 }
 
-func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Article) {
-	html, description, catalogues := markdown.RenderByArticle(article.Content)
+func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Article, fs markdown.FragmentSource) {
+	html, description, catalogues := markdown.RenderByArticle(article.Content, fs)
 	var prevArticleItemVO, nextArticleItemVO *ArticleItemVO
 	if prevArticle != nil {
 		prevArticleItemVO = &ArticleItemVO{}
@@ -59,14 +60,14 @@ func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Articl
 	a.Next = nextArticleItemVO
 }
 
-func convertCatalog(catalogues []markdown.Catalogue) []CatalogueVO {
-	vos := make([]CatalogueVO, 0)
-	for _, catalog := range catalogues {
-		vos = append(vos, CatalogueVO{
-			Title:  catalog.Title,
-			Anchor: catalog.Anchor,
-			Childs: convertCatalog(catalog.Childs),
+func convertCatalog(catalogues []*next.Catalogue) []CatalogueVO {
+	catalogueVOs := make([]CatalogueVO, 0)
+	for _, c := range catalogues {
+		catalogueVOs = append(catalogueVOs, CatalogueVO{
+			Title:  c.Title,
+			Anchor: c.Anchor,
+			Childs: convertCatalog(c.Childs),
 		})
 	}
-	return vos
+	return catalogueVOs
 }

@@ -19,6 +19,7 @@ type ArticleController struct {
 
 	articleService    *service.ArticleService
 	articleUrlService *service.ArticleUrlService
+	fragmentService   *service.FragmentService
 	captchaService    *service.CaptchaService
 	commentService    *service.CommentService
 }
@@ -27,6 +28,7 @@ func (c *ArticleController) OnInitController() {
 	c.ThemeService = service.GetService[*service.ThemeService](c.ThemeService)
 	c.articleService = service.GetService[*service.ArticleService](c.articleService)
 	c.articleUrlService = service.GetService[*service.ArticleUrlService](c.articleUrlService)
+	c.fragmentService = service.GetService[*service.FragmentService](c.fragmentService)
 	c.captchaService = service.GetService[*service.CaptchaService](c.captchaService)
 	c.commentService = service.GetService[*service.CommentService](c.commentService)
 
@@ -55,8 +57,8 @@ func (c *ArticleController) getArticle(context *gin.Context) {
 	nextArticle := c.articleService.QueryNextArticle(article.Id)
 
 	articleVO := &html_vo.ArticleVO{}
-	articleVO.From(*article, prevArticle, nextArticle)
-	c.Render(context, http.StatusOK, "article.gohtml", articleVO)
+	articleVO.From(*article, prevArticle, nextArticle, c.fragmentService)
+	c.RenderArticle(context, articleVO)
 }
 
 type commentArticleId struct {

@@ -1,72 +1,83 @@
 package markdown
 
 import (
+	"blog/markdown/next"
 	"bytes"
 	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/renderer/html"
-	"regexp"
-	"strings"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 )
 
-var blogMarkdown = goldmark.New(
-	goldmark.WithParserOptions(),
-	goldmark.WithRendererOptions(
-		html.WithUnsafe(),
-	),
-	goldmark.WithExtensions(),
-)
-
-type Catalogue struct {
-	Title  string
-	Anchor string
-	Childs []Catalogue
-}
-
-func RenderByArticle(markdown string) (html string, description string, catalogues []Catalogue) {
-	catalogues = []Catalogue{}
+func RenderByArticle(source string, fs FragmentSource) (html string, description string, catalogues []*next.Catalogue) {
+	sourceBytes := getFinalSource(source, fs)
+	markdown := getMarkdown(
+		next.NewCatalogues(),
+		next.NewMoreAnchor(),
+	)
+	context := parser.NewContext(NewCustomIDs())
 	var buffer bytes.Buffer
-	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
+	if err := markdown.Convert(sourceBytes, &buffer, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	html = buffer.String()
 	description = trimHtml(html)
+	catalogues = next.GetCatalogues(context)
 	return
 }
 
-func RenderByPage(markdown string) (html string, hasPreview bool) {
+func RenderByPreview(source string, fs FragmentSource) (html string, hasPreview bool) {
+	sourceBytes := getFinalSource(source, fs)
+	markdown := getMarkdown(
+		next.NewMorePreview(),
+	)
 	var buffer bytes.Buffer
-	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
+	context := parser.NewContext(NewCustomIDs())
+	if err := markdown.Convert(sourceBytes, &buffer, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	html = buffer.String()
-	hasPreview = strings.Contains(html, "<!--more-->")
+	hasPreview = next.HasPreview(context)
 	return
 }
 
-func RenderBySearch(markdown string) (text string) {
+func RenderBySearch(source string, fs FragmentSource) (text string) {
+	sourceBytes := getFinalSource(source, fs)
+	markdown := getMarkdown()
 	var buffer bytes.Buffer
-	if err := blogMarkdown.Convert([]byte(markdown), &buffer); err != nil {
+	if err := markdown.Convert(sourceBytes, &buffer); err != nil {
 		panic(err)
 	}
-	text = trimHtml(buffer.String())
+	html := buffer.String()
+	text = trimHtml(html)
 	return
 }
 
-func trimHtml(src string) string {
-	//将HTML标签全转换成小写
-	re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-	src = re.ReplaceAllStringFunc(src, strings.ToLower)
-	//去除STYLE
-	re, _ = regexp.Compile("\\<style[\\S\\s]+?\\</style\\>")
-	src = re.ReplaceAllString(src, "")
-	//去除SCRIPT
-	re, _ = regexp.Compile("\\<script[\\S\\s]+?\\</script\\>")
-	src = re.ReplaceAllString(src, "")
-	//去除所有尖括号内的HTML代码，并换成换行符
-	re, _ = regexp.Compile("\\<[\\S\\s]+?\\>")
-	src = re.ReplaceAllString(src, "")
-	//去除连续的换行符
-	re, _ = regexp.Compile("\\s{2,}")
-	src = re.ReplaceAllString(src, "")
-	return strings.TrimSpace(src)
+func getMarkdown(ext ...goldmark.Extender) goldmark.Markdown {
+	extends := []goldmark.Extender{
+		//extension.GFM,            // GitHub Flavored Markdown(Linkify, Table, Strikethrough, TaskList)
+		extension.NewLinkify(),     // 自动链接
+		extension.NewTable(),       // 表格
+		extension.Strikethrough,    // 删除线
+		extension.TaskList,         // 任务列表
+		extension.DefinitionList,   // 定义列表
+		extension.NewCJK(),         // 换行优化
+		extension.NewFootnote(),    // 脚注
+		extension.NewTypographer(), // 排版优化
+
+		next.NewCustomStyle(),
+		next.NewUnderline(),
+		next.NewHighlight(),
+	}
+	extends = append(extends, ext...)
+	return goldmark.New(
+		goldmark.WithParserOptions(
+			parser.WithEscapedSpace(),
+			parser.WithAutoHeadingID(),
+			parser.WithHeadingAttribute(),
+		),
+		goldmark.WithRendererOptions(),
+		goldmark.WithExtensions(
+			extends...,
+		),
+	)
 }

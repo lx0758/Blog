@@ -18,8 +18,8 @@ type ArticleItemVO struct {
 	CategoryName string
 }
 
-func (a *ArticleItemVO) FromPage(article po.Article) {
-	html, hasPreview := markdown.RenderByPage(article.Content)
+func (a *ArticleItemVO) FromPage(article po.Article, fs markdown.FragmentSource) {
+	html, hasPreview := markdown.RenderByPreview(article.Content, fs)
 	a.Url = article.GetSafeUrl()
 	a.Top = article.Weight > 0
 	a.Title = article.Title
@@ -37,8 +37,8 @@ func (a *ArticleItemVO) FromItem(article po.Article) {
 	a.UpdateTime = util.IfNotNil(article.UpdateTime, article.CreateTime)
 }
 
-func (a *ArticleItemVO) FromSearch(article po.Article) {
-	text := markdown.RenderBySearch(article.Content)
+func (a *ArticleItemVO) FromSearch(article po.Article, fs markdown.FragmentSource) {
+	text := markdown.RenderBySearch(article.Content, fs)
 	a.Url = article.GetSafeUrl()
 	a.Title = article.Title
 	a.Content = text

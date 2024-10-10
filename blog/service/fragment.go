@@ -17,6 +17,14 @@ func (s *FragmentService) OnInitService() {
 	s.db = database.GetDB()
 }
 
+func (s *FragmentService) GetFragment(key string) string {
+	var fragment po.Fragment
+	s.db.Model(&po.Fragment{}).
+		Where("? = ?", clause.Column{Name: "key"}, key).
+		First(&fragment)
+	return fragment.Content
+}
+
 func (s *FragmentService) PaginationByAdmin(
 	key *string,
 	context *string,
