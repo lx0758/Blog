@@ -16,7 +16,7 @@ var (
 
 	//go:embed static/admin/*
 	adminStaticFS embed.FS
-	AdminStaticFS = createSafeFS(adminStaticFS, "static/admin/", false)
+	AdminStaticFS = createSafeFS(adminStaticFS, "static/admin/", true)
 
 	//go:embed templates/*
 	templatesFS embed.FS
