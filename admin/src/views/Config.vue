@@ -29,7 +29,7 @@
       style="justify-content: center; margin-top: 20px" background layout="prev, pager, next" />
   </el-container>
 
-  <el-dialog :title="(editConfigDialogState.formModel.id != 0 ? '新增' : '编辑') + '配置'"
+  <el-dialog :title="(editConfigDialogState.formModel.key.length === 0 ? '新增' : '编辑') + '配置'"
     v-model="editConfigDialogState.isShow" :close-on-click-modal="false">
     <el-form ref="editConfigDialogStateFormRef" :model="editConfigDialogState.formModel"
       :rules="editConfigDialogState.formRules" label-width="120px">

@@ -89,14 +89,12 @@ function onCurrentPageChange(currentPage: number) {
 
 function onAddFragment() {
   router.push({
-    path: '/fragment-edit',
     name: '片段编辑'
   })
 }
 
 function onEditFragment(row: any) {
   router.push({
-    path: '/fragment-edit',
     name: '片段编辑',
     params: {
       id: row.id

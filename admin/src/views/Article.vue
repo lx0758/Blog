@@ -156,14 +156,12 @@ function onCurrentPageChange(currentPage: number) {
 
 function onAddArticle() {
   router.push({
-    path: '/article-edit',
     name: '文章编辑'
   })
 }
 
 function onEditArticle(row: any) {
   router.push({
-    path: '/article-edit',
     name: '文章编辑',
     params: {
       id: row.id

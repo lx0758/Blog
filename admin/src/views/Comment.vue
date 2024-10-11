@@ -268,6 +268,7 @@ function onCurrentPageChange(currentPage: number) {
 
 function onShowReplyComment(row: any) {
   replayCommentDialogState.value.formModel = {
+    id: 0,
     articleId: row.articleId,
     parentId: row.id,
     articleTitle: row.articleTitle,
