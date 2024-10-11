@@ -45,7 +45,7 @@ func (p *moreParser) Open(parent ast.Node, reader text.Reader, pc parser.Context
 	if p.preview {
 		pc.Set(keyHasPreview, true)
 	}
-	return nast.NewMore(), parser.Close
+	return nast.NewMore(p.preview), parser.Close
 }
 
 func (p *moreParser) Continue(node ast.Node, reader text.Reader, pc parser.Context) parser.State {
@@ -69,23 +69,6 @@ func (p *moreParser) CanAcceptIndentedLine() bool {
 	return true
 }
 
-type morePreview struct {
-}
-
-var MorePreview = &morePreview{}
-
-func NewMorePreview() goldmark.Extender {
-	return &morePreview{}
-}
-
-func (e *morePreview) Extend(m goldmark.Markdown) {
-	m.Parser().AddOptions(
-		parser.WithBlockParsers(
-			util.Prioritized(NewMoreParser(true), 399),
-		),
-	)
-}
-
 func HasPreview(context parser.Context) bool {
 	value := context.Get(keyHasPreview)
 	if result, ok := value.(bool); ok {
@@ -94,18 +77,21 @@ func HasPreview(context parser.Context) bool {
 	return false
 }
 
-type moreAnchorRenderer struct {
+type moreRenderer struct {
 }
 
-func NewMoreAnchorRenderer() renderer.NodeRenderer {
-	return &moreAnchorRenderer{}
+func NewMoreRenderer() renderer.NodeRenderer {
+	return &moreRenderer{}
 }
 
-func (m *moreAnchorRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
-	reg.Register(nast.KindMore, m.renderMoreAnchor)
+func (m *moreRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(nast.KindMore, m.renderMore)
 }
 
-func (m *moreAnchorRenderer) renderMoreAnchor(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+func (m *moreRenderer) renderMore(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	if n.(*nast.More).Preview() {
+		return ast.WalkContinue, nil
+	}
 	if entering {
 		_, _ = w.WriteString("<a")
 		n.SetAttributeString("id", "more")
@@ -120,24 +106,31 @@ func (m *moreAnchorRenderer) renderMoreAnchor(w util.BufWriter, source []byte, n
 	return ast.WalkContinue, nil
 }
 
-type moreAnchor struct {
+type more struct {
+	Preview bool
 }
 
-var MoreAnchor = &moreAnchor{}
+func NewMorePreview() goldmark.Extender {
+	return &more{
+		Preview: true,
+	}
+}
 
 func NewMoreAnchor() goldmark.Extender {
-	return &moreAnchor{}
+	return &more{
+		Preview: false,
+	}
 }
 
-func (e *moreAnchor) Extend(m goldmark.Markdown) {
+func (e *more) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithBlockParsers(
-			util.Prioritized(NewMoreParser(false), 399),
+			util.Prioritized(NewMoreParser(e.Preview), 399),
 		),
 	)
 	m.Renderer().AddOptions(
 		renderer.WithNodeRenderers(
-			util.Prioritized(NewMoreAnchorRenderer(), 999),
+			util.Prioritized(NewMoreRenderer(), 999),
 		),
 	)
 }
