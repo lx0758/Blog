@@ -28,7 +28,7 @@ func GetDB() *gorm.DB {
 			driver = postgres.Open(conf.Dsn)
 			break
 		default:
-			bloglogger.Panic("Unsupported database types\n")
+			bloglogger.Panic("Unsupported database types")
 		}
 		db, err := gorm.Open(driver, &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
