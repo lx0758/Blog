@@ -106,13 +106,27 @@ func (s *CategoryService) DeleteByAdmin(id int) bool {
 		return false
 	}
 
-	db := s.db.Model(&po.Category{}).
+	tdb := s.db.Begin()
+
+	db := tdb.Model(&po.Article{}).
+		Where("? = ?", clause.Column{Name: "category_id"}, id).
+		Update("category_id", category.Id)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+
+	db = tdb.Model(&po.Category{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+
+	tdb.Commit()
+
 	if db.RowsAffected > 0 {
-		s.db.Model(&po.Article{}).
-			Where("? = ?", clause.Column{Name: "category_id"}, id).
-			Update("category_id", category.Id)
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0

@@ -110,7 +110,7 @@ func (s *ArticleService) PaginationArticleByArchive(pageNum int) po.Pagination[p
 func (s *ArticleService) PaginationArticleByCategory(categoryId int, pageNum int) po.Pagination[po.Article] {
 	db := s.db.Model(&po.Article{}).
 		Preload("Urls").
-		InnerJoins("Category", s.db.Where(&po.Category{Id: categoryId})).
+		Where("? = ?", clause.Column{Name: "category_id"}, categoryId).
 		Where(&po.Article{Status: po.ARTICLE_STATUS_PUBLISHED}).
 		Order(clause.OrderBy{
 			Columns: []clause.OrderByColumn{

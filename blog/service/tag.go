@@ -100,13 +100,26 @@ func (s *TagService) UpdateByAdmin(id int, name string) bool {
 }
 
 func (s *TagService) DeleteByAdmin(id int) bool {
-	db := s.db.Model(&po.Tag{}).
+	tdb := s.db.Begin()
+
+	db := tdb.Model("t_article_tag").
+		Where("? = ?", clause.Column{Name: "tag_id"}, id).
+		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+	db = tdb.Model(&po.Tag{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+
+	tdb.Commit()
+
 	if db.RowsAffected > 0 {
-		s.db.Table("t_article_tag").
-			Where("? = ?", clause.Column{Name: "tag_id"}, id).
-			Delete(nil)
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0

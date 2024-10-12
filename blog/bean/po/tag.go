@@ -8,5 +8,5 @@ type Tag struct {
 	CreateTime time.Time  `gorm:"column:create_time;comment:创建时间;not null"`
 	UpdateTime *time.Time `gorm:"column:update_time;comment:更新时间"`
 
-	ArticleCount int `gorm:"-:migration;->"`
+	ArticleCount int `gorm:"column:article_count;-:migration;->"`
 }
