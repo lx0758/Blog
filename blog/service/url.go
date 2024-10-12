@@ -87,7 +87,9 @@ func (s *UrlService) UpdateByAdmin(id int, key string, url string, description s
 }
 
 func (s *UrlService) DeleteByAdmin(id int) bool {
-	db := s.db.Model(&po.Url{}).Delete(&po.Url{Id: id})
+	db := s.db.Model(&po.Url{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Delete(nil)
 	return db.RowsAffected > 0
 }
 

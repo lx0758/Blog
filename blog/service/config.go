@@ -106,7 +106,7 @@ func (s *ConfigService) UpdateByAdmin(key string, description string, value *str
 func (s *ConfigService) DeleteByAdmin(key string) bool {
 	db := s.db.Model(&po.Config{}).
 		Where("? = ?", clause.Column{Name: "key"}, key).
-		Delete(&po.Config{})
+		Delete(nil)
 	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}

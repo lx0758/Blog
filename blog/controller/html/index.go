@@ -59,7 +59,7 @@ func (c *IndexController) getSearchJson(context *gin.Context) {
 		searchArray = append(searchArray, map[string]any{
 			"title":   articleItemVO.Title,
 			"content": articleItemVO.Content,
-			"url":     articleItemVO.Url,
+			"url":     "/article/" + articleItemVO.Url,
 		})
 	}
 	context.JSON(http.StatusOK, searchArray)

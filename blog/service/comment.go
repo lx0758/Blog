@@ -223,7 +223,7 @@ func (s *CommentService) UpdateStatusByAdmin(
 func (s *CommentService) DeleteByAdmin(id int) bool {
 	db := s.db.Model(&po.Comment{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
-		Delete(&po.Comment{})
+		Delete(nil)
 	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}

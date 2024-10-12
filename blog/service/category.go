@@ -84,7 +84,7 @@ func (s *CategoryService) AddByAdmin(name string) bool {
 			Name:       name,
 			CreateTime: time.Now(),
 		})
-	if db.RowsAffected == 0 {
+	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
@@ -94,7 +94,7 @@ func (s *CategoryService) UpdateByAdmin(id int, name string) bool {
 	db := s.db.Model(&po.Category{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("name", name)
-	if db.RowsAffected == 0 {
+	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
@@ -106,7 +106,9 @@ func (s *CategoryService) DeleteByAdmin(id int) bool {
 		return false
 	}
 
-	db := s.db.Delete(&po.Category{Id: id})
+	db := s.db.Model(&po.Category{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Delete(nil)
 	if db.RowsAffected > 0 {
 		s.db.Model(&po.Article{}).
 			Where("? = ?", clause.Column{Name: "category_id"}, id).

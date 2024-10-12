@@ -102,6 +102,8 @@ func (s *FragmentService) UpdateByAdmin(id int, key string, content string, stat
 }
 
 func (s *FragmentService) DeleteByAdmin(id int) bool {
-	db := s.db.Delete(&po.Fragment{}, id)
+	db := s.db.Model(&po.Fragment{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Delete(nil)
 	return db.RowsAffected > 0
 }

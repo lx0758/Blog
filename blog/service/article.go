@@ -274,7 +274,7 @@ func (s *ArticleService) AddByAdmin(
 			tagPO := po.Tag{}
 			tdb.Model(&po.Tag{}).
 				Where("? = ?", clause.Column{Name: "name"}, tag).
-				Take(&tag)
+				Take(&tagPO)
 			if tagPO.Id == 0 {
 				tagPO = po.Tag{
 					Name:       tag,
@@ -457,18 +457,50 @@ func (s *ArticleService) UpdateStatusByAdmin(id int, status int) bool {
 	db := s.db.Model(&po.Article{}).
 		Where("? = ?", clause.Column{Name: "id"}, id).
 		Update("status", status)
-	if db.RowsAffected == 0 {
+	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
 }
 
 func (s *ArticleService) DeleteByAdmin(id int) bool {
-	db := s.db.Delete(&po.Article{Id: id})
-	if db.RowsAffected == 0 {
-		refreshBlogCacheInfo()
+	tdb := s.db.Begin()
+
+	db := tdb.Model(&po.Comment{}).
+		Where("? = ?", clause.Column{Name: "article_id"}, id).
+		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
 	}
-	return db.RowsAffected > 0
+
+	db = tdb.Table("t_article_tag").
+		Where("? = ?", clause.Column{Name: "article_id"}, id).
+		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+
+	db = tdb.Model(&po.ArticleUrl{}).
+		Where("? = ?", clause.Column{Name: "article_id"}, id).
+		Delete(nil)
+	if db.Error != nil {
+		tdb.Rollback()
+		return false
+	}
+
+	db = tdb.Model(&po.Article{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Delete(nil)
+	if db.RowsAffected > 0 {
+		tdb.Commit()
+		refreshBlogCacheInfo()
+		return true
+	} else {
+		tdb.Rollback()
+		return false
+	}
 }
 
 func (s *ArticleService) incrementViews(article *po.Article) {

@@ -88,7 +88,9 @@ func (s *LinkService) UpdateByAdmin(id int, title string, url string, weight int
 }
 
 func (s *LinkService) DeleteByAdmin(id int) bool {
-	db := s.db.Model(&po.Link{}).Delete(&po.Link{Id: id})
+	db := s.db.Model(&po.Link{}).
+		Where("? = ?", clause.Column{Name: "id"}, id).
+		Delete(nil)
 	if db.RowsAffected > 0 {
 		refreshBlogCacheInfo()
 	}
