@@ -30,7 +30,7 @@ buildBlog() {
     if [[ "$os" == "windows" ]]; then
       filename=${filename}".exe"
     fi
-    GOOS=$os GOARCH=$arch go build -o "${filename}" -v
+    GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -o "${filename}" -v
     if [[ $? != 0 ]]; then error "Blog"; fi
   done
   rm -rf "$SCRIPT_DIR"/blog/res/static/admin/*
