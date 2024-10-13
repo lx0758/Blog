@@ -32,6 +32,9 @@ func NewCustomASTTransformer() parser.ASTTransformer {
 	return defaultCustomASTTransformer
 }
 
+// Transform
+// 1. 给标题加锚点
+// 2. 给链接加新标签页打开
 func (t *customASTTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
 	_ = ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
@@ -67,10 +70,40 @@ func NewCustomStyleRenderer(opts ...html.Option) renderer.NodeRenderer {
 }
 
 func (r *customStyleRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(ast.KindListItem, r.renderListItem)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
-	reg.Register(east.KindTaskCheckBox, r.renderTaskCheckBox)
 }
 
+// 优化 ListItem, 渲染 TaskCheckBox 的父容器为 div
+func (r *customStyleRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	itemTag := "li"
+	if tbn, ok := n.FirstChild().(*ast.TextBlock); ok {
+		if _, ok := tbn.FirstChild().(*east.TaskCheckBox); ok {
+			itemTag = "div"
+		}
+	}
+
+	if entering {
+		if n.Attributes() != nil {
+			_, _ = w.WriteString("<" + itemTag)
+			html.RenderAttributes(w, n, html.ListItemAttributeFilter)
+			_ = w.WriteByte('>')
+		} else {
+			_, _ = w.WriteString("<" + itemTag + ">")
+		}
+		fc := n.FirstChild()
+		if fc != nil {
+			if _, ok := fc.(*ast.TextBlock); !ok {
+				_ = w.WriteByte('\n')
+			}
+		}
+	} else {
+		_, _ = w.WriteString("</" + itemTag + ">\n")
+	}
+	return ast.WalkContinue, nil
+}
+
+// 适配前台代码高亮框架
 func (r *customStyleRenderer) renderFencedCodeBlock(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	n := node.(*ast.FencedCodeBlock)
 	if entering {
@@ -89,25 +122,6 @@ func (r *customStyleRenderer) renderFencedCodeBlock(w util.BufWriter, source []b
 		}
 	} else {
 		_, _ = w.WriteString("</code></pre>\n")
-	}
-	return ast.WalkContinue, nil
-}
-
-func (r *customStyleRenderer) renderTaskCheckBox(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	if !entering {
-		return ast.WalkContinue, nil
-	}
-	n := node.(*east.TaskCheckBox)
-
-	if n.IsChecked {
-		_, _ = w.WriteString(`<input checked="" disabled="" type="checkbox"`)
-	} else {
-		_, _ = w.WriteString(`<input disabled="" type="checkbox"`)
-	}
-	if r.XHTML {
-		_, _ = w.WriteString(" /> ")
-	} else {
-		_, _ = w.WriteString("> ")
 	}
 	return ast.WalkContinue, nil
 }
