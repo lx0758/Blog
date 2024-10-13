@@ -102,7 +102,7 @@ func (s *TagService) UpdateByAdmin(id int, name string) bool {
 func (s *TagService) DeleteByAdmin(id int) bool {
 	tdb := s.db.Begin()
 
-	db := tdb.Model("t_article_tag").
+	db := tdb.Table("t_article_tag").
 		Where("? = ?", clause.Column{Name: "tag_id"}, id).
 		Delete(nil)
 	if db.Error != nil {
