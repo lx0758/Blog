@@ -40,12 +40,10 @@ var apiIndexController = &api.IndexController{}
 func main() {
 	pprofConf := config.Config().Pprof
 	if pprofConf.Enable {
-		host := pprofConf.Host
-		port := pprofConf.Port
-		addr := fmt.Sprintf("%s:%d", host, port)
-		logger.Printf("Start pprof server at: http://%s", addr)
+		address := pprofConf.Address
+		logger.Printf("Start pprof server at: http://%s", address)
 		go func() {
-			logger.Panicf(http.ListenAndServe(addr, nil).Error())
+			logger.Panicf(http.ListenAndServe(address, nil).Error())
 		}()
 	}
 
@@ -72,10 +70,7 @@ func main() {
 	controller.AddController(engine, "", htmlIndexController)
 	controller.AddController(engine, "api", apiIndexController)
 
-	host := serverConf.Host
-	port := serverConf.Port
-	addr := fmt.Sprintf("%s:%d", host, port)
-	err := engine.Run(addr)
+	err := engine.Run(serverConf.Address)
 	if err != nil {
 		logger.Panicf("Run server error:%s\n", err)
 	}

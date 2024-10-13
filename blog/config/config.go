@@ -33,15 +33,13 @@ type Conf struct {
 }
 
 type Pprof struct {
-	Enable bool   `yaml:"enable"`
-	Host   string `yaml:"host"`
-	Port   int    `yaml:"port"`
+	Enable  bool   `yaml:"enable"`
+	Address string `yaml:"address"`
 }
 
 type Server struct {
-	Host  string `yaml:"host"`
-	Port  int    `yaml:"port"`
-	Debug bool   `yaml:"debug"`
+	Debug   bool   `yaml:"debug"`
+	Address string `yaml:"address"`
 }
 
 type DataSource struct {
