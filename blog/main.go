@@ -15,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
+	_ "net/http/pprof"
 	"regexp"
 	"strconv"
 	"strings"
@@ -37,14 +38,31 @@ var apiIndexController = &api.IndexController{}
 // @host			127.0.0.1:8080
 // @basePath		/
 func main() {
-	conf := config.Config().Server
-	if conf.Release {
-		gin.SetMode(gin.ReleaseMode)
+	pprofConf := config.Config().Pprof
+	if pprofConf.Enable {
+		host := pprofConf.Host
+		port := pprofConf.Port
+		addr := fmt.Sprintf("%s:%d", host, port)
+		logger.Printf("Start pprof server at: http://%s", addr)
+		go func() {
+			logger.Panicf(http.ListenAndServe(addr, nil).Error())
+		}()
 	}
 
-	engine := gin.Default()
+	serverConf := config.Config().Server
+	var ginMode string
+	if serverConf.Debug {
+		ginMode = gin.DebugMode
+	} else {
+		ginMode = gin.ReleaseMode
+	}
+	gin.SetMode(ginMode)
+
+	engine := gin.New()
 	engine.With(
+		InstallLogger,
 		InstallRecovery,
+		InstallRemoterIPHeader,
 		InstallTemplate,
 		InstallSession,
 		InstallStatic,
@@ -54,11 +72,36 @@ func main() {
 	controller.AddController(engine, "", htmlIndexController)
 	controller.AddController(engine, "api", apiIndexController)
 
-	port := conf.Port
-	err := engine.Run(fmt.Sprintf(":%d", port))
+	host := serverConf.Host
+	port := serverConf.Port
+	addr := fmt.Sprintf("%s:%d", host, port)
+	err := engine.Run(addr)
 	if err != nil {
 		logger.Panicf("Run server error:%s\n", err)
 	}
+}
+
+func InstallLogger(engine *gin.Engine) {
+	serverConf := config.Config().Server
+	if serverConf.Debug {
+		engine.Use(gin.Logger())
+		return
+	}
+	skipPaths := []string{
+		"/blog/",
+		"/admin/",
+	}
+	engine.Use(gin.LoggerWithConfig(gin.LoggerConfig{
+		Skip: func(context *gin.Context) bool {
+			path := context.Request.URL.Path
+			for _, skipPath := range skipPaths {
+				if strings.HasPrefix(path, skipPath) {
+					return true
+				}
+			}
+			return false
+		},
+	}))
 }
 
 func InstallRecovery(engine *gin.Engine) {
@@ -73,6 +116,16 @@ func InstallRecovery(engine *gin.Engine) {
 		}()
 		context.Next()
 	})
+}
+
+func InstallRemoterIPHeader(engine *gin.Engine) {
+	engine.RemoteIPHeaders = []string{
+		"X-Forwarded-For",
+		"Proxy-Client-IP",
+		"WL-Proxy-Client-IP",
+		"HTTP_CLIENT_IP",
+		"X-Real-IP",
+	}
 }
 
 func InstallTemplate(engine *gin.Engine) {
@@ -129,7 +182,8 @@ func InstallTemplate(engine *gin.Engine) {
 }
 
 func InstallSession(engine *gin.Engine) {
-	storeKey := config.Config().Session.StoreKey
+	sessionConf := config.Config().Session
+	storeKey := sessionConf.StoreKey
 	if storeKey == "" {
 		storeKey = strconv.FormatInt(time.Now().UnixMilli(), 10)
 	}

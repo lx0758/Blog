@@ -26,14 +26,22 @@ func Config() *Conf {
 }
 
 type Conf struct {
+	Pprof      Pprof      `yaml:"pprof"`
 	Server     Server     `yaml:"server"`
 	DataSource DataSource `yaml:"datasource"`
 	Session    Session    `yaml:"session"`
 }
 
+type Pprof struct {
+	Enable bool   `yaml:"enable"`
+	Host   string `yaml:"host"`
+	Port   int    `yaml:"port"`
+}
+
 type Server struct {
-	Port    int  `yaml:"port"`
-	Release bool `yaml:"release"`
+	Host  string `yaml:"host"`
+	Port  int    `yaml:"port"`
+	Debug bool   `yaml:"debug"`
 }
 
 type DataSource struct {

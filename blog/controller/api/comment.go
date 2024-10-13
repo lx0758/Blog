@@ -5,7 +5,6 @@ import (
 	"blog/bean/po"
 	"blog/controller"
 	"blog/service"
-	"blog/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -116,8 +115,8 @@ func (c *CommentController) addComment(context *gin.Context) {
 	userId := user.Id
 	nickName := user.Nickname
 	email := user.Email
-	ip := util.GetRequestIp(context)
-	ua := util.GetRequestUa(context)
+	ip := context.ClientIP()
+	ua := context.Request.UserAgent()
 	result := c.commentService.AddByAdmin(
 		addComment.ArticleId,
 		addComment.ParentId,

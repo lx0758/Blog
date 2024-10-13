@@ -5,7 +5,6 @@ import (
 	"blog/bean/po"
 	"blog/controller"
 	"blog/service"
-	"blog/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -166,8 +165,8 @@ func (c *ArticleController) addArticleComment(context *gin.Context) {
 		addArticleComment.ParentId,
 		addArticleComment.Nickname,
 		addArticleComment.Email,
-		util.GetRequestIp(context),
-		util.GetRequestUa(context),
+		context.ClientIP(),
+		context.Request.UserAgent(),
 		addArticleComment.Content,
 	)
 	if result {

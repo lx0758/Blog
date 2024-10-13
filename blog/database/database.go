@@ -18,14 +18,14 @@ var gDb *gorm.DB
 
 func GetDB() *gorm.DB {
 	if gDb == nil {
-		conf := config.Config().DataSource
+		dataSourceConf := config.Config().DataSource
 		var driver gorm.Dialector
-		switch conf.Type {
+		switch dataSourceConf.Type {
 		case "sqlite":
-			driver = sqlite.Open(conf.Dsn)
+			driver = sqlite.Open(dataSourceConf.Dsn)
 			break
 		case "postgres":
-			driver = postgres.Open(conf.Dsn)
+			driver = postgres.Open(dataSourceConf.Dsn)
 			break
 		default:
 			bloglogger.Panic("Unsupported database types")
@@ -41,7 +41,7 @@ func GetDB() *gorm.DB {
 				bloglogger.Logger(),
 				gormlogger.Config{
 					SlowThreshold:             time.Second,
-					LogLevel:                  util.If(conf.Debug, gormlogger.Info, gormlogger.Warn),
+					LogLevel:                  util.If(dataSourceConf.Debug, gormlogger.Info, gormlogger.Warn),
 					IgnoreRecordNotFoundError: false,
 					ParameterizedQueries:      false,
 					Colorful:                  true,
@@ -52,11 +52,11 @@ func GetDB() *gorm.DB {
 			bloglogger.Panicf("Failed to connect to database:%s\n", err)
 		}
 
-		if conf.Debug {
+		if dataSourceConf.Debug {
 			db.Debug()
 		}
 
-		if conf.AutoMigrate {
+		if dataSourceConf.AutoMigrate {
 			err = db.AutoMigrate(
 				&po.User{},
 				&po.Config{},

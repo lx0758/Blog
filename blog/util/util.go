@@ -1,7 +1,6 @@
 package util
 
 import (
-	"github.com/gin-gonic/gin"
 	"strings"
 	"unicode"
 )
@@ -34,25 +33,4 @@ func ToSnakeCase(string string) string {
 		}
 	}
 	return builder.String()
-}
-
-var IP_HEADERS = [5]string{
-	"X-Forwarded-For",
-	"Proxy-Client-IP",
-	"WL-Proxy-Client-IP",
-	"HTTP_CLIENT_IP",
-	"X-Real-IP",
-}
-
-func GetRequestIp(context *gin.Context) string {
-	for _, header := range IP_HEADERS {
-		if ip := context.Request.Header.Get(header); ip != "" {
-			return ip
-		}
-	}
-	return context.ClientIP()
-}
-
-func GetRequestUa(context *gin.Context) string {
-	return context.Request.UserAgent()
 }
