@@ -127,8 +127,11 @@ func (s *EmailService) SendCommentReplayEmail(
 		}
 		parentId = *comment.ParentId
 	}
-	// 抄收自己
-	recipients = append(recipients, recipient{Name: &author, Email: email})
+
+	// 抄收评论作者
+	//recipients = append(recipients, recipient{Name: &author, Email: email})
+	// 抄收文章作者
+	recipients = append(recipients, recipient{Name: &article.Author.Nickname, Email: *article.Author.Email})
 
 	siteDomain := util.IfNotNil(s.blogService.GetCacheConfigMap()[po.CONFIG_KEY_SITE_DOMAIN], "")
 	to := recipients[0:1]

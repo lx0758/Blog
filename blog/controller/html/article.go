@@ -172,12 +172,12 @@ func (c *ArticleController) addArticleComment(context *gin.Context) {
 	if result {
 		context.JSON(http.StatusOK, map[string]any{
 			"status":  http.StatusOK,
-			"message": "评论成功",
+			"message": "评论成功~",
 		})
 	} else {
 		context.JSON(http.StatusOK, map[string]any{
 			"status":  http.StatusBadRequest,
-			"message": "评论失败",
+			"message": "评论失败, 请联系博客管理员!",
 		})
 	}
 }

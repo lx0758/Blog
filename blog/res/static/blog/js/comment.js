@@ -197,11 +197,11 @@ function Comment(options) {
                 _content.focus()
             },
             showInfo(info) {
-                _status.innerHTML = info
+                _status.innerHTML = '<span style="padding: 10px;color: #ff7272;"><b>' + info + "</b></span>"
                 if (infoTimer) clearTimeout(infoTimer);
                 infoTimer = setTimeout(function () {
                     _status.innerHTML = null
-                },5000);
+                },10 * 1000);
             },
             refreshCaptcha() {
                 if (captchaUrl) {
@@ -229,15 +229,15 @@ function Comment(options) {
             let content = _content.value
 
             if (captchaUrl && (!code || code.length === 0)) {
-                Comment.panel.showInfo('验证码不能为空')
+                Comment.panel.showInfo('验证码不能为空!')
                 return
             }
             if (!nickname || nickname.length === 0) {
-                Comment.panel.showInfo('昵称不能为空')
+                Comment.panel.showInfo('昵称不能为空!')
                 return
             }
             if (!content || content.length === 0) {
-                Comment.panel.showInfo('评论内容不能为空')
+                Comment.panel.showInfo('评论内容不能为空!')
                 return
             }
 
@@ -246,7 +246,7 @@ function Comment(options) {
             }
 
             api.commit(code, parentId, nickname, email, link, content).then(data => {
-                Comment.panel.showInfo('评论成功!')
+                Comment.panel.showInfo('评论成功! 新评论通过管理员审核后即可展示. 欢迎交流~')
                 Comment.panel.clearContent()
                 Comment.panel.replyCancel()
                 Comment.panel.refreshCaptcha()
