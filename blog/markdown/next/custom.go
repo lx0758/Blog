@@ -126,6 +126,11 @@ func (e *customStyle) Extend(m goldmark.Markdown) {
 		),
 	)
 	m.Renderer().AddOptions(
+		// see:
+		//	html.Config.HardWraps
+		//	html.SetOption
+		renderer.WithOption("HardWraps", true),
+		renderer.WithOption("EastAsianLineBreaks", html.EastAsianLineBreaksCSS3Draft),
 		renderer.WithNodeRenderers(
 			util.Prioritized(NewCustomStyleRenderer(), 999),
 		),
