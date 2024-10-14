@@ -93,8 +93,6 @@ func (r *underlineRenderer) renderUnderline(w util.BufWriter, source []byte, n a
 type underline struct {
 }
 
-var Underline = &underline{}
-
 func NewUnderline() goldmark.Extender {
 	return &underline{}
 }

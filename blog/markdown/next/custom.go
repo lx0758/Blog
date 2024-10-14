@@ -55,12 +55,12 @@ func (t *customASTTransformer) Transform(node *ast.Document, reader text.Reader,
 	})
 }
 
-type customStyleRenderer struct {
+type customRenderer struct {
 	html.Config
 }
 
-func NewCustomStyleRenderer(opts ...html.Option) renderer.NodeRenderer {
-	r := &customStyleRenderer{
+func NewCustomRenderer(opts ...html.Option) renderer.NodeRenderer {
+	r := &customRenderer{
 		Config: html.NewConfig(),
 	}
 	for _, opt := range opts {
@@ -69,13 +69,13 @@ func NewCustomStyleRenderer(opts ...html.Option) renderer.NodeRenderer {
 	return r
 }
 
-func (r *customStyleRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+func (r *customRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindListItem, r.renderListItem)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
 }
 
 // 优化 ListItem, 渲染 TaskCheckBox 的父容器为 div
-func (r *customStyleRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+func (r *customRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	itemTag := "li"
 	if tbn, ok := n.FirstChild().(*ast.TextBlock); ok {
 		if _, ok := tbn.FirstChild().(*east.TaskCheckBox); ok {
@@ -104,7 +104,7 @@ func (r *customStyleRenderer) renderListItem(w util.BufWriter, source []byte, n 
 }
 
 // 适配前台代码高亮框架
-func (r *customStyleRenderer) renderFencedCodeBlock(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+func (r *customRenderer) renderFencedCodeBlock(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	n := node.(*ast.FencedCodeBlock)
 	if entering {
 		_, _ = w.WriteString(`<pre class="line-numbers"><code`)
@@ -126,14 +126,14 @@ func (r *customStyleRenderer) renderFencedCodeBlock(w util.BufWriter, source []b
 	return ast.WalkContinue, nil
 }
 
-type customStyle struct {
+type custom struct {
 }
 
-func NewCustomStyle() goldmark.Extender {
-	return &customStyle{}
+func NewCustom() goldmark.Extender {
+	return &custom{}
 }
 
-func (e *customStyle) Extend(m goldmark.Markdown) {
+func (e *custom) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithASTTransformers(
 			util.Prioritized(NewCustomASTTransformer(), 999),
@@ -146,7 +146,7 @@ func (e *customStyle) Extend(m goldmark.Markdown) {
 		renderer.WithOption("HardWraps", true),
 		renderer.WithOption("EastAsianLineBreaks", html.EastAsianLineBreaksCSS3Draft),
 		renderer.WithNodeRenderers(
-			util.Prioritized(NewCustomStyleRenderer(), 999),
+			util.Prioritized(NewCustomRenderer(), 999),
 		),
 	)
 }

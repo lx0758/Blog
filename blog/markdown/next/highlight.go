@@ -93,8 +93,6 @@ func (r *highlightRenderer) renderHighlight(w util.BufWriter, source []byte, n a
 type highlight struct {
 }
 
-var Highlight = &highlight{}
-
 func NewHighlight() goldmark.Extender {
 	return &highlight{}
 }

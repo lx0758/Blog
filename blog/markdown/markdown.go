@@ -64,9 +64,10 @@ func getMarkdown(ext ...goldmark.Extender) goldmark.Markdown {
 		extension.NewFootnote(),    // 脚注
 		extension.NewTypographer(), // 排版优化
 
-		next.NewCustomStyle(),
+		next.NewCustom(),
 		next.NewUnderline(),
 		next.NewHighlight(),
+		next.NewToc(),
 	}
 	extends = append(extends, ext...)
 	return goldmark.New(
