@@ -91,7 +91,7 @@ func (s *FragmentService) UpdateByAdmin(id int, key string, content string, stat
 	updateTime := time.Now()
 	db := s.db.Model(&po.Fragment{}).
 		Where("id = ?", id).
-		Select("content", "key", "status").
+		Select("content", "key", "status", "update_time").
 		Updates(&po.Fragment{
 			Key:        key,
 			Content:    content,
