@@ -41,11 +41,11 @@ func (c *DashboardController) queryDashboard(context *gin.Context) {
 	articleCount, categoryCount, tagCount, fileCount, commentCount := c.blogService.GetCacheCount()
 	browseCount := c.articleService.CountViews()
 
-	newArticleVOs := make([]api_vo.ArticleVO, 0)
+	newArticleItemVOs := make([]api_vo.ArticleItemVO, 0)
 	for _, article := range c.articleService.ListNewArticle(10) {
-		articleVO := api_vo.ArticleVO{}
-		articleVO.From(article)
-		newArticleVOs = append(newArticleVOs, articleVO)
+		articleItemVO := api_vo.ArticleItemVO{}
+		articleItemVO.From(article)
+		newArticleItemVOs = append(newArticleItemVOs, articleItemVO)
 	}
 	newCommentVOs := make([]api_vo.CommentVO, 0)
 	for _, comment := range c.commentService.ListNewComment(10) {
@@ -67,7 +67,7 @@ func (c *DashboardController) queryDashboard(context *gin.Context) {
 		UploadCount:   fileCount,
 		CommentCount:  commentCount,
 		BrowseCount:   browseCount,
-		NewArticles:   newArticleVOs,
+		NewArticles:   newArticleItemVOs,
 		NewComments:   newCommentVOs,
 		NewUploads:    newFileVOs,
 	}

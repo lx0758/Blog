@@ -23,8 +23,8 @@ func (a *ArticleVO) From(article po.Article) {
 	a.Id = article.Id
 	a.Title = article.Title
 	a.CategoryId = article.CategoryId
-	a.Url = article.GetSafeUrl()
-	a.Tags = article.GetSafeTags()
+	a.Url = article.GetUrl()
+	a.Tags = article.GetTagArray()
 	a.Content = article.Content
 	a.Weight = article.Weight
 	a.EnableComment = article.CommentStatus == po.ARTICLE_COMMENT_ENABLE

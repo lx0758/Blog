@@ -54,7 +54,7 @@ func (a *ArticleVO) From(article po.Article, prevArticle, nextArticle *po.Articl
 	a.AuthorNickname = article.Author.Nickname
 	a.Views = article.Views
 	a.EnableComment = article.CommentStatus == po.ARTICLE_COMMENT_ENABLE
-	a.Tags = article.GetSafeTags()
+	a.Tags = article.GetTagArray()
 	a.Catalogues = convertCatalog(catalogues)
 	a.Prev = prevArticleItemVO
 	a.Next = nextArticleItemVO

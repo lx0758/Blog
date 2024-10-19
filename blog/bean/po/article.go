@@ -24,21 +24,26 @@ type Article struct {
 	Tags     []Tag        `gorm:"many2many:article_tag;foreignKey:Id;joinForeignKey:article_id;References:Id;joinReferences:tag_id"`
 }
 
-func (a *Article) GetSafeUrl() string {
-	url := ""
+func (a *Article) GetUrl() string {
+	var url string
 	for _, u := range a.Urls {
 		if u.Status == ARTICLE_URL_STATUS_LAST {
 			url = u.Url
 			break
 		}
 	}
+	return url
+}
+
+func (a *Article) GetSafeUrl() string {
+	url := a.GetUrl()
 	if url == "" {
 		url = strconv.Itoa(a.Id)
 	}
 	return url
 }
 
-func (a *Article) GetSafeTags() []string {
+func (a *Article) GetTagArray() []string {
 	tags := make([]string, 0)
 	for _, tag := range a.Tags {
 		tags = append(tags, tag.Name)
