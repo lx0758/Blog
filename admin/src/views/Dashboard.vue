@@ -80,7 +80,7 @@
   </el-row>
 
   <el-row :gutter="30" style="margin-top: 40px">
-    <el-col :span="8">
+    <el-col :span="12">
       <el-card shadow="hover">
         <template #header>
           <span>最新文章</span>
@@ -92,13 +92,27 @@
       </el-card>
     </el-col>
 
-    <el-col :span="8">
+    <el-col :span="12">
       <el-card shadow="hover">
         <template #header>
           <span>最新评论</span>
         </template>
         <el-table :data="state.newComments" :show-header="false" style="width: 100%">
-          <el-table-column prop="content" :show-overflow-tooltip="true" />
+          <el-table-column prop="content">
+            <template #default="scope">
+              <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  placement="top">
+                <template #content>
+                  <pre>{{ scope.row.content }}</pre>
+                </template>
+                <p class="single-line" style="margin-block-start:0;margin-block-end:0;">
+                  {{ scope.row.content }}
+                </p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
           <el-table-column prop="nickname" :show-overflow-tooltip="true" width="80" />
           <date-time-column prop="createTime" width="70" format="MM-DD" />
         </el-table>
