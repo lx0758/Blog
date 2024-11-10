@@ -102,11 +102,15 @@ func InstallLogger(engine *gin.Engine) {
 func InstallRecovery(engine *gin.Engine) {
 	engine.Use(func(context *gin.Context) {
 		defer func() {
-			if context.Writer.Status() == http.StatusNotFound {
-				htmlIndexController.RenderError(context, errors.New("not found"))
-			} else if err := recover(); err != nil {
+			if err := recover(); err != nil {
+				// 全局 panic 处理
 				logger.Printf("Recovered from panic:%s\n", err)
 				htmlIndexController.RenderError(context, err.(error))
+			} else if context.Writer.Status() == http.StatusNotFound {
+				// 处理 Gin 路由没有命中的场景
+				notFoundError := errors.New("Not found " + context.Request.URL.Path)
+				logger.Printf("Recovered from NotFound:%s\n", notFoundError)
+				htmlIndexController.RenderError(context, notFoundError)
 			}
 		}()
 		context.Next()
