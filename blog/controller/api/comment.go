@@ -111,7 +111,7 @@ func (c *CommentController) addComment(context *gin.Context) {
 	if err := context.ShouldBind(&addComment); err != nil {
 		c.RestValidationError(context, err)
 	}
-	user := context.MustGet(KEY_USER).(po.User)
+	user := context.MustGet(KEY_USER).(*po.User)
 	userId := user.Id
 	nickName := user.Nickname
 	email := user.Email
