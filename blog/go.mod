@@ -12,6 +12,7 @@ require (
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20240510055607-89e20ab7b6c6
 	github.com/medama-io/go-useragent v1.0.1
 	github.com/yuin/goldmark v1.7.4
+	go.abhg.dev/goldmark/mermaid v0.5.0
 	golang.org/x/crypto v0.27.0
 	golang.org/x/image v0.20.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

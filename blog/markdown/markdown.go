@@ -6,6 +6,7 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"go.abhg.dev/goldmark/mermaid"
 )
 
 func RenderByArticle(source string, fs FragmentSource) (html string, description string, catalogues []*next.Catalogue) {
@@ -63,6 +64,8 @@ func getMarkdown(ext ...goldmark.Extender) goldmark.Markdown {
 		extension.NewCJK(),         // 换行优化
 		extension.NewFootnote(),    // 脚注
 		extension.NewTypographer(), // 排版优化
+
+		&mermaid.Extender{},
 
 		next.NewCustom(),
 		next.NewUnderline(),

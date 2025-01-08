@@ -14,10 +14,19 @@ import '@kangc/v-md-editor/lib/style/base-editor.css'
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
 import Prism from 'prismjs'
+import createMermaidPlugin from '@kangc/v-md-editor/lib/plugins/mermaid/cdn'
+import '@kangc/v-md-editor/lib/plugins/mermaid/mermaid.css'
+import createTodoListPlugin from '@kangc/v-md-editor/lib/plugins/todo-list/index'
+import '@kangc/v-md-editor/lib/plugins/todo-list/todo-list.css'
+import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index'
+import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index'
+import '@kangc/v-md-editor/lib/plugins/highlight-lines/highlight-lines.css'
+import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index'
+import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css'
 
 import BlogSelector from '@/components/BlogSelector.vue'
 import DateTimeColumn from '@/components/DateTimeColumn.vue'
-import LimitHightContainer from '@/components/LimitHightContainer.vue'
+import LimitHeightContainer from '@/components/LimitHeightContainer.vue'
 
 const app = createApp(App)
 
@@ -33,10 +42,15 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 VueMarkdownEditor.use(vuepressTheme, {
   Prism
 })
+VueMarkdownEditor.use(createMermaidPlugin())
+VueMarkdownEditor.use(createTodoListPlugin())
+VueMarkdownEditor.use(createLineNumbertPlugin())
+VueMarkdownEditor.use(createHighlightLinesPlugin())
+VueMarkdownEditor.use(createCopyCodePlugin())
 app.use(VueMarkdownEditor)
 
 app.component('blog-selector', BlogSelector)
 app.component('date-time-column', DateTimeColumn)
-app.component('limit-height-container', LimitHightContainer)
+app.component('limit-height-container', LimitHeightContainer)
 
 app.mount('#app')
