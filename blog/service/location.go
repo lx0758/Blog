@@ -2,13 +2,14 @@ package service
 
 import (
 	"blog/logger"
-	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
+	"github.com/IncSW/geoip2"
+	"net"
 	"strings"
 )
 
 var (
-	ipDbPath      = "ip2region.xdb"
-	ipVectorIndex []byte
+	geoIp2DbPath = "GeoLite2-City.mmdb"
+	cityReader   *geoip2.CityReader
 )
 
 type LocationService struct {
@@ -16,27 +17,31 @@ type LocationService struct {
 }
 
 func (s *LocationService) OnInitService() {
-	vIndex, err := xdb.LoadVectorIndexFromFile(ipDbPath)
+	reader, err := geoip2.NewCityReaderFromFile(geoIp2DbPath)
 	if err != nil {
-		logger.Fatalf("failed to load vector index: %s", err)
+		logger.Fatalf("failed to load geoip2 database: %s", err)
 	}
-	ipVectorIndex = vIndex
+	cityReader = reader
 }
 
 func (s *LocationService) GetLocationFromIp(ip string) string {
-	searcher, err := xdb.NewWithVectorIndex(ipDbPath, ipVectorIndex)
-	if err != nil {
-		return "Unknown"
-	}
-	region, err := searcher.SearchByStr(ip)
+	record, err := cityReader.Lookup(net.ParseIP(ip))
 	if err != nil {
 		return "Unknown"
 	}
 	regions := make([]string, 0)
-	for _, r := range strings.Split(region, "|") {
-		if r != "0" {
-			regions = append(regions, r)
-		}
+	//regions = appendX(regions, record.Continent.Names["zh-CN"])
+	regions = appendX(regions, record.Country.Names["zh-CN"])
+	if record.Subdivisions != nil {
+		regions = appendX(regions, record.Subdivisions[0].Names["zh-CN"])
 	}
+	regions = appendX(regions, record.City.Names["zh-CN"])
 	return strings.Join(regions, ",")
+}
+
+func appendX(regions []string, text string) []string {
+	if text != "" {
+		regions = append(regions, text)
+	}
+	return regions
 }
