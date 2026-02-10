@@ -6,11 +6,12 @@ import (
 	"blog/res"
 	"blog/service"
 	"blog/util"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type IndexController struct {

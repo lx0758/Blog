@@ -2,9 +2,10 @@ package service
 
 import (
 	"blog/logger"
-	"github.com/IncSW/geoip2"
 	"net"
 	"strings"
+
+	"github.com/IncSW/geoip2"
 )
 
 var (

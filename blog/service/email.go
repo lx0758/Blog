@@ -7,11 +7,12 @@ import (
 	"blog/res"
 	"blog/util"
 	"errors"
+	"html/template"
+	"strings"
+
 	"gopkg.in/gomail.v2"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"html/template"
-	"strings"
 )
 
 type EmailService struct {

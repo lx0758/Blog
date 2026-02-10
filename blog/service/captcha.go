@@ -5,10 +5,6 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/golang/freetype"
-	"github.com/golang/freetype/truetype"
-	"golang.org/x/image/font"
 	"image"
 	"image/color"
 	"image/draw"
@@ -17,6 +13,11 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font"
 )
 
 var (

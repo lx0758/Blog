@@ -3,10 +3,11 @@ package api
 import (
 	"blog/controller"
 	"blog/service"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 type CaptchaController struct {

@@ -4,8 +4,9 @@ import (
 	"blog/bean/api_vo"
 	"blog/controller"
 	"blog/service"
-	"github.com/gin-gonic/gin"
 	"mime/multipart"
+
+	"github.com/gin-gonic/gin"
 )
 
 type FileController struct {

@@ -1,10 +1,11 @@
 package markdown
 
 import (
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
 	"regexp"
 	"strconv"
+
+	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/parser"
 )
 
 type customIDs struct {

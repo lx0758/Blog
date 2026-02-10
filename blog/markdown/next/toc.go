@@ -2,13 +2,14 @@ package next
 
 import (
 	nast "blog/markdown/next/ast"
+	"strings"
+
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
-	"strings"
 )
 
 type tocParser struct {

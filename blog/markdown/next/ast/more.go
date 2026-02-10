@@ -1,8 +1,9 @@
 package ast
 
 import (
-	gast "github.com/yuin/goldmark/ast"
 	"strconv"
+
+	gast "github.com/yuin/goldmark/ast"
 )
 
 type More struct {

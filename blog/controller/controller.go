@@ -4,10 +4,11 @@ import (
 	"blog/bean/api_vo"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func AddController(engine *gin.Engine, relativePath string, controller ControllerInterface) *gin.RouterGroup {

@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
+
+	"go.yaml.in/yaml/v3"
 )
 
 var gConf *Conf

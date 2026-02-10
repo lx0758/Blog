@@ -3,8 +3,9 @@ package html
 import (
 	"blog/controller"
 	"blog/service"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UrlController struct {
