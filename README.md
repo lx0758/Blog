@@ -24,4 +24,4 @@
 
 # License
 
-[The MIT License Copyright (c) 2020-2024 6x](/LICENSE.txt)
+[The MIT License Copyright (c) 2020-2026 6x](/LICENSE.txt)
