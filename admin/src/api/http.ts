@@ -22,7 +22,7 @@ export const request = async function (
     },
     params: queryParams,
     data: fromdata,
-    timeout: 30 * 1000,
+    timeout: 60 * 1000,
     transformRequest: [
       (data: any) => {
         return qs.stringify(data)

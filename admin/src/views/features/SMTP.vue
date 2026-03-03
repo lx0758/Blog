@@ -6,11 +6,13 @@
     <el-form-item label="主机">
       <el-input v-model="state.hostname"/>
     </el-form-item>
+    <el-form-item label="模式">
+      <el-select v-model="state.mode" placeholder="请选择" @change="onModeChange">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
+      </el-select>
+    </el-form-item>
     <el-form-item label="端口">
       <el-input v-model="state.port" type="number"/>
-    </el-form-item>
-    <el-form-item label="SSL">
-      <el-switch v-model="state.ssl"/>
     </el-form-item>
     <el-form-item label="用户名">
       <el-input v-model="state.username"/>
@@ -53,8 +55,8 @@ import {updateSMTP, querySMTP, testSMTP} from '@/api'
 interface State {
   enable: boolean
   hostname: string | null
+  mode: number | null
   port: number | null
-  ssl: boolean | null
   username: string | null
   password: string | null
   fromName: string | null
@@ -68,13 +70,19 @@ interface SendEmailState {
 const state = ref<State>({
   enable: false,
   hostname: null,
+  mode: null,
   port: null,
-  ssl: false,
   username: null,
   password: null,
   fromName: null,
   fromEmail: null,
 })
+
+const options = [
+  {value: 0, label: 'NONE'},
+  {value: 1, label: 'SSL'},
+  {value: 2, label: 'STARTTLS'},
+]
 
 const sendEmailDialogStateFormRef = ref()
 const sendEmailDialogState = ref(new DialogState<SendEmailState>(
@@ -92,8 +100,8 @@ function onRefresh() {
     data = data.data
     state.value.enable = data.enable
     state.value.hostname = data.hostname
+    state.value.mode = data.mode
     state.value.port = data.port
-    state.value.ssl = data.ssl
     state.value.username = data.username
     state.value.password = data.password
     state.value.fromName = data.fromName
@@ -101,12 +109,26 @@ function onRefresh() {
   })
 }
 
+function onModeChange() {
+  switch (state.value.mode) {
+    case 0:
+      state.value.port = 25
+      break
+    case 1:
+      state.value.port = 465
+      break
+    case 2:
+      state.value.port = 587
+      break
+  }
+}
+
 function onSubmit() {
   updateSMTP(
       state.value.enable,
       state.value.hostname,
+      state.value.mode,
       state.value.port,
-      state.value.ssl,
       state.value.username,
       state.value.password,
       state.value.fromName,

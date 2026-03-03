@@ -39,8 +39,8 @@ func (c *FeatureController) querySmtp(context *gin.Context) {
 	if smtpFeature != nil {
 		smtpVO.Enable = smtpFeature.Enable
 		smtpVO.Hostname = smtpFeature.Hostname
+		smtpVO.Mode = smtpFeature.Mode
 		smtpVO.Port = smtpFeature.Port
-		smtpVO.Ssl = smtpFeature.Ssl
 		smtpVO.Username = smtpFeature.Username
 		smtpVO.Password = smtpFeature.Password
 		smtpVO.FromName = smtpFeature.FromName
@@ -52,8 +52,8 @@ func (c *FeatureController) querySmtp(context *gin.Context) {
 type updateSmtp struct {
 	Enable    *bool   `form:"enable" binding:"required"`
 	Hostname  *string `form:"hostname"`
+	Mode      *int    `form:"mode"`
 	Port      *int    `form:"port"`
-	Ssl       *bool   `form:"ssl"`
 	Username  *string `form:"username"`
 	Password  *string `form:"password"`
 	FromName  *string `form:"fromName"`
@@ -67,8 +67,8 @@ type updateSmtp struct {
 // @Produce		json
 // @Param		enable		body	bool	true	"enable"
 // @Param		hostname	body	string	false	"hostname"
+// @Param		mode		body	int		false	"mode"
 // @Param		port		body	int		false	"port"
-// @Param		ssl			body	bool	false	"ssl"
 // @Param		username	body	string	false	"username"
 // @Param		password	body	string	false	"password"
 // @Param		fromName	body	string	false	"fromName"
@@ -85,8 +85,8 @@ func (c *FeatureController) updateSmtp(context *gin.Context) {
 	result := c.featureService.UpdateSmtp(
 		*updateSmtp.Enable,
 		updateSmtp.Hostname,
+		updateSmtp.Mode,
 		updateSmtp.Port,
-		updateSmtp.Ssl,
 		updateSmtp.Username,
 		updateSmtp.Password,
 		updateSmtp.FromName,

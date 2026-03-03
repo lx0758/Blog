@@ -7,6 +7,7 @@ import (
 	"blog/res"
 	"blog/util"
 	"errors"
+	"fmt"
 	"html/template"
 	"strings"
 
@@ -48,7 +49,7 @@ func (s *EmailService) SendTestEmail(email string) error {
 	body := s.renderEmailTemplate("comment_test", nil)
 	err := s.sendEmail(to, nil, "博客邮件发送测试", body)
 	if err != nil {
-		return errors.New("邮件发送失败")
+		return errors.New(fmt.Sprintf("邮件发送失败: %s", err.Error()))
 	}
 	return nil
 }
@@ -168,11 +169,27 @@ func (s *EmailService) sendEmail(to []recipient, cc *[]recipient, subject string
 	message.SetHeader("Subject", subject)
 	message.SetBody("text/html", content)
 
-	dialer := gomail.NewDialer(smtpFeature.Hostname, smtpFeature.Port, smtpFeature.Username, smtpFeature.Password)
-	dialer.SSL = smtpFeature.Ssl
+	ssl := false
+	switch smtpFeature.Mode {
+	case po.SMTP_MODE_NONE:
+		ssl = false
+	case po.SMTP_MODE_SSL:
+		ssl = true
+	case po.SMTP_MODE_STARTTLS:
+		ssl = false
+	default:
+		return errors.New("SMTP 模式错误")
+	}
+	dialer := &gomail.Dialer{
+		Host:     smtpFeature.Hostname,
+		Port:     smtpFeature.Port,
+		Username: smtpFeature.Username,
+		Password: smtpFeature.Password,
+		SSL:      ssl,
+	}
 	err := dialer.DialAndSend(message)
 	if err != nil {
-		logger.Printf("send email to %s(cc:%s) error:%s\n", message.GetHeader("To"), message.GetHeader("Cc"), err)
+		logger.Printf("send email to %s(cc:%s) error:%s\n", message.GetHeader("To"), message.GetHeader("Cc"), err.Error())
 	} else {
 		logger.Printf("send email to %s(cc:%s) succeed.", message.GetHeader("To"), message.GetHeader("Cc"))
 	}

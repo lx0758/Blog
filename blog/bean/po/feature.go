@@ -12,13 +12,17 @@ type Feature struct {
 
 const (
 	FEATURE_KEY_SMTP = "SMTP"
+
+	SMTP_MODE_NONE     = 0
+	SMTP_MODE_SSL      = 1
+	SMTP_MODE_STARTTLS = 2
 )
 
 type SMTPFeature struct {
 	Enable    bool   `json:"enable"`
 	Hostname  string `json:"hostname"`
+	Mode      int    `json:"mode"`
 	Port      int    `json:"port"`
-	Ssl       bool   `json:"ssl"`
 	Username  string `json:"username"`
 	Password  string `json:"password"`
 	FromName  string `json:"fromName"`

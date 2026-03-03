@@ -38,8 +38,8 @@ func (s *FeatureService) QuerySmtp() *po.SMTPFeature {
 func (s *FeatureService) UpdateSmtp(
 	enable bool,
 	hostname *string,
+	mode *int,
 	port *int,
-	ssl *bool,
 	username *string,
 	password *string,
 	fromName *string,
@@ -48,8 +48,8 @@ func (s *FeatureService) UpdateSmtp(
 	smtpFeature := po.SMTPFeature{
 		Enable:    enable,
 		Hostname:  *hostname,
+		Mode:      *mode,
 		Port:      *port,
-		Ssl:       *ssl,
 		Username:  *username,
 		Password:  *password,
 		FromName:  *fromName,

@@ -669,8 +669,8 @@ export const querySMTP = () => request(
 export const updateSMTP = (
     enable: boolean,
     hostname: string | null,
+    mode: number | null,
     port: number | null,
-    ssl: boolean | null,
     username: string | null,
     password: string | null,
     fromName: string | null,
@@ -682,8 +682,8 @@ export const updateSMTP = (
     {
         enable: enable,
         hostname: hostname,
+        mode: mode,
         port: port,
-        ssl: ssl,
         username: username,
         password: password,
         fromName: fromName,
