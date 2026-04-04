@@ -1,0 +1,90 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 匹配以v开头的tag，例如v1.0.0
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'blog/go.mod'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install build toolchain
+        run: |
+          sudo apt install -y make gcc mingw-w64
+
+      - name: Build
+        run: |
+          make init
+          make build
+
+      # https://github.com/actions/upload-artifact
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: blog/bin/*
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      # https://github.com/actions/download-artifact
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Download GeoIP2 database
+        run: |
+          export LATEST_VERSION=$(curl "https://api.github.com/repos/P3TERX/GeoLite.mmdb/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+          export LATEST_URL=https://github.com/P3TERX/GeoLite.mmdb/releases/download/${LATEST_VERSION}
+          wget ${LATEST_URL}/GeoLite2-City.mmdb
+
+      - name: Package artifacts
+        run: |
+          ls -lh
+          # windows
+          mkdir -p blog-windows-amd64/
+          mv blog-v*.exe blog-windows-amd64/
+          cp -rf GeoLite2-City.mmdb blog-windows-amd64/
+          zip -r blog-windows-amd64-${{ github.ref_name }}.zip blog-windows-amd64/
+          # linux
+          mkdir -p blog-linux-amd64/
+          mv blog-v* blog-linux-amd64/
+          cp -rf GeoLite2-City.mmdb blog-linux-amd64/
+          zip -r blog-linux-amd64-${{ github.ref_name }}.zip blog-linux-amd64/
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.ref_name }}
+          token: ${{ secrets.GHP_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          body: |
+            Release ${{ github.ref_name }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: |
+            blog-*

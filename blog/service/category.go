@@ -20,6 +20,8 @@ func (s *CategoryService) OnInitService() {
 	s.db = database.GetDB()
 
 	s.articleService = GetService[*ArticleService](s.articleService)
+
+	s.checkInitCategory()
 }
 
 func (s *CategoryService) Count() int {
@@ -131,4 +133,19 @@ func (s *CategoryService) DeleteByAdmin(id int) bool {
 		refreshBlogCacheInfo()
 	}
 	return db.RowsAffected > 0
+}
+
+func (s *CategoryService) checkInitCategory() {
+	var count int64
+	s.db.Model(&po.Category{}).Count(&count)
+	if count > 0 {
+		return
+	}
+	createDateTime, _ := time.Parse("2006-01-02 15:04:05", "2020-01-01 00:00:00")
+	user := po.Category{
+		Id:         1,
+		Name:       "默认分类",
+		CreateTime: createDateTime,
+	}
+	s.db.Create(&user)
 }

@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var Version = "dev"
+
 var (
 	//go:embed comic.ttf
 	FontFile []byte

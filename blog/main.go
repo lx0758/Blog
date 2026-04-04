@@ -9,10 +9,6 @@ import (
 	"blog/res"
 	"errors"
 	"fmt"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/memstore"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
 	_ "net/http/pprof"
@@ -20,6 +16,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/memstore"
+	"github.com/gin-gonic/gin"
 )
 
 var htmlIndexController = &html.IndexController{}
@@ -70,6 +71,7 @@ func main() {
 	controller.AddController(engine, "", htmlIndexController)
 	controller.AddController(engine, "api", apiIndexController)
 
+	logger.Printf("Start blog server at: http://%s", serverConf.Address)
 	err := engine.Run(serverConf.Address)
 	if err != nil {
 		logger.Panicf("Run server error:%s\n", err)

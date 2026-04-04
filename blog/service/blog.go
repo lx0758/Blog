@@ -83,6 +83,9 @@ func (s *BlogService) refreshCacheInfo() {
 			Accounts: &po.UserAccounts{},
 		}
 	}
+	if user.Accounts == nil {
+		user.Accounts = &po.UserAccounts{}
+	}
 	s.owner = *user
 
 	s.links = s.linkService.ListLink()

@@ -17,6 +17,7 @@ type UserService struct {
 
 func (s *UserService) OnInitService() {
 	s.db = database.GetDB()
+	s.checkInitUser()
 }
 
 func (s *UserService) ListByAdmin(username *string, nickname *string, status *int) []po.User {
@@ -118,7 +119,7 @@ func (s *UserService) UpdateUserPassword(id int, oldPassword string, newPassword
 	if !s.VerifyPassword(user, oldPassword) {
 		return false
 	}
-	newHash, err := hashPassword(newPassword)
+	newHash, err := s.hashPassword(newPassword)
 	if err != nil {
 		return false
 	}
@@ -134,7 +135,26 @@ func (s *UserService) VerifyPassword(user *po.User, password string) bool {
 	return err == nil
 }
 
-func hashPassword(password string) (string, error) {
+func (s *UserService) checkInitUser() {
+	var count int64
+	s.db.Model(&po.User{}).Count(&count)
+	if count > 0 {
+		return
+	}
+	hashPassword, _ := s.hashPassword("admin")
+	createDateTime, _ := time.Parse("2006-01-02 15:04:05", "2020-01-01 00:00:00")
+	user := po.User{
+		Id:         1,
+		Username:   "admin",
+		Password:   hashPassword,
+		Nickname:   "Admin",
+		Status:     po.USER_STATUS_ENABLED,
+		CreateTime: createDateTime,
+	}
+	s.db.Create(&user)
+}
+
+func (s *UserService) hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err

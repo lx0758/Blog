@@ -1,6 +1,9 @@
+/bin/
 /docs/
+/res/static/admin/
+
 /files/
-/application.yaml
 /*.db
 /*.mmdb
-/blog-*
+
+/*.yaml

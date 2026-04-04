@@ -20,12 +20,16 @@ type LocationService struct {
 func (s *LocationService) OnInitService() {
 	reader, err := geoip2.NewCityReaderFromFile(geoIp2DbPath)
 	if err != nil {
-		logger.Fatalf("failed to load geoip2 database: %s", err)
+		logger.Printf("failed to load geoip2 database: %v", err)
+		return
 	}
 	cityReader = reader
 }
 
 func (s *LocationService) GetLocationFromIp(ip string) string {
+	if cityReader == nil {
+		return "Unknown"
+	}
 	record, err := cityReader.Lookup(net.ParseIP(ip))
 	if err != nil {
 		return "Unknown"

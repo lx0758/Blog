@@ -13,7 +13,18 @@ func Config() *Conf {
 	if gConf == nil {
 		content, err := os.ReadFile("application.yaml")
 		if err != nil {
-			fmt.Printf("Read applocation.yaml error: %s\n", err)
+			content = []byte(`
+server:
+  address: 0.0.0.0:8080
+pprof:
+  enable: true
+  address: localhost:6060
+datasource:
+  type: sqlite
+  path: data.db
+session:
+  store_key: ----------
+`)
 		}
 
 		conf := &Conf{}
@@ -44,10 +55,14 @@ type Server struct {
 }
 
 type DataSource struct {
-	Debug       bool   `yaml:"debug"`
-	AutoMigrate bool   `yaml:"auto_migrate"`
-	Type        string `yaml:"type"`
-	Dsn         string `yaml:"dsn"`
+	Debug    bool   `yaml:"debug"`
+	Type     string `yaml:"type"`
+	Path     string `yaml:"path"`
+	Host     string
+	Port     int
+	Username string
+	Password string
+	DBName   string
 }
 
 type Session struct {

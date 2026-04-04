@@ -5,6 +5,7 @@ import (
 	"blog/config"
 	bloglogger "blog/logger"
 	"blog/util"
+	"fmt"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -20,18 +21,20 @@ var gDb *gorm.DB
 func GetDB() *gorm.DB {
 	if gDb == nil {
 		dataSourceConf := config.Config().DataSource
-		var driver gorm.Dialector
+		var dialector gorm.Dialector
 		switch dataSourceConf.Type {
 		case "sqlite":
-			driver = sqlite.Open(dataSourceConf.Dsn)
-			break
+			dsn := fmt.Sprintf("%s?charset=utf8mb4&parseTime=True&loc=Local",
+				dataSourceConf.Path)
+			dialector = sqlite.Open(dsn)
 		case "postgres":
-			driver = postgres.Open(dataSourceConf.Dsn)
-			break
+			dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s",
+				dataSourceConf.Host, dataSourceConf.Port, dataSourceConf.Username, dataSourceConf.Password, dataSourceConf.DBName)
+			dialector = postgres.Open(dsn)
 		default:
 			bloglogger.Panic("Unsupported database types")
 		}
-		db, err := gorm.Open(driver, &gorm.Config{
+		db, err := gorm.Open(dialector, &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
 				TablePrefix:   "t_",
 				SingularTable: true,
@@ -57,27 +60,25 @@ func GetDB() *gorm.DB {
 			db.Debug()
 		}
 
-		if dataSourceConf.AutoMigrate {
-			err = db.AutoMigrate(
-				&po.User{},
-				&po.Config{},
-				&po.Feature{},
-				&po.Link{},
+		err = db.AutoMigrate(
+			&po.User{},
+			&po.Config{},
+			&po.Feature{},
+			&po.Link{},
 
-				&po.Url{},
-				&po.File{},
+			&po.Url{},
+			&po.File{},
 
-				&po.Fragment{},
-				&po.Article{},
-				&po.ArticleUrl{},
-				&po.Category{},
-				&po.Tag{},
+			&po.Fragment{},
+			&po.Article{},
+			&po.ArticleUrl{},
+			&po.Category{},
+			&po.Tag{},
 
-				&po.Comment{},
-			)
-			if err != nil {
-				bloglogger.Panicf("Failed auto migrate database:%s\n", err)
-			}
+			&po.Comment{},
+		)
+		if err != nil {
+			bloglogger.Panicf("Failed auto migrate database:%s\n", err)
 		}
 
 		gDb = db
